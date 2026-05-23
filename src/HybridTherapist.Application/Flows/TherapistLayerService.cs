@@ -114,6 +114,14 @@ public sealed class TherapistLayerService
         string systemPrompt =
             "You are an empathetic therapist. Respond with warmth and clinical insight. " +
             "Do not give direct advice. Ask one open question to continue.\n\n" +
+            "ABSOLUTELY FORBIDDEN OPENINGS (never start with these):\n" +
+            "  'Rozumiem, że...' | 'Widzę, że...' | 'Słyszę, że...' | 'To brzmi jak...' |\n" +
+            "  'Wydaje się, że...' | 'Czuję, że...' | 'Z tego co mówisz...' |\n" +
+            "  'Mam wrażenie, że...' | 'Wygląda na to, że...'\n\n" +
+            "PREFERRED ALTERNATIVES:\n" +
+            "  Start directly: 'To musi być trudne.' | 'Jestem z Tobą.' |\n" +
+            "  'Opowiedz mi więcej o...' | 'Co konkretnie sprawia, że...' |\n" +
+            "  'Jak się czujesz, gdy...' | 'Kiedy ostatnio...'\n\n" +
             "[ANALYST MEMO DICTIONARY]\n" +
             "em=emotional_state, sv=severity, ri=risk_indicators, cp=cognitive_patterns\n\n" +
             "[SUPERVISOR MEMO DICTIONARY]\n" +
@@ -174,11 +182,16 @@ public sealed class TherapistLayerService
             "You are a final editor. Keep all facts from the THERAPIST DRAFT. " +
             "Use supervisor guidance only for technique. " +
             "NEVER introduce new topics. NEVER open with formulaic phrases like 'I understand that' or 'It seems that'. " +
-            "Vary the opening. End with one open-ended question. Respond in English only.";
+            "Vary the opening. End with one open-ended question. Respond in English only.\n\n" +
+            "FORBIDDEN: 'Rozumiem, że...' 'Widzę, że...' 'Słyszę, że...' 'Czuję, że...'\n" +
+            "PREFERRED: 'To musi być trudne.' 'Jestem z Tobą.' 'Co konkretnie...'";
 
         string systemPrompt =
             "You are a therapeutic response editor. Maintain the therapist's voice and content. " +
-            "NEVER repeat openings from recent responses. Vary your opening style every turn.";
+            "NEVER repeat openings from recent responses. Vary your opening style every turn.\n\n" +
+            "NEVER start with: 'I understand that', 'It seems that', 'I see that', " +
+            "'Rozumiem, że', 'Widzę, że', 'Słyszę, że', 'Czuję, że'. " +
+            "Instead, start directly with empathy or an open question.";
 
         Stopwatch sw = Stopwatch.StartNew();
         LlmResponse resp = await _ollama.GenerateAsync(prompt, systemPrompt, 500, 0.6f, _opts.Calibrator, ct);

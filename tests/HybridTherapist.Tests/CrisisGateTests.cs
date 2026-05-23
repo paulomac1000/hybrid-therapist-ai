@@ -75,6 +75,88 @@ public sealed class CrisisGateTests
         result.Severity.Should().Be("high");
     }
 
+    // ── New categories — anhedonia (high) ─────────────────────────────────────
+
+    [Theory]
+    [InlineData("nic nie sprawia mi przyjemności")]
+    [InlineData("nic mnie już nie cieszy")]
+    [InlineData("straciłem zainteresowanie wszystkim")]
+    [InlineData("wszystko jest mi obojętne")]
+    [InlineData("czuję pustkę")]
+    public void Check_Anhedonia_ReturnsHighEscalation(string input)
+    {
+        var result = _gate.Check(input);
+        result.IsEscalation.Should().BeTrue();
+        result.Severity.Should().Be("high");
+    }
+
+    // ── New categories — social withdrawal (moderate) ─────────────────────────
+
+    [Theory]
+    [InlineData("czuję się sam z tym wszystkim")]
+    [InlineData("czuję się wyobcowany")]
+    [InlineData("unikam ludzi")]
+    [InlineData("nie mam do kogo się zwrócić")]
+    public void Check_SocialWithdrawal_ReturnsModerateEscalation(string input)
+    {
+        var result = _gate.Check(input);
+        result.IsEscalation.Should().BeTrue();
+        result.Severity.Should().Be("moderate");
+    }
+
+    // ── New categories — panic/anxiety (high) ─────────────────────────────────
+
+    [Theory]
+    [InlineData("mam ataki paniki")]
+    [InlineData("ciągły niepokój nie daje mi spokoju")]
+    [InlineData("serce wali mi w piersi")]
+    public void Check_PanicAnxiety_ReturnsHighEscalation(string input)
+    {
+        var result = _gate.Check(input);
+        result.IsEscalation.Should().BeTrue();
+        result.Severity.Should().Be("high");
+    }
+
+    // ── New categories — anger (moderate) ─────────────────────────────────────
+
+    [Theory]
+    [InlineData("wszystko mnie denerwuje")]
+    [InlineData("mam dość tego wszystkiego")]
+    [InlineData("nie mogę się uspokoić")]
+    public void Check_Anger_ReturnsModerateEscalation(string input)
+    {
+        var result = _gate.Check(input);
+        result.IsEscalation.Should().BeTrue();
+        result.Severity.Should().Be("moderate");
+    }
+
+    // ── New categories — cognitive (moderate) ─────────────────────────────────
+
+    [Theory]
+    [InlineData("nie mogę się skupić")]
+    [InlineData("mam mgłę mózgową")]
+    [InlineData("ciągle zapominam")]
+    [InlineData("jestem rozkojarzony")]
+    public void Check_Cognitive_ReturnsModerateEscalation(string input)
+    {
+        var result = _gate.Check(input);
+        result.IsEscalation.Should().BeTrue();
+        result.Severity.Should().Be("moderate");
+    }
+
+    // ── New categories — insomnia extended (moderate) ─────────────────────────
+
+    [Theory]
+    [InlineData("mam okropne koszmary")]
+    [InlineData("budzę się o trzeciej i nie mogę zasnąć")]
+    [InlineData("nie przesypiam nocy")]
+    public void Check_InsomniaExtended_ReturnsModerateEscalation(string input)
+    {
+        var result = _gate.Check(input);
+        result.IsEscalation.Should().BeTrue();
+        result.Severity.Should().Be("moderate");
+    }
+
     // ── Edge cases ────────────────────────────────────────────────────────────
 
     [Fact]

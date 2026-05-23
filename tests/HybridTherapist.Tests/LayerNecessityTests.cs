@@ -142,7 +142,7 @@ public sealed class LayerNecessityTests
         var prompts = new[] { init, digging, working, closing };
         prompts.Distinct().Count().Should().Be(prompts.Length,
             because: "each phase must produce a different system prompt — otherwise the phase machine has no behavioural effect");
-        init.Should().Contain("first contact", because: "INIT prompt should reflect first-contact intent");
+        init.Should().Contain("First contact", because: "INIT prompt should reflect first-contact intent");
         closing.Should().Contain("winding down", because: "CLOSING prompt should reflect end-of-session intent");
     }
 

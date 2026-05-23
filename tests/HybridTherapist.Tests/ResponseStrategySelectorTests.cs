@@ -9,7 +9,7 @@ public sealed class ResponseStrategySelectorTests
 {
     [Theory]
     [InlineData("INIT", "low", false, ResponseStrategy.Intake)]
-    [InlineData("INIT", "medium", false, ResponseStrategy.Intake)]
+    [InlineData("INIT", "medium", false, ResponseStrategy.Mapping)]
     [InlineData("INIT", "high", false, ResponseStrategy.Stabilizing)]
     [InlineData("EXPLORATION", "low", false, ResponseStrategy.Mapping)]
     [InlineData("EXPLORATION", "high", false, ResponseStrategy.MappingWithNaming)]

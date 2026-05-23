@@ -22,6 +22,9 @@ public static class ThematicAlignment
         ("suicide", ["suicidal", "self-harm", "ideation"], ["samobój", "samobojstw", "skończyć", "skonczyc", "suicide", "kill myself"]),
         ("grief", ["bereavement", "grief over loss", "lost a loved one"], ["żałob", "zalob", "umarł", "umarl", "zmarł", "zmarl", "śmierć", "smierc", "loss", "passed away"]),
         ("addiction", ["addiction", "substance abuse", "alcoholism", "uzależnienie"], ["alkohol", "narkoty", "drugs", "addicted", "uzależn", "uzalezn"]),
+        ("self_harm", ["self-harm", "selfharm", "cutting", "cut myself", "cięcie", "samookalecz", "okalecz", "żyletk"], ["samookalecz", "okalecz", "cięcie", "żyletk", "cut", "self-harm"]),
+        ("eating_disorder", ["eating disorder", "anorexi", "bulimi", "binge", "purg", "zaburzenia odżywiania", "zaburzen odzywiania", "nie jem", "wymiot"], ["anoreks", "bulimi", "jedzeni", "wymiot", "nie jem", "głodz", "glodz", "eating"]),
+        ("psychosis", ["psychosis", "psychotic", "hallucinat", "halucyn", "voices told me", "paranoi", "urojeni", "delusion"], ["halucyn", "głosy", "glosy", "urojeni", "paranoi", "śledz", "sledz", "psychoz"]),
     ];
 
     /// <summary>

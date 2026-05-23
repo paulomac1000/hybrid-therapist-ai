@@ -53,10 +53,18 @@ public sealed class SupervisorLayer
             "You are a clinical supervisor overseeing a therapy session.\n" +
             $"The selected strategy for this turn is: {strategy}.\n\n" +
             "Respond EXACTLY as a single M| wire line. Dictionary:\n" +
-            "  L=3 (fixed), ap=approach(CBT|ACT|reflective_listening|...),\n" +
-            "  tk=technique(one specific technique),\n" +
+            "  L=3 (fixed), ap=approach(CBT|ACT|behavioral_activation|sleep_hygiene|" +
+            "boundary_setting|cognitive_restructuring|grounding|breathing|activity_scheduling),\n" +
+            "  tk=technique(one specific technique — examples below),\n" +
             "  kq=key_question(one open question for the therapist),\n" +
             "  rn=risk_note(optional safety note or 'none')\n\n" +
+            "Technique examples per approach:\n" +
+            "  behavioral_activation: schedule_one_small_activity | 10min_walk | call_friend\n" +
+            "  sleep_hygiene: no_screen_30min_before | consistent_bedtime | reduce_caffeine\n" +
+            "  boundary_setting: inbox_cutoff_time | say_no_politely | block_focus_time\n" +
+            "  grounding: 54321_senses | deep_breathing_4_7_8 | body_scan_5min\n" +
+            "  cognitive_restructuring: thought_record | evidence_for_against | alternative_thought\n" +
+            "  breathing: box_breathing | 4_7_8_breathing | belly_breathing\n\n" +
             "Example: M|L=3|ap=CBT|tk=thought_challenging|kq=What evidence supports that thought?|rn=none\n\n" +
             "CRITICAL: Output ONLY one line starting with M|L=3|. Nothing else. " +
             "No markdown. No XML tags. No explanations. Do NOT respond to the user directly.";
@@ -81,7 +89,7 @@ public sealed class SupervisorLayer
             await _trace.RecordAsync(new TraceEvent(
                 DateTimeOffset.UtcNow, sessionId, "L3_supervisor", _opts.Supervisor,
                 prompt, string.Empty, sw.ElapsedMilliseconds, "error", resp.Error), ct);
-            return new SupervisorResult(false, "reflective_listening",
+            return new SupervisorResult(false, "behavioral_activation",
                 BuildFallbackMemo("llm_error"), resp.Error);
         }
 
@@ -95,19 +103,19 @@ public sealed class SupervisorLayer
         if (parsed.Level >= 5)
         {
             memo = BuildFallbackMemo("decoder_level5_fallback");
-            approach = "reflective_listening";
+            approach = "behavioral_activation";
         }
         else if (parsed.Message.Performative == Performative.Memo)
         {
             memo = parsed.Message.RawMessage;
-            approach = parsed.Message.Get("ap") ?? "reflective_listening";
+            approach = parsed.Message.Get("ap") ?? "behavioral_activation";
         }
         else
         {
             memo = string.IsNullOrWhiteSpace(parsed.Message.Body)
                 ? BuildFallbackMemo("parse_no_body")
                 : BuildFallbackMemo("parsed_from_body");
-            approach = "reflective_listening";
+            approach = "behavioral_activation";
         }
 
         await _trace.RecordAsync(new TraceEvent(
@@ -141,9 +149,9 @@ public sealed class SupervisorLayer
     {
         return new MemoBuilder(_opts.HandCompressionTier)
             .Layer(3)
-            .Approach("reflective_listening")
-            .Technique("open_question")
-            .KeyQuestion("Could you tell me more?")
+            .Approach("behavioral_activation")
+            .Technique("schedule_one_small_activity")
+            .KeyQuestion("What is one tiny thing you could do today that used to bring you joy?")
             .RiskNote("none")
             .Field("note", note)
             .Build();

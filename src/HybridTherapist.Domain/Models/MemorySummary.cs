@@ -5,7 +5,8 @@ public sealed record MemorySummary(
     IReadOnlyList<TopicEntry> TopicMap,
     string EmotionalArc,
     string? ClinicalFlags,
-    string? FocusNext);
+    string? FocusNext,
+    string EmotionalTrend = "stable");
 
 public sealed record TopicEntry(
     string Theme,

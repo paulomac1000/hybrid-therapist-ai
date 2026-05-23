@@ -91,7 +91,7 @@ public sealed class TherapyMemoryService
             return state.StructuredSummary;
         }
 
-        state.StructuredSummary = parsed;
+        state.StructuredSummary = parsed with { EmotionalTrend = DetectTrend(parsed, state.StructuredSummary) };
         state.SessionSummary = parsed.Overview;
         state.History = state.History.TakeLast(KeepLastNMessages).ToList();
 
@@ -104,6 +104,21 @@ public sealed class TherapyMemoryService
             tier, sessionId, KeepLastNMessages);
 
         return parsed;
+    }
+
+    private static string DetectTrend(MemorySummary current, MemorySummary? previous)
+    {
+        if (previous is null) return "stable";
+
+        string prevArc = (previous.EmotionalArc ?? "").ToLowerInvariant();
+        string currArc = (current.EmotionalArc ?? "").ToLowerInvariant();
+
+        bool prevHasCrisis = prevArc.Contains("crisis") || prevArc.Contains("high");
+        bool currHasCrisis = currArc.Contains("crisis") || currArc.Contains("high");
+
+        if (!prevHasCrisis && currHasCrisis) return "worsening";
+        if (prevHasCrisis && !currHasCrisis) return "improving";
+        return "stable";
     }
 
     private static string BuildSystemPrompt(CompactionTier tier) => tier switch

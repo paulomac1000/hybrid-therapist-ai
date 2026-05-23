@@ -13,6 +13,37 @@ public static class QualityValidator
     /// <summary>
     /// Validates an English calibrator output before it goes to L7 translator.
     /// </summary>
+    public static Verdict ValidateTherapeuticQuality(string response, string phase, int messageCount)
+    {
+        if (string.IsNullOrWhiteSpace(response))
+            return new Verdict(false, "empty");
+
+        string trimmed = response.Trim();
+
+        bool containsQuestion = trimmed.Contains('?', StringComparison.Ordinal);
+        bool containsAdvice =
+            trimmed.Contains("spróbuj", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.Contains("możesz", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.Contains("warto", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.Contains("proponuję", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.Contains("proponuje", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.Contains("pomocne może być", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.Contains("jednym ze sposobów", StringComparison.OrdinalIgnoreCase);
+
+        bool containsFormulaicOpening =
+            trimmed.StartsWith("Rozumiem", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.StartsWith("Widzę", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.StartsWith("Słyszę", StringComparison.OrdinalIgnoreCase);
+
+        if (messageCount >= 4 && containsQuestion && !containsAdvice)
+            return new Verdict(false, "only_questions_after_4_messages");
+
+        if (containsFormulaicOpening)
+            return new Verdict(false, "formulaic_opening");
+
+        return new Verdict(true, "ok");
+    }
+
     public static Verdict ValidateEnglishDraft(string draft, string userTextEn)
     {
         if (string.IsNullOrWhiteSpace(draft))

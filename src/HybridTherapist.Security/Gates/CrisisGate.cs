@@ -33,9 +33,45 @@ public sealed partial class CrisisGate : ICrisisGate
 
     // Medium severity
     [GeneratedRegex(
-        @"(nie\s+śpię|nie\s+mogę\s+zasnąć|budzę\s+się\s+w\s+nocy|bezsenność|kołatanie\s+serca|ciągle\s+zmęczony|ciągle\s+zmęczona)",
+        @"(nie\s+śpię|nie\s+mogę\s+zasnąć|budzę\s+się\s+w\s+nocy|bezsenność|kołatanie\s+serca|ciągle\s+zmęczony|ciągle\s+zmęczona|nie\s+sypiam|problemy\s+ze\s+snem|nie\s+wysypiam\s+się)",
         RegexOptions.IgnoreCase, matchTimeoutMilliseconds: 200)]
     private static partial Regex MediumSeverityPl();
+
+    // Anhedonia / depression markers (high)
+    [GeneratedRegex(
+        @"(nic\s+nie\s+sprawia.*przyjemności|nic\s+mnie.*nie\s+cieszy|stracił[ae]m?\s+zainteresowanie|stracił[ae]m?\s+radość|wszystko\s+jest.*obojętne|nie\s+czuję\s+nic|czuję\s+pustkę|bez\s+sensu|nie\s+mam\s+siły|wypalon)",
+        RegexOptions.IgnoreCase, matchTimeoutMilliseconds: 200)]
+    private static partial Regex AnhedoniaPl();
+
+    // Social withdrawal (moderate)
+    [GeneratedRegex(
+        @"(nikt\s+mnie\s+nie\s+rozumie|czuję\s+się\s+sam|czuje\s+sie\s+sam|wyobcowan|izoluj|unikam\s+ludzi|nie\s+mam\s+do\s+kogo|samotno)",
+        RegexOptions.IgnoreCase, matchTimeoutMilliseconds: 200)]
+    private static partial Regex SocialWithdrawalPl();
+
+    // Panic / anxiety (high)
+    [GeneratedRegex(
+        @"(nie\s+mogę\s+oddychać|serce.*w\s+piersi|duszę\s+się|atak[yi]\s+paniki|ściska.*w\s+klatce|niepokój.*nie\s+daje|ataki\s+lęku|napady\s+lęku|ciągły\s+niepokój|ciagly\s+niepokoj)",
+        RegexOptions.IgnoreCase, matchTimeoutMilliseconds: 200)]
+    private static partial Regex PanicAnxietyPl();
+
+    // Anger / irritability (moderate)
+    [GeneratedRegex(
+        @"(wkurza.*mnie|denerwuje|mnie\s+denerwuje|nie\s+wytrzymuję|mam\s+dość|wszystko\s+mnie\s+drażni|jestem\s+wściek|jestem\s+wsciek|nie\s+mogę\s+się\s+uspokoić)",
+        RegexOptions.IgnoreCase, matchTimeoutMilliseconds: 200)]
+    private static partial Regex AngerPl();
+
+    // Cognitive complaints (moderate)
+    [GeneratedRegex(
+        @"(nie\s+mogę\s+się\s+skupić|zapominam|pustka\s+w\s+głowie|nie\s+myślę\s+jasno|mg[łl][aąeę]\s+m[oó]zgow[aąeę]|nie\s+mogę\s+się\s+skoncentrować|rozkojarzon)",
+        RegexOptions.IgnoreCase, matchTimeoutMilliseconds: 200)]
+    private static partial Regex CognitivePl();
+
+    // Insomnia extended (moderate)
+    [GeneratedRegex(
+        @"(problemy\s+ze\s+snem|nie\s+przesypiam|budzę\s+się\s+o\s+trzeciej|wstaję\s+zmęczon|nie\s+wysypiam|koszmary|koszmarów|wybudzam\s+się)",
+        RegexOptions.IgnoreCase, matchTimeoutMilliseconds: 200)]
+    private static partial Regex InsomniaExtendedPl();
 
     public CrisisGateResult Check(string input)
     {
@@ -49,6 +85,13 @@ public sealed partial class CrisisGate : ICrisisGate
 
             if (HighSeverityPl().IsMatch(input))
                 return CrisisGateResult.Escalation("high");
+
+            if (AnhedoniaPl().IsMatch(input) || PanicAnxietyPl().IsMatch(input))
+                return CrisisGateResult.Escalation("high");
+
+            if (SocialWithdrawalPl().IsMatch(input) || AngerPl().IsMatch(input) ||
+                CognitivePl().IsMatch(input) || InsomniaExtendedPl().IsMatch(input))
+                return CrisisGateResult.Escalation("moderate");
 
             if (MediumSeverityPl().IsMatch(input))
                 return CrisisGateResult.Escalation("medium");
