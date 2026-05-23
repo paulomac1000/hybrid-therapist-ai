@@ -1,5 +1,5 @@
 language: dotnet
-dotnet_version: "8.0.x"
+dotnet_version: "10.0.x"
 dotnet_solution: HybridTherapist.sln
 project: hybrid-therapist
 use_docker: true
