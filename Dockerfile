@@ -3,13 +3,14 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
+RUN mkdir -p local-packages && \
+    curl -fsSL https://github.com/paulomac1000/hand-codec/releases/download/v0.2.0/HandCodec.0.2.0.nupkg -o local-packages/HandCodec.0.2.0.nupkg && \
+    curl -fsSL https://github.com/paulomac1000/hand-codec/releases/download/v0.2.0/HandRuntime.0.2.0.nupkg -o local-packages/HandRuntime.0.2.0.nupkg
+
 COPY nuget.config ./
 COPY HybridTherapist.sln ./
 COPY src/ ./src/
 COPY tests/ ./tests/
-
-ARG GITHUB_TOKEN=""
-ENV GITHUB_TOKEN=${GITHUB_TOKEN}
 
 RUN dotnet restore HybridTherapist.sln
 RUN dotnet test tests/HybridTherapist.Tests/HybridTherapist.Tests.csproj \
