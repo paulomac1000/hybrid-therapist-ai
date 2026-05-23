@@ -10,7 +10,8 @@ COPY tests/ ./tests/
 
 ARG GITHUB_TOKEN=""
 RUN if [ -n "$GITHUB_TOKEN" ]; then \
-        dotnet nuget update source github \
+        dotnet nuget add source https://nuget.pkg.github.com/paulomac1000/index.json \
+            --name github \
             --username paulomac1000 \
             --password "$GITHUB_TOKEN" \
             --store-password-in-clear-text; \
