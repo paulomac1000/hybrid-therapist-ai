@@ -9,13 +9,7 @@ COPY src/ ./src/
 COPY tests/ ./tests/
 
 ARG GITHUB_TOKEN=""
-RUN if [ -n "$GITHUB_TOKEN" ]; then \
-        dotnet nuget add source https://nuget.pkg.github.com/paulomac1000/index.json \
-            --name github \
-            --username paulomac1000 \
-            --password "$GITHUB_TOKEN" \
-            --store-password-in-clear-text; \
-    fi
+ENV NUGET_AUTH_TOKEN=${GITHUB_TOKEN}
 
 RUN dotnet restore HybridTherapist.sln
 RUN dotnet test tests/HybridTherapist.Tests/HybridTherapist.Tests.csproj \
