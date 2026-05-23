@@ -161,14 +161,18 @@ Zero hardcoded model names in code. All model references come from configuration
 
 ## HandCodec + HandRuntime dependency
 
-The H.A.N.D. protocol libraries are consumed as NuGet packages from the [hand-codec](https://github.com/paulomac1000/hand-codec) GitHub repository:
+The H.A.N.D. protocol libraries are published as NuGet packages on [GitHub Packages](https://github.com/paulomac1000/hand-codec/pkgs/nuget/HandCodec). Both repos are public — no authentication required for `dotnet restore`.
+
+The `nuget.config` at the repository root configures two NuGet sources:
+- `nuget.pkg.github.com/paulomac1000` — HandCodec + HandRuntime
+- `nuget.org` — all other dependencies (YamlDotNet and others)
 
 ```xml
 <PackageReference Include="HandCodec" Version="0.2.0" />
 <PackageReference Include="HandRuntime" Version="0.2.0" />
 ```
 
-The `local-packages/` directory contains the latest `.nupkg` files downloaded from the GitHub release. Run `gh release download v0.2.0 --repo paulomac1000/hand-codec --pattern "*.nupkg" --dir local-packages` to update.
+`dotnet restore` resolves these automatically — no local `.nupkg` files needed.
 
 ## Documentation
 
