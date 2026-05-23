@@ -165,7 +165,7 @@ The H.A.N.D. protocol libraries are published as NuGet packages on [GitHub Packa
 
 The `nuget.config` at the repository root configures two NuGet sources:
 - `nuget.pkg.github.com/paulomac1000` — HandCodec + HandRuntime
-- `nuget.org` — all other dependencies (YamlDotNet, etc.)
+- `nuget.org` — all other dependencies (YamlDotNet and others)
 
 ```xml
 <PackageReference Include="HandCodec" Version="0.2.0" />

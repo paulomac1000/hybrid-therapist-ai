@@ -8,6 +8,14 @@ COPY HybridTherapist.sln ./
 COPY src/ ./src/
 COPY tests/ ./tests/
 
+ARG GITHUB_TOKEN=""
+RUN if [ -n "$GITHUB_TOKEN" ]; then \
+        dotnet nuget update source github \
+            --username paulomac1000 \
+            --password "$GITHUB_TOKEN" \
+            --store-password-in-clear-text; \
+    fi
+
 RUN dotnet restore HybridTherapist.sln
 RUN dotnet test tests/HybridTherapist.Tests/HybridTherapist.Tests.csproj \
         -c Release --no-restore --logger "trx;LogFileName=test-results.trx" \
