@@ -3,9 +3,11 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-COPY nuget.config ./
-COPY local-packages/ ./local-packages/
+RUN mkdir -p local-packages && \
+    wget -q https://github.com/paulomac1000/hand-codec/releases/download/v0.2.0/HandCodec.0.2.0.nupkg -O local-packages/HandCodec.0.2.0.nupkg && \
+    wget -q https://github.com/paulomac1000/hand-codec/releases/download/v0.2.0/HandRuntime.0.2.0.nupkg -O local-packages/HandRuntime.0.2.0.nupkg
 
+COPY nuget.config ./
 COPY HybridTherapist.sln ./
 COPY src/ ./src/
 COPY tests/ ./tests/

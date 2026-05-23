@@ -47,3 +47,6 @@ docker-compose.override.yml
 
 # Backup files
 *.bak
+
+# NuGet local cache (remote GitHub Packages is the source of truth)
+local-packages/
