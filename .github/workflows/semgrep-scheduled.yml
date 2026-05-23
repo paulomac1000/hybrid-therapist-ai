@@ -25,6 +25,8 @@ jobs:
       - uses: semgrep/semgrep-action@713efdd345f3035192eaa63f56867b88e63e4e5d  # v1
         env:
           SEMGREP_RULES: p/auto p/secrets p/owasp-top-ten
+        with:
+          publishToken: ${{ secrets.SEMGREP_APP_TOKEN || '' }}
 
       - name: Upload SARIF
         if: always() && hashFiles('semgrep.sarif') != ''

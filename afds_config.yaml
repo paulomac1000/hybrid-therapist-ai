@@ -5,4 +5,5 @@ excluded_dirs:
   - archived
 exempt_files:
   - README.md
+  - CHANGELOG.md
 default_doc_id_prefix: ref
