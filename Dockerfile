@@ -29,6 +29,7 @@ ENV ASPNETCORE_URLS=http://+:8080
 ENV ASPNETCORE_ENVIRONMENT=Production
 ENV Models__StackYamlPath=/app/config/stack.yaml
 EXPOSE 8080
+USER app
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
     CMD curl -fsS http://localhost:8080/v1/models || exit 1
 ENTRYPOINT ["dotnet", "HybridTherapist.Api.dll"]
