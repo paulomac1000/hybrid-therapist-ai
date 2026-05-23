@@ -4,8 +4,6 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 COPY nuget.config ./
-COPY local-packages/ ./local-packages/
-
 COPY HybridTherapist.sln ./
 COPY src/ ./src/
 COPY tests/ ./tests/
