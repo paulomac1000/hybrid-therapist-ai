@@ -9,9 +9,7 @@ COPY src/ ./src/
 COPY tests/ ./tests/
 
 ARG GITHUB_TOKEN=""
-RUN if [ -n "$GITHUB_TOKEN" ]; then \
-        sed -i "/<\/configuration>/i\  <packageSourceCredentials><github><add key=\"Username\" value=\"paulomac1000\"\/><add key=\"ClearTextPassword\" value=\"$GITHUB_TOKEN\"\/><\/github><\/packageSourceCredentials>" nuget.config; \
-    fi
+ENV GITHUB_TOKEN=${GITHUB_TOKEN}
 
 RUN dotnet restore HybridTherapist.sln
 RUN dotnet test tests/HybridTherapist.Tests/HybridTherapist.Tests.csproj \
