@@ -58,7 +58,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           platforms: linux/amd64,linux/arm64
 
-      - uses: actions/attest@281a49d4cbb0a72c9575a50d18f6deb515a11deb  # v4
+      - uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26  # v4
         with:
           subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           subject-digest: ${{ steps.meta.outputs.digest }}
