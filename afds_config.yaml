@@ -1,0 +1,8 @@
+# AFDS Validator Configuration for hybrid-therapist (.NET 8, no Python)
+default_paths:
+  - docs/
+excluded_dirs:
+  - archived
+exempt_files:
+  - README.md
+default_doc_id_prefix: ref

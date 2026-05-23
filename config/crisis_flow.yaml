@@ -1,0 +1,74 @@
+metadata:
+  version: "1.0"
+
+patterns:
+  - id: suicide_direct_pl
+    severity: critical
+    is_hard_stop: true
+    regex: "(samob[oó][jy]stw|zabi[ćjł]|umrze[ćj]|sko[ńn]cz[ęy][ćc]? z sob|jestem beznadziej)"
+    flags:
+      - case_insensitive
+
+  - id: suicide_direct_en
+    severity: critical
+    is_hard_stop: true
+    regex: "(suicide|kill myself|end my life|want to die|hopeless|worthless)"
+    flags:
+      - case_insensitive
+
+  # High severity patterns (non-hard-stop)
+  - id: high_collapse_pl
+    severity: high
+    is_hard_stop: false
+    regex: '(nie\s+daję\s+rady|nie\s+wytrzymam|już\s+nie\s+mogę|załamał[aem]\s+się|czuję\s+się\s+bezsilny|bezsilna|totalnie\s+zagubiony|zagubiona)'
+    flags: [case_insensitive]
+
+  - id: high_overwhelm_pl
+    severity: high
+    is_hard_stop: false
+    regex: '(przytłoczon[ay]|nie\s+widzę\s+wyjścia|wszystko\s+się\s+wali|nie\s+mam\s+siły|nie\s+wiem\s+co\s+robić\s+z\s+sobą)'
+    flags: [case_insensitive]
+
+  # Medium severity patterns
+  - id: medium_insomnia_pl
+    severity: medium
+    is_hard_stop: false
+    regex: '(nie\s+śpię|nie\s+mogę\s+zasnąć|budzę\s+się\s+w\s+nocy|bezsenność|gonitwa\s+myśli\s+w\s+nocy)'
+    flags: [case_insensitive]
+
+  - id: medium_anxiety_somatic_pl
+    severity: medium
+    is_hard_stop: false
+    regex: '(kołatanie\s+serca|ścisk\s+w\s+klatce|napięcie\s+w\s+ciele|nie\s+mogę\s+oddychać\s+ze\s+stresu|drżenie\s+rąk)'
+    flags: [case_insensitive]
+
+  - id: medium_chronic_stress_pl
+    severity: medium
+    is_hard_stop: false
+    regex: '(od\s+\w+\s+miesięcy|od\s+tygodni|ciągle\s+zmęczony|ciągle\s+zmęczona|tryb\s+przetrwania|permanentny\s+stres)'
+    flags: [case_insensitive]
+
+  # Tier 2: trauma disclosure patterns (High severity, non-hard-stop)
+  - id: tier2_abuse_disclosure_pl
+    severity: high
+    is_hard_stop: false
+    regex: '(jestem ofiar[ąa]|byłam ofiarą|byłem ofiarą|doznałam przemocy|doznałem przemocy|zgwałcon[ay]|molestowa[łn][ay])'
+    flags: [case_insensitive]
+
+  - id: tier2_domestic_violence_pl
+    severity: high
+    is_hard_stop: false
+    regex: '(bi[łl]a? mnie|krzycza[łl]a? na mnie|groź[bił]|poniż[ay][łl]|kontrolowa[łl]a? mnie|nie pozwala[łl]a? mi)'
+    flags: [case_insensitive]
+
+  - id: tier2_childhood_trauma_pl
+    severity: high
+    is_hard_stop: false
+    regex: '(w dzieciństwie|jako dziecko).{0,60}(bi[łl]|krzycza[łl]|molestowa[łl]|poniż[ay][łl]|zabrania[łl]|ba[łl]em się|ba[łl]am się)'
+    flags: [case_insensitive, dot_all]
+
+# Polish and English hard-stop messages sent directly to the user (no LLM translation).
+# These are the only strings in .NET code that may contain Polish (safety-critical path).
+hard_stop_responses:
+  pl: "Jest mi przykro, że przechodzisz przez trudne chwile. Jako asystent AI nie mogę udzielić pomocy psychologicznej. Skontaktuj się z profesjonalistą: Telefon Zaufania dla Osób Dorosłych: 116 123 (bezpłatny, czynny 14:00-22:00) lub 112 w sytuacji zagrożenia życia."
+  en: "I'm sorry you're going through a difficult time. As an AI assistant, I cannot provide psychological help. Please contact a professional: National Suicide Prevention Lifeline: 988 (US) or 112 (EU) in case of life-threatening emergency."
