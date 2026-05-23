@@ -106,7 +106,7 @@ public sealed class TherapyMemoryService
         return parsed;
     }
 
-    private static string DetectTrend(MemorySummary current, MemorySummary? previous)
+    internal static string DetectTrend(MemorySummary current, MemorySummary? previous)
     {
         if (previous is null) return "stable";
 

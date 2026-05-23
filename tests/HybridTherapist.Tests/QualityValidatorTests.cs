@@ -94,4 +94,63 @@ public sealed class QualityValidatorTests
         v.Ok.Should().BeFalse();
         v.Reason.Should().Be("too_short");
     }
+
+    // ── Therapeutic quality checks ────────────────────────────────────────────
+
+    [Fact]
+    public void ValidateTherapeuticQuality_GoodResponse_Ok()
+    {
+        var v = QualityValidator.ValidateTherapeuticQuality(
+            "To musi być trudne. Może spróbuj jednej małej rzeczy przed snem — odłożyć telefon 30 minut wcześniej.",
+            "EXPLORATION", 4);
+        v.Ok.Should().BeTrue();
+    }
+
+    [Fact]
+    public void ValidateTherapeuticQuality_FormulaicOpening_Fails()
+    {
+        var v = QualityValidator.ValidateTherapeuticQuality(
+            "Rozumiem, że czujesz się źle. Opowiedz więcej.",
+            "INIT", 1);
+        v.Ok.Should().BeFalse();
+        v.Reason.Should().Be("formulaic_opening");
+    }
+
+    [Theory]
+    [InlineData("Widzę, że to trudne. Co myślisz?", "formulaic_opening")]
+    [InlineData("Słyszę, że jest Ci ciężko. Opowiedz.", "formulaic_opening")]
+    public void ValidateTherapeuticQuality_OtherFormulaic_Fails(string text, string expectedReason)
+    {
+        var v = QualityValidator.ValidateTherapeuticQuality(text, "EXPLORATION", 2);
+        v.Ok.Should().BeFalse();
+        v.Reason.Should().Be(expectedReason);
+    }
+
+    [Fact]
+    public void ValidateTherapeuticQuality_OnlyQuestionsAfter4Messages_Fails()
+    {
+        var v = QualityValidator.ValidateTherapeuticQuality(
+            "To ważne co mówisz. Jak się z tym czujesz? Czy chcesz o tym porozmawiać?",
+            "EXPLORATION", 5);
+        v.Ok.Should().BeFalse();
+        v.Reason.Should().Be("only_questions_after_4_messages");
+    }
+
+    [Fact]
+    public void ValidateTherapeuticQuality_QuestionsBefore4Messages_Ok()
+    {
+        var v = QualityValidator.ValidateTherapeuticQuality(
+            "Jak się z tym czujesz? Opowiedz mi więcej o tym co Cię trapi.",
+            "INIT", 2);
+        v.Ok.Should().BeTrue("only_questions check triggers at 4+ messages");
+    }
+
+    [Fact]
+    public void ValidateTherapeuticQuality_ConcreteAdviceAfter4Messages_Ok()
+    {
+        var v = QualityValidator.ValidateTherapeuticQuality(
+            "Warto spróbować techniki 5-4-3-2-1 — nazwij 5 rzeczy które widzisz. Co o tym myślisz?",
+            "WORKING", 6);
+        v.Ok.Should().BeTrue();
+    }
 }

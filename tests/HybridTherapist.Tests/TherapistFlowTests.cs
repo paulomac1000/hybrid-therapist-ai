@@ -157,4 +157,53 @@ public sealed class TherapistFlowTests
 
         s1.Should().NotBe(s2, "different first-user messages must produce different session IDs");
     }
+
+    // ── T4: Severity escalation — anhedonia triggers EXPLORATION + concrete response
+
+    [Fact]
+    public async Task ExecuteAsync_AnhedoniaInput_EscalatesSeverityAndProvidesConcreteAdvice()
+    {
+        var perModel = new Dictionary<string, LlmResponse>
+        {
+            // L1 + L7: use same translator model — returns PL text for simplicity
+            ["SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M"] = new LlmResponse { Ok = true, Text = "nic mnie już nie cieszy", ModelId = "translator" },
+            ["hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M"] = new LlmResponse
+            {
+                Ok = true,
+                Text = "M|L=2|em=depressed|sv=high|ri=anhedonia,social_withdrawal|cp=hopelessness",
+                ModelId = "analyst"
+            },
+            ["hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M"] = new LlmResponse
+            {
+                Ok = true,
+                Text = "M|L=3|ap=behavioral_activation|tk=schedule_one_small_activity|kq=What_One_Tiny_Thing_Could_You_Try_Today?|rn=none",
+                ModelId = "supervisor"
+            },
+            ["hf.co/mradermacher/PsychoCounsel-Llama3-8B-GGUF:Q4_K_S"] = new LlmResponse
+            {
+                Ok = true,
+                Text = "R|C=0.95|V=To musi być naprawdę trudne. Może spróbuj jednej małej rzeczy — wyjść na 5-minutowy spacer. Co o tym myślisz?",
+                ModelId = "therapist"
+            },
+            ["hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S"] = new LlmResponse
+            {
+                Ok = true,
+                Text = "To musi być naprawdę trudne. Może spróbuj jednej małej rzeczy.",
+                ModelId = "calibrator"
+            },
+        };
+
+        var fake = new FakeOllamaAdapter(perModel);
+        TherapistFlow flow = CreateFlow(fake);
+
+        FlowExecutionResult result = await flow.ExecuteAsync(
+            MakeRequest("nic mnie nie cieszy, nie mam siły na nic"));
+
+        result.Fallback.Should().BeFalse();
+        result.Content.Should().NotBeNullOrWhiteSpace();
+        result.Content.Should().NotContain("Rozumiem, że", "response must not start with formulaic phrase");
+        result.Content.Should().NotContain("Widzę, że", "response must not start with formulaic phrase");
+        result.Content.Should().NotContain("Słyszę, że", "response must not start with formulaic phrase");
+        result.Metadata["fallback"].Should().Be(false);
+    }
 }

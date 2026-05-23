@@ -101,4 +101,63 @@ public sealed class ThematicAlignmentTests
         r.Aligned.Should().BeTrue();
         r.UnsupportedThemes.Should().BeEmpty();
     }
+
+    // ── New categories ────────────────────────────────────────────────────────
+
+    [Fact]
+    public void Verify_SelfHarm_Fabricated_NotAligned()
+    {
+        var r = ThematicAlignment.Verify(
+            analystMemoOrReport: "M|L=2|em=depressed|sv=high|ri=self-harm|cp=hopelessness",
+            userInput: "jestem smutny i nie mam energii");
+        r.Aligned.Should().BeFalse();
+        r.UnsupportedThemes.Should().Contain("self_harm");
+    }
+
+    [Fact]
+    public void Verify_SelfHarm_SupportedByUserInput_Aligned()
+    {
+        var r = ThematicAlignment.Verify(
+            analystMemoOrReport: "M|L=2|em=crisis|sv=high|ri=self-harm,cutting",
+            userInput: "czasem się okaleczam, nie wiem co robić");
+        r.Aligned.Should().BeTrue();
+    }
+
+    [Fact]
+    public void Verify_EatingDisorder_Fabricated_NotAligned()
+    {
+        var r = ThematicAlignment.Verify(
+            analystMemoOrReport: "M|L=2|em=shame|sv=moderate|ri=binge,eating_disorder|cp=body_image",
+            userInput: "czuję się zestresowany w pracy");
+        r.Aligned.Should().BeFalse();
+        r.UnsupportedThemes.Should().Contain("eating_disorder");
+    }
+
+    [Fact]
+    public void Verify_EatingDisorder_SupportedByUserInput_Aligned()
+    {
+        var r = ThematicAlignment.Verify(
+            analystMemoOrReport: "M|L=2|em=shame|sv=moderate|ri=binge|cp=control_loss",
+            userInput: "nie mogę przestać jeść, wymiotuję po posiłkach");
+        r.Aligned.Should().BeTrue();
+    }
+
+    [Fact]
+    public void Verify_Psychosis_Fabricated_NotAligned()
+    {
+        var r = ThematicAlignment.Verify(
+            analystMemoOrReport: "M|L=2|em=fear|sv=high|ri=psychosis,hallucinations|cp=paranoia",
+            userInput: "boję się, że nie zdam egzaminu");
+        r.Aligned.Should().BeFalse();
+        r.UnsupportedThemes.Should().Contain("psychosis");
+    }
+
+    [Fact]
+    public void Verify_Psychosis_SupportedByUserInput_Aligned()
+    {
+        var r = ThematicAlignment.Verify(
+            analystMemoOrReport: "M|L=2|em=fear|sv=high|ri=psychosis,voices",
+            userInput: "słyszę głosy które mówią mi co mam robić");
+        r.Aligned.Should().BeTrue();
+    }
 }
