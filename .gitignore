@@ -1,0 +1,49 @@
+# Build output
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+[Bb]uild/
+[Pp]ublish/
+
+# Test results
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+coverage.opencover.xml
+
+# IDE
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+.idea/
+.vscode/
+*.suo
+
+# OS
+.DS_Store
+Thumbs.db
+*~
+*.swp
+
+# Logs
+*.log
+data/logs/
+
+# Secrets / local config
+.env
+*.local.json
+appsettings.Development.json
+appsettings.Local.json
+
+# Docker runtime data (models, databases, logs)
+data/
+ollama_data/
+
+# Docker Compose local overrides
+docker-compose.override.yml
+
+# Backup files
+*.bak

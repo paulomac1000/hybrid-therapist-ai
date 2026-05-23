@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="HybridTherapist.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="YamlDotNet" Version="15.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../HybridTherapist.Domain/HybridTherapist.Domain.csproj" />
+    <ProjectReference Include="../HybridTherapist.Security/HybridTherapist.Security.csproj" />
+    <ProjectReference Include="../HybridTherapist.Infrastructure/HybridTherapist.Infrastructure.csproj" />
+    <PackageReference Include="HandCodec" Version="0.2.0" />
+    <PackageReference Include="HandRuntime" Version="0.2.0" />
+  </ItemGroup>
+</Project>

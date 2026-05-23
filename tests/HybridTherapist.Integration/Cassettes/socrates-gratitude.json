@@ -1,0 +1,89 @@
+{
+  "name": "socrates-gratitude",
+  "description": "Short positive turn — 'dziękuję'. Tests non-crisis short input. L2/L3 emit native M| wire. L4/L7 use Result with Body.",
+  "interactions": [
+    {
+      "layer": "L1_translator_pl_en",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "You are a translator"
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": { "role": "assistant", "content": "R|C=0.99|V=thank you" },
+        "done": true
+      }
+    },
+    {
+      "layer": "L2_analyst",
+      "request_match": {
+        "model_contains": "MentaLLaMA"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "M|L=2|em=gratitude|sv=low|ri=none|cp=none|ev=thank_you"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L3_supervisor",
+      "request_match": {
+        "model_contains": "PsyLLM"
+      },
+      "response": {
+        "model": "hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "M|L=3|ap=warm_acknowledgement|tk=brief_reflection|kq=How_are_you_feeling_right_now?|rn=none"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L4_therapist",
+      "request_match": {
+        "model_contains": "PsychoCounsel"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/PsychoCounsel-Llama3-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.91\nYou're welcome — it means a lot that you chose to come here today.\n\nHow are you feeling right now?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L6_calibrator",
+      "request_match": {
+        "model_contains": "dolphin"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "You're welcome — it means a lot that you came here today.\n\nHow are you feeling right now?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L7_translator_en_pl",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "You are a Polish translator"
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.95\nNie ma za co — to dla mnie ważne, że tu jesteś dzisiaj.\n\nJak się teraz czujesz?"
+        },
+        "done": true
+      }
+    }
+  ]
+}

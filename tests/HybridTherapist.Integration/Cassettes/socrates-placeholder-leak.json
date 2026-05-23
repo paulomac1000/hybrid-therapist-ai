@@ -1,0 +1,89 @@
+{
+  "name": "socrates-placeholder-leak",
+  "description": "REGRESSION CASSETTE — reproduces bug where L7 Bielik copies format-hint placeholder ('R|V=0.95|C=confidence_decimal') instead of translating. The real Polish prose follows on subsequent lines. The resilience pipeline must detect the placeholder V and surface the prose Body.",
+  "interactions": [
+    {
+      "layer": "L1_translator_pl_en",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "You are a translator"
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": { "role": "assistant", "content": "R|C=0.90|V=I cannot sleep for three weeks" },
+        "done": true
+      }
+    },
+    {
+      "layer": "L2_analyst",
+      "request_match": {
+        "model_contains": "MentaLLaMA"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "M|L=2|em=exhaustion|sv=high|ri=chronic_insomnia|cp=none|ev=cannot_sleep_three_weeks"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L3_supervisor",
+      "request_match": {
+        "model_contains": "PsyLLM"
+      },
+      "response": {
+        "model": "hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "M|L=3|ap=reflective_listening|tk=validate_exhaustion|kq=What_keeps_your_mind_awake_at_night?|rn=none"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L4_therapist",
+      "request_match": {
+        "model_contains": "PsychoCounsel"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/PsychoCounsel-Llama3-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.91\nThree weeks of broken sleep — I hear how exhausting that is. What keeps your mind awake at night?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L6_calibrator",
+      "request_match": {
+        "model_contains": "dolphin"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "Three weeks of broken sleep — I hear how exhausting that is. What keeps your mind awake at night?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L7_translator_en_pl",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "You are a Polish translator"
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|V=0.95|C=confidence_decimal\nDziękuję, że podzieliłeś się tym ze mną. Trzy tygodnie nieprzespanych nocy to bardzo wyczerpujące doświadczenie. Co Cię trzyma w nocy?"
+        },
+        "done": true
+      }
+    }
+  ]
+}

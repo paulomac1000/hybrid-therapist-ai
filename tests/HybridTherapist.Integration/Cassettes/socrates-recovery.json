@@ -1,0 +1,92 @@
+{
+  "name": "socrates-recovery",
+  "description": "RECOVERY CASSETTE — L2 (Analyst) emits plain prose instead of native M| wire. The HandResiliencePipeline Level 4 (semantic extraction) must recover the memo fields. Pipeline must return HTTP 200 with valid Polish response.",
+  "interactions": [
+    {
+      "layer": "L1_translator_pl_en",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "You are a translator"
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.92|V=I cannot sleep for three weeks"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L2_analyst",
+      "request_match": {
+        "model_contains": "MentaLLaMA"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "Here is my analysis.\n\nEmotional state: exhaustion with anxiety\nSeverity: moderate\nRisk indicators: insomnia\nCognitive patterns: worry"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L3_supervisor",
+      "request_match": {
+        "model_contains": "PsyLLM"
+      },
+      "response": {
+        "model": "hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "M|L=3|ap=reflective_listening|tk=open_question|kq=What_tends_to_occupy_your_mind_at_night?|rn=none"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L4_therapist",
+      "request_match": {
+        "model_contains": "PsychoCounsel"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/PsychoCounsel-Llama3-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.88\nIt sounds like sleep has been really hard for you lately. Three weeks is a long time to go without proper rest.\n\nWhat thoughts tend to keep you awake when you lie down at night?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L6_calibrator",
+      "request_match": {
+        "model_contains": "dolphin"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "Sleep has been really hard for you lately. Three weeks is a long time to go without proper rest.\n\nWhat thoughts tend to keep you awake when you lie down at night?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L7_translator_en_pl",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "You are a Polish translator"
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.91\nSen ostatnio naprawdę daje Ci się we znaki. Trzy tygodnie to dużo czasu bez porządnego odpoczynku.\n\nJakie myśli zazwyczaj nie dają Ci zasnąć, kiedy kładziesz się do łóżka?"
+        },
+        "done": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+version: "1.0"
+
+# Model stack for hybrid-therapist Socrates pipeline
+# Zero hardcoded model names in code — all references come from here (via appsettings.json)
+
+models:
+  translator:
+    name: "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M"
+    provider: "ollama"
+    role: "translation_pl_en_en_pl"
+    vram_budget_gb: 4.1
+    inference_device: "gpu"
+    keep_alive_seconds: 1800
+
+  analyst:
+    name: "hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M"
+    provider: "ollama"
+    role: "emotional_analysis"
+    vram_budget_gb: 4.1
+    inference_device: "gpu"
+    keep_alive_seconds: 1800
+
+  supervisor:
+    name: "hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M"
+    provider: "ollama"
+    role: "clinical_supervision"
+    vram_budget_gb: 4.9
+    inference_device: "gpu"
+    keep_alive_seconds: 1800
+
+  therapist:
+    name: "hf.co/mradermacher/PsychoCounsel-Llama3-8B-GGUF:Q4_K_S"
+    provider: "ollama"
+    role: "therapeutic_response"
+    vram_budget_gb: 4.5
+    inference_device: "gpu"
+    keep_alive_seconds: 1800
+
+  calibrator:
+    name: "hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S"
+    provider: "ollama"
+    role: "response_calibration"
+    vram_budget_gb: 4.5
+    inference_device: "gpu"
+    keep_alive_seconds: 1800
+

@@ -1,0 +1,124 @@
+services:
+  # ── Ollama — local LLM runtime ──────────────────────────────────────────────
+  ollama:
+    image: ollama/ollama:latest
+    container_name: hybrid-ollama
+    ports:
+      - "127.0.0.1:11434:11434"
+    volumes:
+      - ./data/ollama:/root/.ollama:Z
+    environment:
+      - OLLAMA_NUM_PARALLEL=1
+      - OLLAMA_MAX_LOADED_MODELS=2
+      - OLLAMA_HOST=0.0.0.0:11434
+      - OLLAMA_KEEP_ALIVE=5m
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 10s
+      start_period: 30s
+      retries: 5
+    networks:
+      - therapist-net
+    restart: unless-stopped
+
+  # ── Model loader — pulls models declared in stack.yaml on first run ─────────
+  model-loader:
+    image: alpine:3.20
+    container_name: hybrid-model-loader
+    volumes:
+      - ./config:/config:Z,ro
+      - ./scripts:/scripts:Z,ro
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+      - STACK_YAML=/config/stack.yaml
+      - SKIP_MODEL_LOADS=${SKIP_MODEL_LOADS:-false}
+    command: ["sh", "/scripts/load-models.sh"]
+    depends_on:
+      ollama:
+        condition: service_healthy
+    networks:
+      - therapist-net
+    restart: "no"
+
+  # ── Hybrid Therapist — Socrates pipeline + OpenAI-compatible API ────────────
+  therapist:
+    image: hybrid-therapist:local
+    container_name: hybrid-therapist
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_URLS=http://+:8080
+      - ASPNETCORE_ENVIRONMENT=Production
+      - Ollama__BaseUrl=http://ollama:11434
+      - Models__StackYamlPath=/app/config/stack.yaml
+    depends_on:
+      ollama:
+        condition: service_healthy
+      model-loader:
+        condition: service_completed_successfully
+    volumes:
+      - ./config:/app/config:Z,ro
+    networks:
+      - therapist-net
+    restart: unless-stopped
+
+  # ── MongoDB — required by LibreChat ─────────────────────────────────────────
+  mongodb:
+    image: mongo:7
+    container_name: hybrid-mongodb
+    volumes:
+      - ./data/mongodb:/data/db:Z
+    networks:
+      - therapist-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      start_period: 30s
+      retries: 5
+
+  # ── LibreChat — chat UI; reads librechat.yaml mounted from ./config ─────────
+  librechat:
+    image: ghcr.io/danny-avila/librechat:latest
+    container_name: hybrid-librechat
+    ports:
+      - "3080:3080"
+    volumes:
+      - ./config/librechat.yaml:/app/librechat.yaml:Z,ro
+      - ./data/librechat:/app/data:Z
+      - ./data/librechat-logs:/app/api/logs:Z
+    environment:
+      - HOST=0.0.0.0
+      - PORT=3080
+      - MONGO_URI=mongodb://mongodb:27017/LibreChat
+      - JWT_SECRET=${JWT_SECRET:-dev-jwt-secret-change-in-prod-please-keep-32chars-min}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:-dev-jwt-refresh-secret-change-in-prod-keep-32chars}
+      - CREDS_KEY=${CREDS_KEY:-f34be427ebb29de8d88c107a71546019685ed8b241d8f2ed00c3df97ad2c8f6c}
+      - CREDS_IV=${CREDS_IV:-e2341419ec3dd3d19b13a1a87fafcbfb}
+      - ENDPOINTS=custom
+      - ALLOW_EMAIL_LOGIN=true
+      - ALLOW_REGISTRATION=true
+      - ALLOW_UNVERIFIED_EMAIL_LOGIN=true
+      - CONFIG_BYPASS_VALIDATION=true
+      - DEBUG_LOGGING=true
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      therapist:
+        condition: service_started
+    networks:
+      - therapist-net
+    restart: unless-stopped
+
+networks:
+  therapist-net:
+    driver: bridge
