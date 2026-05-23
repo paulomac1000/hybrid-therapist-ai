@@ -107,8 +107,10 @@ public sealed class SupervisorLayer
         }
         else if (parsed.Message.Performative == Performative.Memo)
         {
-            memo = parsed.Message.RawMessage;
             approach = parsed.Message.Get("ap") ?? "behavioral_activation";
+            memo = parsed.Message.Get("ap") is null
+                ? BuildFallbackMemo("missing_ap")
+                : parsed.Message.RawMessage;
         }
         else
         {

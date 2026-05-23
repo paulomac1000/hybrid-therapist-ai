@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+
 namespace HybridTherapist.Domain.Services;
 
 /// <summary>
@@ -8,6 +10,9 @@ namespace HybridTherapist.Domain.Services;
 /// </summary>
 public static class QualityValidator
 {
+    private static readonly Regex AdviceRegex = new(
+        @"\bmożesz\s+\p{L}", RegexOptions.IgnoreCase | RegexOptions.Compiled,
+        TimeSpan.FromMilliseconds(100));
     public sealed record Verdict(bool Ok, string Reason);
 
     /// <summary>
@@ -23,7 +28,8 @@ public static class QualityValidator
         bool containsQuestion = trimmed.Contains('?', StringComparison.Ordinal);
         bool containsAdvice =
             trimmed.Contains("spróbuj", StringComparison.OrdinalIgnoreCase) ||
-            trimmed.Contains("możesz", StringComparison.OrdinalIgnoreCase) ||
+            AdviceRegex.IsMatch(trimmed) ||
+            trimmed.Contains("spróbować", StringComparison.OrdinalIgnoreCase) ||
             trimmed.Contains("warto", StringComparison.OrdinalIgnoreCase) ||
             trimmed.Contains("proponuję", StringComparison.OrdinalIgnoreCase) ||
             trimmed.Contains("proponuje", StringComparison.OrdinalIgnoreCase) ||

@@ -208,6 +208,13 @@ public sealed class TherapistFlow : ITherapistFlow
             enResponse = l4.Text;
         }
 
+        QualityValidator.Verdict tq = QualityValidator.ValidateTherapeuticQuality(
+            enResponse, state.CurrentPhase, state.MessageCount);
+        if (!tq.Ok)
+        {
+            _logger.LogWarning("Therapeutic quality check failed for {Session}: {Reason}", sessionId, tq.Reason);
+        }
+
         // ── Layer 14: L7 EN → PL ──────────────────────────────────────────────
         LayerResult l7 = await _layers.RunL7TranslateEnToPlAsync(sessionId, enResponse, sanitized, ct);
         bool fallback = !l7.Ok;

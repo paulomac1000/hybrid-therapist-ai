@@ -201,9 +201,12 @@ public sealed class TherapistFlowTests
 
         result.Fallback.Should().BeFalse();
         result.Content.Should().NotBeNullOrWhiteSpace();
-        result.Content.Should().NotContain("Rozumiem, że", "response must not start with formulaic phrase");
-        result.Content.Should().NotContain("Widzę, że", "response must not start with formulaic phrase");
-        result.Content.Should().NotContain("Słyszę, że", "response must not start with formulaic phrase");
+        result.Content.TrimStart().Should().NotStartWith("Rozumiem, że");
+        result.Content.TrimStart().Should().NotStartWith("Widzę, że");
+        result.Content.TrimStart().Should().NotStartWith("Słyszę, że");
+        result.Metadata.Should().ContainKey("severity");
+        result.Metadata["severity"].Should().Be("high",
+            "anhedonia input ('nic mnie nie cieszy, nie mam siły na nic') must escalate severity to high");
         result.Metadata["fallback"].Should().Be(false);
     }
 }

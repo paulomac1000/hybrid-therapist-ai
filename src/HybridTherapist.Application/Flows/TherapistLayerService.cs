@@ -183,15 +183,18 @@ public sealed class TherapistLayerService
             "Use supervisor guidance only for technique. " +
             "NEVER introduce new topics. NEVER open with formulaic phrases like 'I understand that' or 'It seems that'. " +
             "Vary the opening. End with one open-ended question. Respond in English only.\n\n" +
-            "FORBIDDEN: 'Rozumiem, że...' 'Widzę, że...' 'Słyszę, że...' 'Czuję, że...'\n" +
+            "FORBIDDEN (Polish — for reference when editing PL responses):\n" +
+            "  'Rozumiem, że...' 'Widzę, że...' 'Słyszę, że...' 'Czuję, że...' (REFERENCE ONLY)\n" +
             "PREFERRED: 'To musi być trudne.' 'Jestem z Tobą.' 'Co konkretnie...'";
 
         string systemPrompt =
             "You are a therapeutic response editor. Maintain the therapist's voice and content. " +
             "NEVER repeat openings from recent responses. Vary your opening style every turn.\n\n" +
-            "NEVER start with: 'I understand that', 'It seems that', 'I see that', " +
-            "'Rozumiem, że', 'Widzę, że', 'Słyszę, że', 'Czuję, że'. " +
-            "Instead, start directly with empathy or an open question.";
+            "FORBIDDEN openings (never start with these):\n" +
+            "  'I understand that', 'It seems that', 'I see that', 'I hear that'\n" +
+            "PREFERRED alternatives:\n" +
+            "  'That must be difficult.' 'I'm with you.' 'What specifically...'\n" +
+            "  Start directly with empathy — don't announce what you're doing.";
 
         Stopwatch sw = Stopwatch.StartNew();
         LlmResponse resp = await _ollama.GenerateAsync(prompt, systemPrompt, 500, 0.6f, _opts.Calibrator, ct);

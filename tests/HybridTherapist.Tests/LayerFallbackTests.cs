@@ -122,6 +122,7 @@ public sealed class LayerFallbackTests
 
         result.Ok.Should().BeFalse();
         result.Memo.Should().Contain("ap=behavioral_activation");
+        result.Memo.Should().Contain("tk=schedule_one_small_activity");
         result.Memo.Should().Contain("note=llm_error");
         result.Memo.Should().StartWith("M|L=3|");
         result.Error.Should().Be("timeout");

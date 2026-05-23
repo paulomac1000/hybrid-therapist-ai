@@ -39,7 +39,7 @@ public sealed partial class CrisisGate : ICrisisGate
 
     // Anhedonia / depression markers (high)
     [GeneratedRegex(
-        @"(nic\s+nie\s+sprawia.*przyjemności|nic\s+mnie.*nie\s+cieszy|stracił[ae]m?\s+zainteresowanie|stracił[ae]m?\s+radość|wszystko\s+jest.*obojętne|nie\s+czuję\s+nic|czuję\s+pustkę|bez\s+sensu|nie\s+mam\s+siły|wypalon)",
+        @"(nic\s+nie\s+sprawia.*przyjemności|nic\s+mnie.*nie\s+cieszy|stracił[ae]m?\s+zainteresowanie|stracił[ae]m?\s+radość|wszystko\s+jest.*obojętne|nie\s+czuję\s+nic|czuję\s+pustkę|(?:życie|wszystko)\s+jest\s+bez\s+sensu|nie\s+mam\s+siły\s+żyć|wypalon)",
         RegexOptions.IgnoreCase, matchTimeoutMilliseconds: 200)]
     private static partial Regex AnhedoniaPl();
 

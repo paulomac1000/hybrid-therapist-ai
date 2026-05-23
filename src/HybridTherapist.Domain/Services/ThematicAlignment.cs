@@ -19,12 +19,12 @@ public static class ThematicAlignment
         ("betrayal", ["betrayal", "betrayed", "infidelit", "zdrad"], ["zdrad", "betray", "cheat", "affair"]),
         ("abuse", ["abuse", "abused", "abusive", "przemoc"], ["przemoc", "abuse", "krzywdz", "uderz", "biją", "bije", "hit"]),
         ("trauma", ["traumatic event", "PTSD", "trauma occurred"], ["trauma", "wypadek", "accident", "atak"]),
-        ("suicide", ["suicidal", "ideation", "kill myself", "end my life"], ["samobój", "samobojstw", "skończyć", "skonczyc", "suicide", "kill myself", "koniec z"]),
+        ("suicide", ["suicidal", "ideation", "kill myself", "end my life"], ["samobój", "samobojstw", "suicide", "kill myself", "end my life", "skończyć ze sobą", "skonczyc ze soba", "odebrać sobie życie", "odebrac sobie zycie"]),
         ("grief", ["bereavement", "grief over loss", "lost a loved one"], ["żałob", "zalob", "umarł", "umarl", "zmarł", "zmarl", "śmierć", "smierc", "loss", "passed away"]),
         ("addiction", ["addiction", "substance abuse", "alcoholism", "uzależnienie"], ["alkohol", "narkoty", "drugs", "addicted", "uzależn", "uzalezn"]),
         ("self_harm", ["self-harm", "selfharm", "cutting", "cut myself", "cięcie", "samookalecz", "okalecz", "żyletk"], ["samookalecz", "okalecz", "cięcie", "żyletk", "cut", "self-harm"]),
-        ("eating_disorder", ["eating disorder", "anorexi", "bulimi", "binge", "purg", "zaburzenia odżywiania", "zaburzen odzywiania", "nie jem", "wymiot"], ["anoreks", "bulimi", "jedzeni", "wymiot", "nie jem", "głodz", "glodz", "eating"]),
-        ("psychosis", ["psychosis", "psychotic", "hallucinat", "halucyn", "voices told me", "paranoi", "urojeni", "delusion"], ["halucyn", "głosy", "glosy", "urojeni", "paranoi", "śledz", "sledz", "psychoz"]),
+        ("eating_disorder", ["eating disorder", "anorexi", "bulimi", "binge", "purg", "zaburzenia odżywiania", "zaburzen odzywiania", "nie jem", "wymiot"], ["anoreks", "bulimi", "wymiot", "nie jem", "głodz", "glodz", "objad", "przeczyszcz"]),
+        ("psychosis", ["psychosis", "psychotic", "hallucinat", "halucyn", "voices told me", "paranoi", "urojeni", "delusion"], ["halucyn", "głosy", "glosy", "urojeni", "paranoi", "psychoz", "słyszę głosy", "slysze glosy"]),
     ];
 
     /// <summary>

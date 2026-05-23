@@ -160,4 +160,36 @@ public sealed class ThematicAlignmentTests
             userInput: "słyszę głosy które mówią mi co mam robić");
         r.Aligned.Should().BeTrue();
     }
+
+    // ── Regression: ambiguous substrings must NOT support sensitive themes ────
+
+    [Fact]
+    public void Verify_SelfHarm_AmbiguousPhrase_NotAligned()
+    {
+        var r = ThematicAlignment.Verify(
+            analystMemoOrReport: "M|L=2|em=neutral|sv=low|ri=self-harm,cutting",
+            userInput: "chcę skończyć ten projekt, jestem zmęczony");
+        r.Aligned.Should().BeFalse();
+        r.UnsupportedThemes.Should().Contain("self_harm");
+    }
+
+    [Fact]
+    public void Verify_EatingDisorder_AmbiguousPhrase_NotAligned()
+    {
+        var r = ThematicAlignment.Verify(
+            analystMemoOrReport: "M|L=2|em=neutral|sv=low|ri=eating_disorder,binge",
+            userInput: "lubię jeść i gotować, to mnie relaksuje");
+        r.Aligned.Should().BeFalse();
+        r.UnsupportedThemes.Should().Contain("eating_disorder");
+    }
+
+    [Fact]
+    public void Verify_Suicide_AmbiguousPhrase_NotAligned()
+    {
+        var r = ThematicAlignment.Verify(
+            analystMemoOrReport: "M|L=2|em=neutral|sv=low|ri=suicidal",
+            userInput: "chcę skończyć studia i znaleźć pracę");
+        r.Aligned.Should().BeFalse();
+        r.UnsupportedThemes.Should().Contain("suicide");
+    }
 }
