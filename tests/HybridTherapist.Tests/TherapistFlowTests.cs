@@ -90,12 +90,18 @@ public sealed class TherapistFlowTests
         var perModel = new Dictionary<string, LlmResponse>
         {
             [opts.Value.Translator] = new() { Ok = true, Text = "I cannot sleep", ModelId = "fake-tr" },
-            [opts.Value.Analyst] = new() { Ok = true,
+            [opts.Value.Analyst] = new()
+            {
+                Ok = true,
                 Text = "EMOTIONAL STATE: tired\nSEVERITY: low\nRISK INDICATORS: none\nCOGNITIVE PATTERNS: rumination\nEVIDENCE: user said they can't sleep",
-                ModelId = "fake-an" },
-            [opts.Value.Supervisor] = new() { Ok = true,
+                ModelId = "fake-an"
+            },
+            [opts.Value.Supervisor] = new()
+            {
+                Ok = true,
                 Text = "APPROACH: CBT\nTECHNIQUE: sleep_hygiene\nKEY QUESTION: what keeps you awake?\nRISK NOTE: none",
-                ModelId = "fake-su" },
+                ModelId = "fake-su"
+            },
             [opts.Value.Therapist] = new() { Ok = false, Error = "model not loaded", ModelId = "fake-th" },
             [opts.Value.Calibrator] = new() { Ok = true, Text = "calibrated output", ModelId = "fake-ca" },
         };

@@ -58,23 +58,23 @@ public sealed class ResilienceRecoveryBenchmark
         foreach (var (input, expectedLevel, expectsRecovery) in samples)
         {
             ResilienceResult result = HandResiliencePipeline.Parse(input, opts);
-            
+
             levelCounts[result.Level]++;
-            
+
             if (result.Level == 1) fullyCompliant++;
-            
+
             // A message is considered "recovered" if it was successfully parsed (Level < 5)
             // or if it was expected to fall through to Level 5.
             if (result.Level < 5) recovered++;
-            
+
             result.Level.Should().BeLessThanOrEqualTo(expectedLevel, $"Input '{input}' should resolve at or below level {expectedLevel}");
         }
 
         double recoveryRate = (double)recovered / (total - levelCounts[5]); // Excluding intentional garbage
-        
+
         _output.WriteLine("=== Resilience Recovery Benchmark ===");
         _output.WriteLine($"Total Samples:     {total}");
-        _output.WriteLine($"Strictly Parsed:   {fullyCompliant} ({(double)fullyCompliant/total:P0})");
+        _output.WriteLine($"Strictly Parsed:   {fullyCompliant} ({(double)fullyCompliant / total:P0})");
         _output.WriteLine($"Recovered total:   {recovered}");
         _output.WriteLine($"Recovery Rate:     {recoveryRate:P0} (on non-garbage input)");
         _output.WriteLine("");
