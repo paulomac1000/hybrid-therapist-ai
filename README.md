@@ -1,15 +1,3 @@
----
-description: Hybrid Therapist — Socrates multi-agent Polish therapy pipeline with OpenAI-compatible API. Uses HandCodec for inter-layer communication.
-doc_id: ref.hybrid-therapist-readme
-type: ref
-status: active
-ttl_days: 365
-stability: stable
-ai_scope: editable
-last_verified: 2026-05-23
-owners: ["hybrid-therapist"]
----
-
 # Hybrid Therapist
 
 A self-contained, OpenAI-compatible Polish therapy AI using a Socrates multi-agent pipeline.
