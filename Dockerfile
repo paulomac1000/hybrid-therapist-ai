@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.6
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
 COPY nuget.config ./
@@ -17,7 +17,7 @@ RUN dotnet test tests/HybridTherapist.Tests/HybridTherapist.Tests.csproj \
 RUN dotnet publish src/HybridTherapist.Api/HybridTherapist.Api.csproj \
         -c Release -o /publish --no-restore
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
 RUN apt-get update \
     && apt-get install -y --no-install-recommends curl \
