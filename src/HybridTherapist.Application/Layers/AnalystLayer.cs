@@ -58,13 +58,8 @@ public sealed class AnalystLayer
             "You are a clinical mental health analyst.\n\n" +
             topicsContext +
             historyContext +
-            "Respond EXACTLY as a single M| wire line. Dictionary:\n" +
-            "  L=2 (fixed), em=emotional_state, sv=severity(low|moderate|high|crisis),\n" +
-            "  ri=risk_indicators(comma-separated or 'none'), cp=cognitive_patterns(comma or 'none'),\n" +
-            "  ev=evidence_quote(short user quote)\n\n" +
-            "Example: M|L=2|em=anxious|sv=moderate|ri=insomnia|cp=catastrophizing|ev=\"I can't sleep\"\n\n" +
-            "CRITICAL: Output ONLY one line starting with M|L=2|. Nothing else. " +
-            "No markdown. No XML tags. No explanations.\n" +
+            "Analyze the user's emotional state, severity, risk indicators, cognitive patterns, " +
+            "and provide evidence from their message.\n\n" +
             "CRITICAL: Only analyze themes the user EXPLICITLY mentioned " +
             "OR that appear in SESSION TOPICS. Do NOT infer or fabricate new themes.";
 
