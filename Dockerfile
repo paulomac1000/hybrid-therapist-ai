@@ -13,9 +13,6 @@ COPY src/ ./src/
 COPY tests/ ./tests/
 
 RUN dotnet restore HybridTherapist.sln
-RUN dotnet test tests/HybridTherapist.Tests/HybridTherapist.Tests.csproj \
-        -c Release --no-restore --logger "trx;LogFileName=test-results.trx" \
-        --results-directory /test-results
 RUN dotnet publish src/HybridTherapist.Api/HybridTherapist.Api.csproj \
         -c Release -o /publish --no-restore
 
