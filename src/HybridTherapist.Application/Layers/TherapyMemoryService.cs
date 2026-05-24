@@ -91,8 +91,12 @@ public sealed class TherapyMemoryService
             return state.StructuredSummary;
         }
 
-        state.StructuredSummary = parsed;
-        state.SessionSummary = parsed.Overview;
+        var updatedSummary = parsed with
+        {
+            EmotionalTrend = DetectTrend(parsed, state.StructuredSummary)
+        };
+        state.StructuredSummary = updatedSummary;
+        state.SessionSummary = updatedSummary.Overview;
         state.History = state.History.TakeLast(KeepLastNMessages).ToList();
 
         await _trace.RecordAsync(new TraceEvent(
@@ -100,10 +104,25 @@ public sealed class TherapyMemoryService
             $"tier={tier},history_msgs_before=...", resp.Text, sw.ElapsedMilliseconds, "ok"), ct);
 
         _logger.LogInformation(
-            "L5 {Tier} summary written for {Session}, history truncated to {N}",
-            tier, sessionId, KeepLastNMessages);
+            "L5 {Tier} summary written for {Session}, history truncated to {N}, trend={Trend}",
+            tier, sessionId, KeepLastNMessages, updatedSummary.EmotionalTrend);
 
-        return parsed;
+        return updatedSummary;
+    }
+
+    internal static string DetectTrend(MemorySummary current, MemorySummary? previous)
+    {
+        if (previous is null) return "stable";
+
+        string prevArc = (previous.EmotionalArc ?? "").ToLowerInvariant();
+        string currArc = (current.EmotionalArc ?? "").ToLowerInvariant();
+
+        bool prevHasCrisis = prevArc.Contains("crisis") || prevArc.Contains("high");
+        bool currHasCrisis = currArc.Contains("crisis") || currArc.Contains("high");
+
+        if (!prevHasCrisis && currHasCrisis) return "worsening";
+        if (prevHasCrisis && !currHasCrisis) return "improving";
+        return "stable";
     }
 
     private static string BuildSystemPrompt(CompactionTier tier) => tier switch

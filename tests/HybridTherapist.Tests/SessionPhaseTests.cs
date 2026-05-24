@@ -45,4 +45,43 @@ public sealed class SessionPhaseTests
         guidance.Should().NotBeNullOrWhiteSpace();
         guidance.Should().Contain("formulaic");
     }
+
+    // ── Phase transitions: severity-aware ─────────────────────────────────────
+
+    [Fact]
+    public void Evaluate_INIT_WithLowSeverity_TransitionsAfter2Messages()
+    {
+        SessionPhase.Evaluate("INIT", 1, "low").Should().Be("INIT");
+        SessionPhase.Evaluate("INIT", 2, "low").Should().Be("EXPLORATION");
+    }
+
+    [Theory]
+    [InlineData("moderate")]
+    [InlineData("high")]
+    [InlineData("crisis")]
+    public void Evaluate_INIT_WithElevatedSeverity_TransitionsAfter1Message(string severity)
+    {
+        SessionPhase.Evaluate("INIT", 1, severity).Should().Be("EXPLORATION");
+    }
+
+    [Fact]
+    public void Evaluate_EXPLORATION_WithLowSeverity_TransitionsAfter6Messages()
+    {
+        SessionPhase.Evaluate("EXPLORATION", 5, "low").Should().Be("EXPLORATION");
+        SessionPhase.Evaluate("EXPLORATION", 6, "low").Should().Be("DIGGING");
+    }
+
+    [Fact]
+    public void Evaluate_EXPLORATION_WithHighSeverity_TransitionsAfter4Messages()
+    {
+        SessionPhase.Evaluate("EXPLORATION", 3, "high").Should().Be("EXPLORATION");
+        SessionPhase.Evaluate("EXPLORATION", 4, "high").Should().Be("DIGGING");
+    }
+
+    [Fact]
+    public void Evaluate_BackwardCompatible_DefaultSeverityIsLow()
+    {
+        SessionPhase.Evaluate("INIT", 2).Should().Be("EXPLORATION");
+        SessionPhase.Evaluate("EXPLORATION", 6).Should().Be("DIGGING");
+    }
 }

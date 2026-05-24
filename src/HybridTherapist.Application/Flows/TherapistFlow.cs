@@ -122,7 +122,8 @@ public sealed class TherapistFlow : ITherapistFlow
         string previousPhase = state.CurrentPhase;
         state.MessageCount++;
         state.MessagesInPhase++;
-        string newPhase = SessionPhase.Evaluate(state.CurrentPhase, state.MessageCount);
+        string severity = crisis.IsEscalation ? crisis.Severity : "low";
+        string newPhase = SessionPhase.Evaluate(state.CurrentPhase, state.MessageCount, severity);
         bool phaseChanged = newPhase != previousPhase;
         if (phaseChanged)
         {
@@ -136,7 +137,6 @@ public sealed class TherapistFlow : ITherapistFlow
         RuptureDetector.Result rupture = RuptureDetector.Check(sanitized, lastAssistantMessage);
 
         // ── Layer 5: ResponseStrategy ─────────────────────────────────────────
-        string severity = crisis.IsEscalation ? crisis.Severity : "low";
         ResponseStrategy strategy = ResponseStrategySelector.Select(state.CurrentPhase, severity, rupture.Detected);
 
         // ── Layer 6: L1 PL → EN ───────────────────────────────────────────────
@@ -206,6 +206,14 @@ public sealed class TherapistFlow : ITherapistFlow
         {
             _logger.LogWarning("EN QA failed for {Session}: {Reason}", sessionId, qa1.Reason);
             enResponse = l4.Text;
+        }
+
+        QualityValidator.Verdict tq = QualityValidator.ValidateTherapeuticQuality(
+            enResponse, state.CurrentPhase, state.MessageCount);
+        if (!tq.Ok)
+        {
+            _logger.LogWarning("Therapeutic quality check failed for {Session}: {Reason} — blocking response", sessionId, tq.Reason);
+            return BuildFallback(request.Model, sessionId, "L6_therapeutic_quality", tq.Reason);
         }
 
         // ── Layer 14: L7 EN → PL ──────────────────────────────────────────────

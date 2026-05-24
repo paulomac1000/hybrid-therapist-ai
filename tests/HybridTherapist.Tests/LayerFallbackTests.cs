@@ -100,11 +100,11 @@ public sealed class LayerFallbackTests
             "M|L=2|em=anxiety|sv=moderate", ResponseStrategy.Intake);
 
         result.Ok.Should().BeTrue();
-        result.Memo.Should().Contain("ap=reflective_listening");
-        result.Memo.Should().Contain("tk=open_question");
+        result.Memo.Should().Contain("ap=behavioral_activation");
+        result.Memo.Should().Contain("tk=schedule_one_small_activity");
         result.Memo.Should().Contain("decoder_level5_fallback");
         result.Memo.Should().StartWith("M|L=3|");
-        result.Approach.Should().Be("reflective_listening");
+        result.Approach.Should().Be("behavioral_activation");
 
         ParsedHandMessage? parsed = HandParser.Parse(result.Memo);
         parsed.Should().NotBeNull();
@@ -121,7 +121,8 @@ public sealed class LayerFallbackTests
             "M|L=2|em=anxiety|sv=moderate", ResponseStrategy.Intake);
 
         result.Ok.Should().BeFalse();
-        result.Memo.Should().Contain("ap=reflective_listening");
+        result.Memo.Should().Contain("ap=behavioral_activation");
+        result.Memo.Should().Contain("tk=schedule_one_small_activity");
         result.Memo.Should().Contain("note=llm_error");
         result.Memo.Should().StartWith("M|L=3|");
         result.Error.Should().Be("timeout");

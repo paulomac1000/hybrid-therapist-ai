@@ -50,4 +50,21 @@ public sealed class RuptureDetectorTests
     {
         RuptureDetector.Check("", PriorAssistantTurn).Detected.Should().BeFalse();
     }
+
+    // ── New patterns (repeated frustration, being ignored) ────────────────────
+
+    [Theory]
+    [InlineData("znowu to samo, czy Ty w ogóle słuchasz?")]
+    [InlineData("już mówiłem że nie o to chodzi")]
+    [InlineData("dalej nie rozumiesz o co mi chodzi")]
+    [InlineData("ignorujesz to co mówię")]
+    [InlineData("powtarzasz się, nic nowego nie powiedziałeś")]
+    [InlineData("nie odpowiedziałeś na moje pytanie")]
+    [InlineData("gadam jak do ściany")]
+    [InlineData("ta rozmowa nie ma sensu")]
+    public void Check_RepeatedFrustration_DetectsRupture(string userMsg)
+    {
+        RuptureDetector.Result r = RuptureDetector.Check(userMsg, PriorAssistantTurn);
+        r.Detected.Should().BeTrue();
+    }
 }
