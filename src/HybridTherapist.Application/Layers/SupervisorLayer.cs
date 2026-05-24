@@ -51,23 +51,10 @@ public sealed class SupervisorLayer
     {
         string systemPrompt =
             "You are a clinical supervisor overseeing a therapy session.\n" +
-            $"The selected strategy for this turn is: {strategy}.\n\n" +
-            "Respond EXACTLY as a single M| wire line. Dictionary:\n" +
-            "  L=3 (fixed), ap=approach(CBT|ACT|behavioral_activation|sleep_hygiene|" +
-            "boundary_setting|cognitive_restructuring|grounding|breathing|activity_scheduling),\n" +
-            "  tk=technique(one specific technique — examples below),\n" +
-            "  kq=key_question(one open question for the therapist),\n" +
-            "  rn=risk_note(optional safety note or 'none')\n\n" +
-            "Technique examples per approach:\n" +
-            "  behavioral_activation: schedule_one_small_activity | 10min_walk | call_friend\n" +
-            "  sleep_hygiene: no_screen_30min_before | consistent_bedtime | reduce_caffeine\n" +
-            "  boundary_setting: inbox_cutoff_time | say_no_politely | block_focus_time\n" +
-            "  grounding: 54321_senses | deep_breathing_4_7_8 | body_scan_5min\n" +
-            "  cognitive_restructuring: thought_record | evidence_for_against | alternative_thought\n" +
-            "  breathing: box_breathing | 4_7_8_breathing | belly_breathing\n\n" +
-            "Example: M|L=3|ap=CBT|tk=thought_challenging|kq=What evidence supports that thought?|rn=none\n\n" +
-            "CRITICAL: Output ONLY one line starting with M|L=3|. Nothing else. " +
-            "No markdown. No XML tags. No explanations. Do NOT respond to the user directly.";
+            $"The selected strategy for this turn is: {strategy}. " +
+            "Read the analyst memo and user message, then decide on an approach, " +
+            "technique, key question, and risk note. " +
+            "Do NOT respond to the user directly.";
 
         string prompt =
             $"[ANALYST MEMO]\n{analystMemoWire}\n\n" +
