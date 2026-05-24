@@ -153,4 +153,45 @@ public sealed class QualityValidatorTests
             "WORKING", 6);
         v.Ok.Should().BeTrue();
     }
+
+    // ── English detectors ─────────────────────────────────────────────────────
+
+    [Fact]
+    public void ValidateTherapeuticQuality_EnglishFormulaicOpening_Fails()
+    {
+        var v = QualityValidator.ValidateTherapeuticQuality(
+            "I understand this is difficult. Let me help.",
+            "EXPLORATION", 3);
+        v.Ok.Should().BeFalse();
+        v.Reason.Should().Be("formulaic_opening");
+    }
+
+    [Theory]
+    [InlineData("I see you're struggling. How can I help?")]
+    [InlineData("I hear that you're in pain. Tell me more.")]
+    [InlineData("It seems like you're going through a lot.")]
+    public void ValidateTherapeuticQuality_EnglishFormulaicVariants_Fails(string text)
+    {
+        var v = QualityValidator.ValidateTherapeuticQuality(text, "INIT", 1);
+        v.Ok.Should().BeFalse();
+    }
+
+    [Fact]
+    public void ValidateTherapeuticQuality_EnglishAdvice_Detected()
+    {
+        var v = QualityValidator.ValidateTherapeuticQuality(
+            "That must be hard. Try taking a few deep breaths when the anxiety peaks. How does that sound?",
+            "WORKING", 5);
+        v.Ok.Should().BeTrue("contains 'try' as advice");
+    }
+
+    [Fact]
+    public void ValidateTherapeuticQuality_EnglishOnlyQuestions_Fails()
+    {
+        var v = QualityValidator.ValidateTherapeuticQuality(
+            "I hear you. Can you tell me more? What does it feel like?",
+            "EXPLORATION", 5);
+        v.Ok.Should().BeFalse();
+        v.Reason.Should().Be("only_questions_after_4_messages");
+    }
 }

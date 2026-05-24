@@ -30,6 +30,10 @@ public static class QualityValidator
             trimmed.Contains("spróbuj", StringComparison.OrdinalIgnoreCase) ||
             AdviceRegex.IsMatch(trimmed) ||
             trimmed.Contains("spróbować", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.Contains("try", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.Contains("you can", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.Contains("it may help", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.Contains("one small step", StringComparison.OrdinalIgnoreCase) ||
             trimmed.Contains("warto", StringComparison.OrdinalIgnoreCase) ||
             trimmed.Contains("proponuję", StringComparison.OrdinalIgnoreCase) ||
             trimmed.Contains("proponuje", StringComparison.OrdinalIgnoreCase) ||
@@ -39,7 +43,11 @@ public static class QualityValidator
         bool containsFormulaicOpening =
             trimmed.StartsWith("Rozumiem", StringComparison.OrdinalIgnoreCase) ||
             trimmed.StartsWith("Widzę", StringComparison.OrdinalIgnoreCase) ||
-            trimmed.StartsWith("Słyszę", StringComparison.OrdinalIgnoreCase);
+            trimmed.StartsWith("Słyszę", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.StartsWith("I understand", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.StartsWith("I see", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.StartsWith("I hear", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.StartsWith("It seems", StringComparison.OrdinalIgnoreCase);
 
         if (messageCount >= 4 && containsQuestion && !containsAdvice)
             return new Verdict(false, "only_questions_after_4_messages");

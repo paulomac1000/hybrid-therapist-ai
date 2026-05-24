@@ -209,4 +209,50 @@ public sealed class TherapistFlowTests
             "anhedonia input ('nic mnie nie cieszy, nie mam siły na nic') must escalate severity to high");
         result.Metadata["fallback"].Should().Be(false);
     }
+
+    // ── T5: QA enforcement — formulaic calibrator output blocks response ──────
+
+    [Fact]
+    public async Task ExecuteAsync_FormulaicCalibratorOutput_QaBlocksResponse()
+    {
+        var perModel = new Dictionary<string, LlmResponse>
+        {
+            ["SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M"] = new LlmResponse { Ok = true, Text = "I feel terrible", ModelId = "translator" },
+            ["hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M"] = new LlmResponse
+            {
+                Ok = true,
+                Text = "M|L=2|em=anxiety|sv=moderate|ri=insomnia|cp=worry",
+                ModelId = "analyst"
+            },
+            ["hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M"] = new LlmResponse
+            {
+                Ok = true,
+                Text = "M|L=3|ap=CBT|tk=thought_record|kq=What_evidence_supports_that?|rn=none",
+                ModelId = "supervisor"
+            },
+            ["hf.co/mradermacher/PsychoCounsel-Llama3-8B-GGUF:Q4_K_S"] = new LlmResponse
+            {
+                Ok = true,
+                Text = "R|C=0.9|V=That must be difficult. Try taking a short walk.",
+                ModelId = "therapist"
+            },
+            // Calibrator returns formulaic opening → QA should block
+            ["hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S"] = new LlmResponse
+            {
+                Ok = true,
+                Text = "I understand that you feel terrible. How can I help you today?",
+                ModelId = "calibrator"
+            },
+        };
+
+        var fake = new FakeOllamaAdapter(perModel);
+        TherapistFlow flow = CreateFlow(fake);
+
+        FlowExecutionResult result = await flow.ExecuteAsync(
+            MakeRequest("czuję się fatalnie"));
+
+        // QA should have detected formulaic opening and returned fallback
+        result.Fallback.Should().BeTrue("formulaic 'I understand' must trigger QA fallback");
+        result.Metadata.Should().ContainKey("failed_layer");
+    }
 }
