@@ -194,4 +194,17 @@ public sealed class QualityValidatorTests
         v.Ok.Should().BeFalse();
         v.Reason.Should().Be("only_questions_after_4_messages");
     }
+
+    // ── Regression: "try" substring in non-advice words ───────────────────────
+
+    [Theory]
+    [InlineData("I hear you. The situation in your country must be difficult. What helps you cope?")]
+    [InlineData("Can you tell me more? Your entry in the journal was meaningful.")]
+    [InlineData("That sounds like poetry. How does it make you feel?")]
+    public void ValidateTherapeuticQuality_TrySubstringNotAdvice_FailsAfterMessages(string text)
+    {
+        var v = QualityValidator.ValidateTherapeuticQuality(text, "EXPLORATION", 5);
+        v.Ok.Should().BeFalse("'try' substring in 'country'/'entry'/'poetry' must not count as advice");
+        v.Reason.Should().Be("only_questions_after_4_messages");
+    }
 }

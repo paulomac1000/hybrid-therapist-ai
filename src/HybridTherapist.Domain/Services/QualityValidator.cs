@@ -13,6 +13,10 @@ public static class QualityValidator
     private static readonly Regex AdviceRegex = new(
         @"\bmożesz\s+\p{L}", RegexOptions.IgnoreCase | RegexOptions.Compiled,
         TimeSpan.FromMilliseconds(100));
+
+    private static readonly Regex TryRegex = new(
+        @"\btry\b", RegexOptions.IgnoreCase | RegexOptions.Compiled,
+        TimeSpan.FromMilliseconds(100));
     public sealed record Verdict(bool Ok, string Reason);
 
     /// <summary>
@@ -30,7 +34,7 @@ public static class QualityValidator
             trimmed.Contains("spróbuj", StringComparison.OrdinalIgnoreCase) ||
             AdviceRegex.IsMatch(trimmed) ||
             trimmed.Contains("spróbować", StringComparison.OrdinalIgnoreCase) ||
-            trimmed.Contains("try", StringComparison.OrdinalIgnoreCase) ||
+            TryRegex.IsMatch(trimmed) ||
             trimmed.Contains("you can", StringComparison.OrdinalIgnoreCase) ||
             trimmed.Contains("it may help", StringComparison.OrdinalIgnoreCase) ||
             trimmed.Contains("one small step", StringComparison.OrdinalIgnoreCase) ||
