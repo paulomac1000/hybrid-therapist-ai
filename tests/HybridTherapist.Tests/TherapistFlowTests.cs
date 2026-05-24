@@ -157,4 +157,102 @@ public sealed class TherapistFlowTests
 
         s1.Should().NotBe(s2, "different first-user messages must produce different session IDs");
     }
+
+    // ── T4: Severity escalation — anhedonia triggers EXPLORATION + concrete response
+
+    [Fact]
+    public async Task ExecuteAsync_AnhedoniaInput_EscalatesSeverityAndProvidesConcreteAdvice()
+    {
+        var perModel = new Dictionary<string, LlmResponse>
+        {
+            // L1 + L7: use same translator model — returns PL text for simplicity
+            ["SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M"] = new LlmResponse { Ok = true, Text = "nic mnie już nie cieszy", ModelId = "translator" },
+            ["hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M"] = new LlmResponse
+            {
+                Ok = true,
+                Text = "M|L=2|em=depressed|sv=high|ri=anhedonia,social_withdrawal|cp=hopelessness",
+                ModelId = "analyst"
+            },
+            ["hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M"] = new LlmResponse
+            {
+                Ok = true,
+                Text = "M|L=3|ap=behavioral_activation|tk=schedule_one_small_activity|kq=What_One_Tiny_Thing_Could_You_Try_Today?|rn=none",
+                ModelId = "supervisor"
+            },
+            ["hf.co/mradermacher/PsychoCounsel-Llama3-8B-GGUF:Q4_K_S"] = new LlmResponse
+            {
+                Ok = true,
+                Text = "R|C=0.95|V=To musi być naprawdę trudne. Może spróbuj jednej małej rzeczy — wyjść na 5-minutowy spacer. Co o tym myślisz?",
+                ModelId = "therapist"
+            },
+            ["hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S"] = new LlmResponse
+            {
+                Ok = true,
+                Text = "To musi być naprawdę trudne. Może spróbuj jednej małej rzeczy.",
+                ModelId = "calibrator"
+            },
+        };
+
+        var fake = new FakeOllamaAdapter(perModel);
+        TherapistFlow flow = CreateFlow(fake);
+
+        FlowExecutionResult result = await flow.ExecuteAsync(
+            MakeRequest("nic mnie nie cieszy, nie mam siły na nic"));
+
+        result.Fallback.Should().BeFalse();
+        result.Content.Should().NotBeNullOrWhiteSpace();
+        result.Content.TrimStart().Should().NotStartWith("Rozumiem, że");
+        result.Content.TrimStart().Should().NotStartWith("Widzę, że");
+        result.Content.TrimStart().Should().NotStartWith("Słyszę, że");
+        result.Metadata.Should().ContainKey("severity");
+        result.Metadata["severity"].Should().Be("high",
+            "anhedonia input ('nic mnie nie cieszy, nie mam siły na nic') must escalate severity to high");
+        result.Metadata["fallback"].Should().Be(false);
+    }
+
+    // ── T5: QA enforcement — formulaic calibrator output blocks response ──────
+
+    [Fact]
+    public async Task ExecuteAsync_FormulaicCalibratorOutput_QaBlocksResponse()
+    {
+        var perModel = new Dictionary<string, LlmResponse>
+        {
+            ["SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M"] = new LlmResponse { Ok = true, Text = "I feel terrible", ModelId = "translator" },
+            ["hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M"] = new LlmResponse
+            {
+                Ok = true,
+                Text = "M|L=2|em=anxiety|sv=moderate|ri=insomnia|cp=worry",
+                ModelId = "analyst"
+            },
+            ["hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M"] = new LlmResponse
+            {
+                Ok = true,
+                Text = "M|L=3|ap=CBT|tk=thought_record|kq=What_evidence_supports_that?|rn=none",
+                ModelId = "supervisor"
+            },
+            ["hf.co/mradermacher/PsychoCounsel-Llama3-8B-GGUF:Q4_K_S"] = new LlmResponse
+            {
+                Ok = true,
+                Text = "R|C=0.9|V=That must be difficult. Try taking a short walk.",
+                ModelId = "therapist"
+            },
+            // Calibrator returns formulaic opening → QA should block
+            ["hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S"] = new LlmResponse
+            {
+                Ok = true,
+                Text = "I understand that you feel terrible. How can I help you today?",
+                ModelId = "calibrator"
+            },
+        };
+
+        var fake = new FakeOllamaAdapter(perModel);
+        TherapistFlow flow = CreateFlow(fake);
+
+        FlowExecutionResult result = await flow.ExecuteAsync(
+            MakeRequest("czuję się fatalnie"));
+
+        // QA should have detected formulaic opening and returned fallback
+        result.Fallback.Should().BeTrue("formulaic 'I understand' must trigger QA fallback");
+        result.Metadata.Should().ContainKey("failed_layer");
+    }
 }

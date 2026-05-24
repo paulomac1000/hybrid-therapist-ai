@@ -19,7 +19,7 @@ public static class ResponseStrategySelector
 
         return phase.ToUpperInvariant() switch
         {
-            "INIT" => high ? ResponseStrategy.Stabilizing : ResponseStrategy.Intake,
+            "INIT" => high ? ResponseStrategy.Stabilizing : (moderate ? ResponseStrategy.Mapping : ResponseStrategy.Intake),
             "EXPLORATION" => high ? ResponseStrategy.MappingWithNaming : ResponseStrategy.Mapping,
             "DIGGING" => high
                 ? ResponseStrategy.Stabilizing

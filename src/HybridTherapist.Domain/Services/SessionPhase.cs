@@ -5,14 +5,23 @@ namespace HybridTherapist.Domain.Services;
 /// </summary>
 public static class SessionPhase
 {
-    public static string Evaluate(string currentPhase, int messageCount)
+    public static string Evaluate(string currentPhase, int messageCount, string severity = "low")
     {
+        bool high = string.Equals(severity, "high", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(severity, "crisis", StringComparison.OrdinalIgnoreCase);
+        bool moderate = string.Equals(severity, "moderate", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(severity, "medium", StringComparison.OrdinalIgnoreCase);
+
         return currentPhase switch
         {
-            "INIT" when messageCount >= 3 => "EXPLORATION",
-            "EXPLORATION" when messageCount >= 8 => "DIGGING",
-            "DIGGING" when messageCount >= 16 => "WORKING",
-            "WORKING" when messageCount >= 24 => "CLOSING",
+            "INIT" when high && messageCount >= 1 => "EXPLORATION",
+            "INIT" when moderate && messageCount >= 1 => "EXPLORATION",
+            "INIT" when messageCount >= 2 => "EXPLORATION",
+            "EXPLORATION" when (high || moderate) && messageCount >= 4 => "DIGGING",
+            "EXPLORATION" when messageCount >= 6 => "DIGGING",
+            "DIGGING" when high && messageCount >= 8 => "WORKING",
+            "DIGGING" when messageCount >= 12 => "WORKING",
+            "WORKING" when messageCount >= 20 => "CLOSING",
             _ => currentPhase,
         };
     }
@@ -20,9 +29,12 @@ public static class SessionPhase
     public static string GetPhaseSystemPrompt(string phase) => phase switch
     {
         "INIT" =>
-            "This is the first contact. Your role is to welcome, make the person feel safe, " +
-            "and gently understand what they'd like to talk about today. " +
-            "Do NOT suggest diagnoses or give advice. Just listen and ask one open question.",
+            "First contact. Welcome warmly and make the person feel safe. " +
+            "Do NOT give clinical diagnoses or deep interpretations. " +
+            "You MAY offer one gentle, practical suggestion if the person explicitly asks for help " +
+            "(e.g. 'what can I do?', 'how to cope?'). " +
+            "If the person asks for advice, give a concrete, small, actionable step. " +
+            "Otherwise, listen and ask one open question.",
 
         "EXPLORATION" =>
             "The person is sharing more context. Explore their situation with curiosity and empathy. " +

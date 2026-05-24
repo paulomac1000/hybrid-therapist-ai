@@ -278,4 +278,50 @@ public sealed class TherapyMemoryServiceTests
         result.FocusNext.Should().Contain("grounding");
         state.History.Should().HaveCount(6);
     }
+
+    // ── DetectTrend ───────────────────────────────────────────────────────────
+
+    [Fact]
+    public void DetectTrend_NoPrevious_ReturnsStable()
+    {
+        var current = new MemorySummary("overview1", Array.Empty<TopicEntry>(), "low", null, null);
+        var result = TherapyMemoryService.DetectTrend(current, null);
+        result.Should().Be("stable");
+    }
+
+    [Fact]
+    public void DetectTrend_Worsening_LowToHigh()
+    {
+        var prev = new MemorySummary("overview1", Array.Empty<TopicEntry>(), "low", null, null);
+        var curr = new MemorySummary("overview2", Array.Empty<TopicEntry>(), "high", null, null);
+        var result = TherapyMemoryService.DetectTrend(curr, prev);
+        result.Should().Be("worsening");
+    }
+
+    [Fact]
+    public void DetectTrend_Improving_HighToLow()
+    {
+        var prev = new MemorySummary("overview1", Array.Empty<TopicEntry>(), "high", null, null);
+        var curr = new MemorySummary("overview2", Array.Empty<TopicEntry>(), "low", null, null);
+        var result = TherapyMemoryService.DetectTrend(curr, prev);
+        result.Should().Be("improving");
+    }
+
+    [Fact]
+    public void DetectTrend_Stable_BothLow()
+    {
+        var prev = new MemorySummary("overview1", Array.Empty<TopicEntry>(), "low", null, null);
+        var curr = new MemorySummary("overview2", Array.Empty<TopicEntry>(), "low", null, null);
+        var result = TherapyMemoryService.DetectTrend(curr, prev);
+        result.Should().Be("stable");
+    }
+
+    [Fact]
+    public void DetectTrend_CrisisDetection()
+    {
+        var prev = new MemorySummary("overview1", Array.Empty<TopicEntry>(), "low → moderate", null, null);
+        var curr = new MemorySummary("overview2", Array.Empty<TopicEntry>(), "crisis", null, null);
+        var result = TherapyMemoryService.DetectTrend(curr, prev);
+        result.Should().Be("worsening");
+    }
 }

@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+
 namespace HybridTherapist.Domain.Services;
 
 /// <summary>
@@ -8,11 +10,58 @@ namespace HybridTherapist.Domain.Services;
 /// </summary>
 public static class QualityValidator
 {
+    private static readonly Regex AdviceRegex = new(
+        @"\bmożesz\s+\p{L}", RegexOptions.IgnoreCase | RegexOptions.Compiled,
+        TimeSpan.FromMilliseconds(100));
+
+    private static readonly Regex TryRegex = new(
+        @"\btry\b", RegexOptions.IgnoreCase | RegexOptions.Compiled,
+        TimeSpan.FromMilliseconds(100));
     public sealed record Verdict(bool Ok, string Reason);
 
     /// <summary>
     /// Validates an English calibrator output before it goes to L7 translator.
     /// </summary>
+    public static Verdict ValidateTherapeuticQuality(string response, string phase, int messageCount)
+    {
+        if (string.IsNullOrWhiteSpace(response))
+            return new Verdict(false, "empty");
+
+        string trimmed = response.Trim();
+
+        bool containsQuestion = trimmed.Contains('?', StringComparison.Ordinal);
+        bool containsAdvice =
+            trimmed.Contains("spróbuj", StringComparison.OrdinalIgnoreCase) ||
+            AdviceRegex.IsMatch(trimmed) ||
+            trimmed.Contains("spróbować", StringComparison.OrdinalIgnoreCase) ||
+            TryRegex.IsMatch(trimmed) ||
+            trimmed.Contains("you can", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.Contains("it may help", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.Contains("one small step", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.Contains("warto", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.Contains("proponuję", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.Contains("proponuje", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.Contains("pomocne może być", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.Contains("jednym ze sposobów", StringComparison.OrdinalIgnoreCase);
+
+        bool containsFormulaicOpening =
+            trimmed.StartsWith("Rozumiem", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.StartsWith("Widzę", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.StartsWith("Słyszę", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.StartsWith("I understand", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.StartsWith("I see", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.StartsWith("I hear", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.StartsWith("It seems", StringComparison.OrdinalIgnoreCase);
+
+        if (messageCount >= 4 && containsQuestion && !containsAdvice)
+            return new Verdict(false, "only_questions_after_4_messages");
+
+        if (containsFormulaicOpening)
+            return new Verdict(false, "formulaic_opening");
+
+        return new Verdict(true, "ok");
+    }
+
     public static Verdict ValidateEnglishDraft(string draft, string userTextEn)
     {
         if (string.IsNullOrWhiteSpace(draft))
