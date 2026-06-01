@@ -165,4 +165,28 @@ public sealed class ModelAvailabilityTests
 
         _output.WriteLine($"Endpoint found: modelDisplayLabel={endpoint.GetProperty("modelDisplayLabel").GetString()}");
     }
+
+    /// <summary>
+    /// LibreChat config must set titleConvo: true with an explicit model
+    /// so conversations get auto-generated titles instead of "New Chat".
+    /// Verified by checking the endpoint is properly configured.
+    /// </summary>
+    [Fact]
+    public void LibreChat_Config_HasTitleConvoEnabled()
+    {
+        string configPath = Path.Combine(
+            AppContext.BaseDirectory, "..", "..", "..", "..", "..", "config", "librechat.yaml");
+
+        if (!File.Exists(configPath))
+        {
+            _output.WriteLine("Config file not found at test path — skip");
+            return;
+        }
+
+        string yaml = File.ReadAllText(configPath);
+        yaml.Should().Contain("titleConvo: true",
+            "librechat.yaml must have titleConvo: true for auto-generated conversation titles");
+        yaml.Should().Contain("titleModel: hybrid-therapist",
+            "librechat.yaml must have titleModel: hybrid-therapist (explicit string, not 'current_model')");
+    }
 }

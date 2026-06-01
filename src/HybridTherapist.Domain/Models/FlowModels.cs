@@ -5,6 +5,7 @@ public sealed class ChatCompletionRequest
     public string Model { get; set; } = string.Empty;
     public List<ChatMessage> Messages { get; set; } = [];
     public bool Stream { get; set; }
+    public string? User { get; set; }
 }
 
 public sealed class FlowExecutionResult

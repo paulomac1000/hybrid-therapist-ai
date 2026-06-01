@@ -255,4 +255,64 @@ public sealed class TherapistFlowTests
         result.Fallback.Should().BeTrue("formulaic 'I understand' must trigger QA fallback");
         result.Metadata.Should().ContainKey("failed_layer");
     }
+
+    // ── Session resolution ──────────────────────────────────────────────────
+
+    [Fact]
+    public void ResolveSessionId_WithUser_UsesUserHash_NotMessageHash()
+    {
+        var req1 = new ChatCompletionRequest
+        {
+            Model = "hybrid-therapist",
+            Messages = [new ChatMessage { Role = "user", Content = "cześć" }],
+            User = "test_user_123",
+        };
+        var req2 = new ChatCompletionRequest
+        {
+            Model = "hybrid-therapist",
+            Messages = [new ChatMessage { Role = "user", Content = "zupełnie inna wiadomość" }],
+            User = "test_user_123",
+        };
+
+        string session1 = TherapistFlow.ResolveSessionId(req1);
+        string session2 = TherapistFlow.ResolveSessionId(req2);
+
+        session1.Should().Be(session2, "same User must produce same session ID");
+        session1.Should().StartWith("user_", "user-scoped sessions use 'user_' prefix");
+    }
+
+    [Fact]
+    public void ResolveSessionId_WithoutUser_UsesMessageHash()
+    {
+        var req = new ChatCompletionRequest
+        {
+            Model = "hybrid-therapist",
+            Messages = [new ChatMessage { Role = "user", Content = "cześć" }],
+        };
+
+        string session = TherapistFlow.ResolveSessionId(req);
+        session.Should().StartWith("sess_", "legacy sessions use 'sess_' prefix");
+    }
+
+    [Fact]
+    public void ResolveSessionId_DifferentUsers_GetDifferentSessions()
+    {
+        var req1 = new ChatCompletionRequest
+        {
+            Model = "hybrid-therapist",
+            Messages = [new ChatMessage { Role = "user", Content = "cześć" }],
+            User = "user_a",
+        };
+        var req2 = new ChatCompletionRequest
+        {
+            Model = "hybrid-therapist",
+            Messages = [new ChatMessage { Role = "user", Content = "cześć" }],
+            User = "user_b",
+        };
+
+        string session1 = TherapistFlow.ResolveSessionId(req1);
+        string session2 = TherapistFlow.ResolveSessionId(req2);
+
+        session1.Should().NotBe(session2, "different Users must get different sessions");
+    }
 }
