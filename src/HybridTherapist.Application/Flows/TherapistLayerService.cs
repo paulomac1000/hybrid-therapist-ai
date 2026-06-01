@@ -63,7 +63,11 @@ public sealed class TherapistLayerService
     public async Task<LayerResult> RunL1TranslatePlToEnAsync(string sessionId, string userTextPl, CancellationToken ct = default)
     {
         const string SystemPrompt =
-            "You are a translator. Translate the Polish text the user sends to natural English. " +
+            "You are a translator working in a mental health therapy context. " +
+            "Translate the following Polish message from a therapy patient to natural, conversational English. " +
+            "The user is Polish — interpret words in their psychological and everyday meaning, not literal dictionary translations. " +
+            "\"Wakacje\" means vacation/time off, not Christmas holidays. " +
+            "\"Urlop\" means time off work. " +
             "Output ONLY the English translation. " +
             "Do NOT explain. Do NOT continue the conversation. Do NOT echo the prompt.";
 

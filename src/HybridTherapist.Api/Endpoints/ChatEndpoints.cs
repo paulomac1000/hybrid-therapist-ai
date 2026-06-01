@@ -1,6 +1,7 @@
 using System.Text.Json;
 using HybridTherapist.Application.Flows;
 using HybridTherapist.Domain.Models;
+using Microsoft.Extensions.Logging;
 
 namespace HybridTherapist.Api.Endpoints;
 
@@ -20,20 +21,44 @@ public static class ChatEndpoints
         TherapistFlow flow,
         CancellationToken ct)
     {
-        ChatCompletionRequest? request;
+        ChatCompletionRequest request;
+
         try
         {
-            request = await ctx.Request.ReadFromJsonAsync<ChatCompletionRequest>(ct);
-        }
-        catch
-        {
-            await WriteJsonAsync(ctx, 400, new { error = "Invalid JSON body." }, ct);
-            return;
-        }
+            using JsonDocument doc = await JsonDocument.ParseAsync(ctx.Request.Body, cancellationToken: ct);
 
-        if (request is null)
+            // Manually extract fields to be maximally tolerant of LibreChat v0.8.x request shapes.
+            // LibreChat's agent system may wrap the request in extra fields or nested objects.
+            JsonElement root = doc.RootElement;
+            request = new ChatCompletionRequest
+            {
+                Model = root.TryGetProperty("model", out JsonElement m) ? m.GetString() ?? "" : "",
+                Stream = root.TryGetProperty("stream", out JsonElement s) && s.ValueKind == JsonValueKind.True,
+                User = root.TryGetProperty("user", out JsonElement u) && u.ValueKind == JsonValueKind.String ? u.GetString() : null,
+            };
+
+            // Messages: accept both array at top level or nested
+            if (root.TryGetProperty("messages", out JsonElement msgs) && msgs.ValueKind == JsonValueKind.Array)
+            {
+                request.Messages = msgs.EnumerateArray()
+                    .Select(msg => new ChatMessage
+                    {
+                        Role = msg.TryGetProperty("role", out JsonElement r) ? r.GetString() ?? "user" : "user",
+                        Content = msg.TryGetProperty("content", out JsonElement c) ? c.GetString() ?? "" : "",
+                    })
+                    .ToList();
+            }
+            else
+            {
+                request.Messages = [];
+            }
+        }
+        catch (Exception ex)
         {
-            await WriteJsonAsync(ctx, 400, new { error = "Request body is required." }, ct);
+            var logger = ctx.RequestServices.GetRequiredService<ILoggerFactory>()
+                .CreateLogger(nameof(ChatEndpoints));
+            logger.LogWarning("JSON parse FAILED — {Error}", ex.Message);
+            await WriteJsonAsync(ctx, 400, new { error = "Invalid JSON body." }, ct);
             return;
         }
 

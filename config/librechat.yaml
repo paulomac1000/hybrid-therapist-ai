@@ -10,12 +10,9 @@ endpoints:
       models:
         default: ["hybrid-therapist"]
         fetch: false
-      titleConvo: true
+      titleConvo: false
       titleModel: hybrid-therapist
       modelDisplayLabel: "Psycholog AI"
-      addParams:
-        user:
-          default: "librechat_user"
       dropParams:
         - temperature
         - top_p

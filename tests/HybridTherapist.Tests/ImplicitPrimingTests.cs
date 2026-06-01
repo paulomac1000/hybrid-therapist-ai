@@ -92,7 +92,7 @@ public sealed class ImplicitPrimingTests
         source.Should().NotContain("Output ONLY one line starting with M|");
 
         // Allowed: prose task descriptions
-        source.Should().Contain("You are a translator.");
+        source.Should().Contain("You are a translator working");
         source.Should().Contain("You are an empathetic therapist.");
         source.Should().Contain("You are a therapeutic response editor.");
         source.Should().Contain("You are a Polish translator.");
