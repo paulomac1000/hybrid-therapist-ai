@@ -40,7 +40,7 @@ Dzięki temu:
 
 ## Czym jest Socrates Pipeline?
 
-```
+```text
 Użytkownik (PL) → CrisisGate → PrivacySanitizer
                        ↓
                  L1 Tłumacz PL→EN (Bielik 7B)
@@ -56,7 +56,7 @@ Użytkownik (PL) → CrisisGate → PrivacySanitizer
                  L7 Tłumacz EN→PL (Bielik 7B)
                        ↓
                  Użytkownik (odpowiedź po polsku)
-```
+```text
 
 Każda warstwa ma jedną odpowiedzialność:
 
@@ -97,15 +97,15 @@ Benchmark H.A.N.D. Codec G sprawdza teraz cały łańcuch: L2 generuje Codec G, 
 generuje Codec G, L4 dostaje surowe `M|` memo bez legendy, a finalna odpowiedź
 pozostaje po polsku. Aktualne wyniki nie są wpisywane w README; generuje je:
 
-```bash
+```textbash
 ./scripts/run-hand-benchmark.sh --cassette --report
-```
+```text
 
 [Pełny opis benchmarku](docs/benchmarks/hand-codec-g.md) | [Macierz porównawcza](docs/benchmarks/benchmark-matrix.md)
 
 ## Szybki start
 
-```bash
+```textbash
 # 1. Uruchom Ollamę i serwis terapeuty
 docker compose up -d
 
@@ -122,23 +122,23 @@ curl -X POST http://localhost:8080/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{"model":"hybrid-therapist","messages":[{"role":"user","content":"chcę skończyć z sobą"}]}'
 # → odpowiedź zawiera "116 123" (polski telefon zaufania)
-```
+```text
 
 ## Konfiguracja
 
 Plik `config/stack.yaml` definiuje modele i ich role. W kodzie nie ma zahardcodowanych nazw modeli — wszystko idzie z konfiguracji.
 
-```yaml
+```textyaml
 translator: SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M
 analyst:    hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M
 supervisor: hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M
 therapist:  hf.co/mradermacher/PsychoCounsel-Llama3-8B-GGUF:Q4_K_S
 calibrator: hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S
-```
+```text
 
 ## Budowanie i testy
 
-```bash
+```textbash
 # Budowanie
 dotnet build HybridTherapist.sln
 
@@ -150,7 +150,7 @@ dotnet test tests/HybridTherapist.Tests/
 
 # Test E2E (wymaga Ollamy na localhost:11434)
 OLLAMA_HOST=http://localhost:11434 dotnet test tests/HybridTherapist.Integration --filter "LiveOllama"
-```
+```text
 
 ## Wymagania VRAM (GTX 1060 6GB)
 
@@ -180,7 +180,7 @@ Nie używać w sytuacjach wymagających profesjonalnej pomocy psychologicznej.
 ## Zależności zewnętrzne
 
 - [HandCodec](https://github.com/paulomac1000/hand-codec) — kompaktowy format wire dla komunikacji między modelami
-- [HandRuntime](https://github.com/paulomac1000/hand-codec) — orkiestracja warstw (Implicit Priming, drabina odporności)
+- [HandRuntime](https://github.com/paulomac1000/hand-codec) — orkiestracja warstw, Implicit Priming, drabina odporności (ten sam pakiet co HandCodec)
 - [Ollama](https://ollama.com) — lokalne uruchamianie modeli LLM
 
 ## Licencja

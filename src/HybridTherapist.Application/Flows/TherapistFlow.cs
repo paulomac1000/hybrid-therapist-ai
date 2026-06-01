@@ -302,12 +302,12 @@ public sealed class TherapistFlow : ITherapistFlow
         if (!string.IsNullOrWhiteSpace(request.User))
         {
             byte[] hash = SHA256.HashData(Encoding.UTF8.GetBytes(request.User));
-            return $"user_{Convert.ToHexString(hash)[..8].ToLowerInvariant()}";
+            return $"user_{Convert.ToHexString(hash)[..16].ToLowerInvariant()}";
         }
 
         string firstUser = request.Messages.FirstOrDefault(m => m.Role == "user")?.Content ?? string.Empty;
         if (firstUser.Length == 0) return Guid.NewGuid().ToString();
         byte[] msgHash = SHA256.HashData(Encoding.UTF8.GetBytes(firstUser));
-        return $"sess_{Convert.ToHexString(msgHash)[..8].ToLowerInvariant()}";
+        return $"sess_{Convert.ToHexString(msgHash)[..16].ToLowerInvariant()}";
     }
 }

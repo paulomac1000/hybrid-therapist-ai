@@ -25,7 +25,7 @@ owners: ["hybrid-therapist"]
 - **Resilience Ladder (Drabina odporności)** — 5-stopniowy pipeline degradacji (strict → lenient → markdown_strip → semantic → unstructured) do parsowania outputu modeli.
 - **AgentClass** — Klasyfikacja behawioralna LLM: Native (frontier), Assisted (mały lokalny), Reasoning (CoT), External (MCP/REST).
 - **CompressionTier** — Poziom szczegółowości kluczy wire-format: Debug (pełne nazwy), Balanced (krótkie aliasy), Compact (pojedyncze litery).
-- **Memobuilder** — Fluent builder do konstruowania wiadomości `M|` z kluczami adaptującymi się do poziomu kompresji. Rdzeń: `HandCodec.Parser.Memobuilder`.
+- **MemoBuilder** — Fluent builder do konstruowania wiadomości `M|` z kluczami adaptującymi się do poziomu kompresji. Rdzeń: `HandCodec.Parser.Memobuilder`.
 - **CrisisGate** — Warstwa -1 Socrates — regex-owe twarde zatrzymanie na słowach kluczowych samobójstwa/samookaleczenia. Uruchamiana przed jakimkolwiek wywołaniem LLM.
 - **PrivacySanitizer** — Warstwa 0 Socrates — redakcja PII (email, telefon, PESEL, imiona i nazwiska) przed jakimkolwiek wywołaniem LLM.
 - **HandCodec** — Biblioteka .NET NuGet dostarczająca kodek wire-format (enkoder, parser, pipeline odporności, Memobuilder).

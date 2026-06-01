@@ -55,7 +55,7 @@ Ten podział na dane i narrację (Data/Narrative Split) zapobiega polowaniu uwag
 
 ### Implicit Priming — uczenie przez przykład, nie przez instrukcję
 
-Modele **nigdy nie dostały instrukcji** o formacie H.A.N.D. Żaden system prompt nie mówi "odpowiadaj w formacie R|C=...". Zamiast tego, przed każdym wywołaniem LLM, orkiestrator po cichu wstrzykuje jedną nieterepeutyczną wymianę do historii konwersacji:
+Modele **nigdy nie dostały instrukcji** o formacie H.A.N.D. Żaden system prompt nie mówi "odpowiadaj w formacie R|C=...". Zamiast tego, przed każdym wywołaniem LLM, orkiestrator po cichu wstrzykuje jedną nieterapeutyczną wymianę do historii konwersacji:
 
 ```
 User:      [SYSTEM_PROTOCOL_PING]

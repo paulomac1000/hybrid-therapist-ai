@@ -120,7 +120,7 @@ public sealed class HandBenchmarkNegativeTests
         Func<string, string> mutateJson)
     {
         string originalJson = await File.ReadAllTextAsync(CassettePath(cassetteFile));
-        string tempPath = Path.GetTempFileName() + ".json";
+        string tempPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
         await File.WriteAllTextAsync(tempPath, mutateJson(originalJson));
 
         try

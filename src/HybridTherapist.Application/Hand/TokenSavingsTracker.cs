@@ -32,7 +32,8 @@ public sealed class TokenSavingsTracker
     /// Verbose fallbacks and old keys are treated as failures. Used for research benchmarks.
     /// Default false — allows verbose backwards compatibility in production.
     /// </summary>
-    public static bool StrictCodecG { get; set; }
+    [ThreadStatic]
+    public static bool StrictCodecG;
 
     /// <summary>
     /// Expands an M| memo wire line into a plaintext English paragraph,

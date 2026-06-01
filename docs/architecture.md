@@ -128,9 +128,9 @@ The lightweight layers ARE the production hardening. Removing CrisisGate or Priv
 | PhaseMachine + SessionPhase | `GetPhaseSystemPrompt(phase)` | L4 system prompt | "this is first contact" vs "session winding down" |
 | RuptureDetector | `Result.Detected` (bool) | ResponseStrategySelector | Forces `Repair` strategy regardless of phase |
 | ResponseStrategy | enum value | L3 Supervisor system prompt | Supervisor tailors approach |
-| L2 Analyst | `M|L=2|e7=...|s9=...` wire | L3 Supervisor + ThematicAlignment | Structured emotional state (raw wire, parsed by HandParser) |
+| L2 Analyst | `M\|L=2\|e7=...\|s9=...` wire | L3 Supervisor + ThematicAlignment | Structured emotional state (raw wire, parsed by HandParser) |
 | ThematicAlignment | bool + redacted memo | L3 Supervisor | Anti-hallucination |
-| L3 Supervisor | `M|L=3|p3=...|t5=...|k2=...` wire | L4 Therapist | Structured therapeutic plan (raw wire) |
+| L3 Supervisor | `M\|L=3\|p3=...\|t5=...\|k2=...` wire | L4 Therapist | Structured therapeutic plan (raw wire) |
 | L5 MemoryService | `state.SessionSummary` (text) | L4 Therapist prompt | Long-term context across history compaction |
 | L4 Therapist | EN draft | L6 Calibrator | Source of truth for facts |
 | QualityValidator | verdict (ok/echo/leak/...) | flow control | EN-side gate before L7 |

@@ -81,7 +81,7 @@ json_number_or_null() {
 parse_token_savings() {
     local output="$1"
     local values
-    values=$(printf '%s\n' "$output" | grep -oP 'tokens saved \(\K[-0-9.]+(?=%\))' || true)
+    values=$(printf '%s\n' "$output" | grep -oP '(?:tokens saved \(|Token save:\s*~\d+ tokens \()\K[-0-9.]+(?=%\))' || true)
     if [ -z "$values" ]; then
         TOKEN_SAVINGS_STATUS="not_measured"
         TOKEN_SAVINGS_COUNT=""
@@ -201,13 +201,8 @@ echo "  Artifacts:      $ARTIFACTS_DIR"
 echo ""
 
 TOTAL_FAILED=$((UNIT_FAILED + CASSETTE_FAILED + LIVE_FAILED))
-if [ "$TOTAL_FAILED" -gt 0 ]; then
-    echo "BENCHMARK FAILED"
-    exit 1
-fi
 
-echo "BENCHMARK PASSED"
-
+# Generate report regardless of pass/fail status
 if [ "$REPORT_FLAG" = true ]; then
     echo ""
     echo "7. Generating report artifacts..."
@@ -297,5 +292,12 @@ MDEOF
     echo "   Done."
 fi
 
+if [ "$TOTAL_FAILED" -gt 0 ]; then
+    echo ""
+    echo "BENCHMARK FAILED"
+    exit 1
+fi
+
 echo ""
-echo "== Benchmark complete =="
+echo "BENCHMARK PASSED"
+echo ""

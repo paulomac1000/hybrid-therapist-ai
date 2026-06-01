@@ -110,14 +110,18 @@ public sealed class ModelAvailabilityTests
     {
         using var client = new HttpClient { BaseAddress = new Uri("http://localhost:3080") };
 
+        // Generate a single random email to use for both register and login
+        string testEmail = $"benchmark_{Guid.NewGuid():N}@test.local";
+        string testPassword = "Test1234!";
+
         // Register a test user
         var registerResponse = await client.PostAsJsonAsync("/api/auth/register", new
         {
             name = "benchmark_test",
-            email = $"benchmark_{Guid.NewGuid():N}@test.local",
+            email = testEmail,
             username = $"benchmark_{Guid.NewGuid():N}",
-            password = "Test1234!",
-            confirm_password = "Test1234!",
+            password = testPassword,
+            confirm_password = testPassword,
         });
 
         if (!registerResponse.IsSuccessStatusCode)
@@ -127,11 +131,11 @@ public sealed class ModelAvailabilityTests
             return;
         }
 
-        // Login
+        // Login with same email
         var loginResponse = await client.PostAsJsonAsync("/api/auth/login", new
         {
-            email = "benchmark_test@test.local",
-            password = "Test1234!",
+            email = testEmail,
+            password = testPassword,
         });
 
         if (!loginResponse.IsSuccessStatusCode)
@@ -179,7 +183,7 @@ public sealed class ModelAvailabilityTests
 
         if (!File.Exists(configPath))
         {
-            _output.WriteLine("Config file not found at test path — skip");
+            Assert.Fail($"LibreChat config file not found: {configPath}. Run from repo root.");
             return;
         }
 
