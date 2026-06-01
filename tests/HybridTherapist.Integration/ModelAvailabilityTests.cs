@@ -184,8 +184,8 @@ public sealed class ModelAvailabilityTests
         }
 
         string yaml = File.ReadAllText(configPath);
-        yaml.Should().Contain("titleConvo: true",
-            "librechat.yaml must have titleConvo: true for auto-generated conversation titles");
+        yaml.Should().Contain("titleConvo: false",
+            "librechat.yaml: titleConvo must be false — the 6-model pipeline is too slow for LibreChat's 30s title timeout");
         yaml.Should().Contain("titleModel: hybrid-therapist",
             "librechat.yaml must have titleModel: hybrid-therapist (explicit string, not 'current_model')");
     }
