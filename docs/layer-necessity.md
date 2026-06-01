@@ -17,43 +17,6 @@ owners: ["hybrid-therapist"]
 
 # Layer Necessity — Why Each Layer Earns Its Place
 
-## PURPOSE
-
-Defines test contracts that prove each Socrates pipeline layer makes a measurable, necessary contribution to the final therapeutic output.
-
-## SCOPE
-
-- INCLUDED: Necessity-proving test cases for every layer, the contract table, and rules for adding new layers.
-- EXCLUDED: Implementation details of individual layers (see sys.socrates-pipeline).
-
-## DEFINITIONS
-
-N/A
-
-## RULES
-
-N/A
-
-## INTERFACES
-
-N/A
-
-## STATE
-
-N/A
-
-## EDGE_CASES
-
-N/A
-
-## EXAMPLES
-
-N/A — the contract table below serves as the example set.
-
-## NON_GOALS
-
-N/A
-
 Every layer in the Socrates pipeline has a measurable contribution to the final output. The `LayerNecessityTests` suite pins these contracts: each test fails if the corresponding layer's wiring is removed.
 
 ## Map

@@ -1,0 +1,109 @@
+{
+  "name": "hand-burnout",
+  "description": "User reports complete emotional exhaustion. Tests s9=high detection, stabilizing intervention.",
+  "expected_quality": {
+    "pass": true,
+    "min_quality_score": 4,
+    "required_topics": [
+      "burnout",
+      "exhaustion"
+    ],
+    "required_phrases_pl": [
+      "pustka",
+      "ciało"
+    ],
+    "forbidden_phrases": [
+      "weź urlop",
+      "po prostu odpocznij"
+    ]
+  },
+  "interactions": [
+    {
+      "layer": "L1_translator_pl_en",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "You are a translator"
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.89|V=I feel completely empty inside, like there is nothing left of me, I am just going through the motions"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L2_analyst",
+      "request_match": {
+        "model_contains": "MentaLLaMA"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "M|L=2|e7=burnout_with_depersonalization|s9=high|x4=emotional_numbness,depersonalization|y1=emptiness_narrative|q3=I_feel_completely_empty_inside"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L3_supervisor",
+      "request_match": {
+        "model_contains": "PsyLLM"
+      },
+      "response": {
+        "model": "hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "M|L=3|p3=grounding|t5=body_awareness|k2=When_was_the_last_time_your_body_felt_something_other_than_emptiness?|r8=monitor_for_depersonalization_worsening"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L4_therapist",
+      "request_match": {
+        "model_contains": "PsychoCounsel"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/PsychoCounsel-Llama3-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.82\nEmptiness is not the absence of feeling — it is the presence of too much pain that had to be walled off. When you say there is nothing left, I hear someone who gave everything and was never refilled.\n\nWhen was the last time your body felt something other than emptiness?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L6_calibrator",
+      "request_match": {
+        "model_contains": "dolphin"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "Emptiness is not the absence of feeling — it is the presence of too much pain that had to be walled off. When you say there is nothing left, I hear someone who gave everything and was never refilled.\n\nWhen was the last time your body felt something other than emptiness?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L7_translator_en_pl",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "You are a Polish translator"
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.88\nPustka to nie brak uczuć — to obecność zbyt dużego bólu, który musiał zostać odgrodzony murem. Kiedy mówisz, że nic już nie zostało, słyszę kogoś, kto oddał wszystko i nigdy nie został napełniony na nowo.\n\nKiedy ostatnio Twoje ciało poczuło coś innego niż pustkę?"
+        },
+        "done": true
+      }
+    }
+  ],
+  "user_input_pl": "Czuję się kompletnie pusta w środku, jakby nic ze mnie nie zostało."
+}

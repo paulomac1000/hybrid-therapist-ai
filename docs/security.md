@@ -15,44 +15,7 @@ last_verified: 2026-05-23
 owners: ["hybrid-therapist"]
 ---
 
-# Hybrid Therapist — Security Model
-
-## PURPOSE
-
-Documents the security invariants, crisis detection rules, PII redaction policy, and failure-mode mitigations for the hybrid-therapist pipeline.
-
-## SCOPE
-
-- INCLUDED: CrisisGate regex tiers, PrivacySanitizer patterns, behavioural matrix (crisis vs phase), failure-mode table, testing requirements.
-- EXCLUDED: Transport security, authentication, rate limiting — these are deployment-layer concerns.
-
-## DEFINITIONS
-
-N/A
-
-## RULES
-
-N/A — covered in "Invariants" and "CrisisGate" sections below.
-
-## INTERFACES
-
-N/A
-
-## STATE
-
-N/A
-
-## EDGE_CASES
-
-N/A
-
-## EXAMPLES
-
-N/A
-
-## NON_GOALS
-
-N/A — see "What is NOT secured by this codebase" below.
+# Hybrid Therapist — Security
 
 ## Invariants
 
@@ -76,7 +39,7 @@ Four regex tiers, ordered by severity:
 
 Patterns use compile-time `[GeneratedRegex]` with a 200 ms timeout to defeat ReDoS. `RegexMatchTimeoutException` is caught and treated as "safe" — fail-open is the right move because the model is still bounded by other gates.
 
-**Polish patterns stay in Polish.** They are user-facing — translating them would break detection. This is a `[STRICT]` rule in cortexa's `security-gates.md` and applies here unchanged.
+**Polish patterns stay in Polish.** They are the user-facing interface — translating them would break detection.
 
 ## PrivacySanitizer
 
@@ -84,10 +47,10 @@ Replaces matching patterns with role-appropriate placeholders before the text re
 
 | Pattern | Replacement |
 |---------|-------------|
-| Email (`user@example.com`) | `[EMAIL]` |
-| Polish phone (`+48 123 456 789`, `123-456-789`) | `[TELEFON]` |
-| PESEL (11 digits) | `[PESEL]` |
-| Full name (heuristic) | `[OSOBA]` |
+| Email (`user@example.com`) | `[REDACTED_EMAIL]` |
+| Polish phone (`+48 123 456 789`, `123-456-789`) | `[REDACTED_PHONE]` |
+| PESEL (11 digits) | `[REDACTED_PESEL]` |
+| Full name (heuristic) | `[REDACTED_NAME]` |
 
 The sanitiser is intentionally aggressive — false positives in personal pronouns or place names are acceptable because the cost of a leaked PESEL is far higher than the cost of an over-redacted message.
 
@@ -101,7 +64,7 @@ Current coverage (`tests/HybridTherapist.Tests/CrisisGateTests.cs`):
 - Negative: ambiguous phrases ("chcę skończyć z tym projektem", "want to die laughing") do not fire
 - Boundary: empty input, whitespace, very long input
 
-## What is NOT secured by this codebase
+## What this code does NOT secure
 
 - **Transport security.** Run behind TLS-terminating reverse proxy in production.
 - **Authentication.** No API key check on `/v1/chat/completions`. Add via ASP.NET Core middleware if needed.

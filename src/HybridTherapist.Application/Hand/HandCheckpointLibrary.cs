@@ -28,11 +28,11 @@ public static class HandCheckpointLibrary
     public static HandCheckpoint TherapyAnalystPing { get; } = new(new[]
     {
         new HandExchange("[SYSTEM_PROTOCOL_PING]",
-            "M|L=2|em=neutral|sv=low|ri=none|cp=reflective|ev=\"acknowledged\""),
+            "M|L=2|e7=neutral|s9=low|x4=none|y1=reflective|q3=\"acknowledged\""),
         new HandExchange("[SYSTEM_PROTOCOL_PING]",
-            "M|L=2|em=content|sv=low|ri=none|cp=grateful|ev=\"thank you\""),
+            "M|L=2|e7=content|s9=low|x4=none|y1=grateful|q3=\"thank you\""),
         new HandExchange("[SYSTEM_PROTOCOL_PING]",
-            "M|L=2|em=worried|sv=low|ri=none|cp=anticipatory|ev=\"what if\""),
+            "M|L=2|e7=worried|s9=low|x4=none|y1=anticipatory|q3=\"what if\""),
     });
 
     /// <summary>
@@ -43,10 +43,10 @@ public static class HandCheckpointLibrary
     public static HandCheckpoint TherapySupervisorPing { get; } = new(new[]
     {
         new HandExchange("[SYSTEM_PROTOCOL_PING]",
-            "M|L=3|ap=behavioral_activation|tk=schedule_one_small_activity|kq=What one small thing could you try?|rn=none"),
+            "M|L=3|p3=behavioral_activation|t5=schedule_one_small_activity|k2=What_one_small_thing_could_you_try?|r8=none"),
         new HandExchange("[SYSTEM_PROTOCOL_PING]",
-            "M|L=3|ap=sleep_hygiene|tk=no_screen_30min_before|kq=What is your bedtime routine?|rn=none"),
+            "M|L=3|p3=sleep_hygiene|t5=no_screen_30min_before|k2=What_is_your_bedtime_routine?|r8=none"),
         new HandExchange("[SYSTEM_PROTOCOL_PING]",
-            "M|L=3|ap=grounding|tk=54321_senses|kq=What do you notice right now?|rn=none"),
+            "M|L=3|p3=grounding|t5=54321_senses|k2=What_do_you_notice_right_now?|r8=none"),
     });
 }

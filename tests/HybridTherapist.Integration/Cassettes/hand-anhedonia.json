@@ -1,0 +1,109 @@
+{
+  "name": "hand-anhedonia",
+  "description": "User reports inability to feel pleasure or anticipate anything positive. Tests anhedonia detection, severity escalation.",
+  "expected_quality": {
+    "pass": true,
+    "min_quality_score": 4,
+    "required_topics": [
+      "anhedonia",
+      "depression"
+    ],
+    "required_phrases_pl": [
+      "kiedyś",
+      "przyjemność"
+    ],
+    "forbidden_phrases": [
+      "znajdź sobie hobby",
+      "wyjdź do ludzi"
+    ]
+  },
+  "interactions": [
+    {
+      "layer": "L1_translator_pl_en",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "You are a translator"
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.90|V=Nothing feels good anymore, not even the things I used to love — music, food, my friends — everything is flat"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L2_analyst",
+      "request_match": {
+        "model_contains": "MentaLLaMA"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "M|L=2|e7=anhedonia|s9=high|x4=loss_of_interest,social_isolation|y1=negative_prediction,flat_affect|q3=even_the_things_I_used_to_love"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L3_supervisor",
+      "request_match": {
+        "model_contains": "PsyLLM"
+      },
+      "response": {
+        "model": "hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "M|L=3|p3=behavioral_activation|t5=activity_scheduling_pleasant|k2=What_is_the_smallest_thing_that_used_to_feel_good_before_this_started?|r8=anhedonia_high_risk_flag"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L4_therapist",
+      "request_match": {
+        "model_contains": "PsychoCounsel"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/PsychoCounsel-Llama3-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.83\nWhen the world turns monochrome, even the brightest colors you once loved become shadows. Anhedonia is not laziness or ingratitude — it is a neurological fog that steals the meaning from everything you touch.\n\nWhat is the smallest thing that used to feel good before this started?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L6_calibrator",
+      "request_match": {
+        "model_contains": "dolphin"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "When the world turns monochrome, even the brightest colors you once loved become shadows. Anhedonia is not laziness or ingratitude — it is a neurological fog that steals the meaning from everything.\n\nWhat is the smallest thing that used to feel good before this started?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L7_translator_en_pl",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "You are a Polish translator"
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.89\nKiedy świat staje się czarno-biały, nawet najjaśniejsze kolory, które kiedyś kochałaś, obracają się w cienie. Anhedonia to nie lenistwo ani niewdzięczność — to neurologiczna mgła, która kradnie znaczenie wszystkiego, czego dotkniesz.\n\nCo jest najmniejszą rzeczą, która kiedyś sprawiała Ci przyjemność, zanim to się zaczęło?"
+        },
+        "done": true
+      }
+    }
+  ],
+  "user_input_pl": "Nic już nie sprawia przyjemności — muzyka, jedzenie, znajomi — wszystko jest płaskie."
+}

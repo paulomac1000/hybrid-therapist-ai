@@ -8,9 +8,12 @@ namespace HybridTherapist.Tests;
 /// "How do you make a model write H.A.N.D. without ever telling it about the format?"
 /// You don't. You show it.
 ///
-/// These tests enforce the invariant that NO system prompt contains
-/// wire-format instructions. The model learns the format exclusively
-/// from conversation-history checkpoints, never from explicit commands.
+/// System prompts describe the TASK in natural language (prose).
+/// They MUST NOT contain wire-format instructions (no "Respond EXACTLY as M|",
+/// no "Dictionary:", no "Output ONLY one line starting with M|").
+///
+/// The model learns the wire format exclusively from conversation-history
+/// checkpoints (TherapyAnalystPing, TherapySupervisorPing, SystemPing).
 /// </summary>
 public sealed class ImplicitPrimingTests
 {
@@ -28,60 +31,71 @@ public sealed class ImplicitPrimingTests
     private static string SrcPath(string relative) =>
         Path.Combine(RepoRoot, relative);
 
-    // ── Pillar 2 invariants ──────────────────────────────────────────────────
+    // ── Pillar 2 invariants: NO wire format instruction in system prompts ─────
 
     [Fact]
-    public void Analyst_SystemPrompt_MustNotContainWireFormatInstruction()
+    public void Analyst_Prompt_HasNoWireFormatInstruction()
     {
-        string analystSource = File.ReadAllText(
+        string source = File.ReadAllText(
             SrcPath("src/HybridTherapist.Application/Layers/AnalystLayer.cs"));
 
-        // Banned: explicit wire format instruction
-        analystSource.Should().NotContain("Respond EXACTLY as a single M|",
+        source.Should().NotContain("Respond EXACTLY as a single M|",
             "System prompt must NEVER tell the model about wire format");
-        analystSource.Should().NotContain("CRITICAL: Output ONLY one line starting with M|",
+        source.Should().NotContain("Output ONLY one line starting with M|",
             "System prompt must NEVER instruct model to output M|");
-        analystSource.Should().NotContain("\"Dictionary:\"",
+        source.Should().NotContain("Dictionary:",
             "System prompt must NEVER list wire format dictionary");
+        source.Should().NotContain("M|L=2|em=anxious|sv=moderate",
+            "System prompt must NEVER contain wire format examples");
+        source.Should().NotContain("M|L=2|e7=anxious|s9=moderate",
+            "System prompt must NEVER contain wire format examples (codec G)");
 
-        // Allowed: task description only
-        analystSource.Should().Contain("clinical mental health analyst",
-            "System prompt should describe the task, not the format");
+        // Allowed: prose task description
+        source.Should().Contain("clinical mental health analyst",
+            "System prompt should describe the task in prose");
     }
 
     [Fact]
-    public void Supervisor_SystemPrompt_MustNotContainWireFormatInstruction()
+    public void Supervisor_Prompt_HasNoWireFormatInstruction()
     {
-        string supervisorSource = File.ReadAllText(
+        string source = File.ReadAllText(
             SrcPath("src/HybridTherapist.Application/Layers/SupervisorLayer.cs"));
 
-        supervisorSource.Should().NotContain("Respond EXACTLY as a single M|",
-            "System prompt must NEVER tell the model about wire format");
-        supervisorSource.Should().NotContain("CRITICAL: Output ONLY one line starting with M|",
-            "System prompt must NEVER instruct model to output M|");
-        supervisorSource.Should().NotContain("\"Dictionary:\"",
-            "System prompt must NEVER list wire format dictionary");
+        source.Should().NotContain("Respond EXACTLY as a single M|");
+        source.Should().NotContain("Output ONLY one line starting with M|");
+        source.Should().NotContain("Dictionary:");
+        source.Should().NotContain("M|L=3|p3=CBT");
 
-        supervisorSource.Should().Contain("clinical supervisor",
-            "System prompt should describe the task, not the format");
+        source.Should().Contain("clinical supervisor");
     }
 
     [Fact]
-    public void Therapist_SystemPrompt_MustNotContainWireFormatInstruction()
+    public void Therapist_Prompts_HaveNoWireFormatInstruction()
     {
-        string therapistSource = File.ReadAllText(
+        string source = File.ReadAllText(
             SrcPath("src/HybridTherapist.Application/Flows/TherapistLayerService.cs"));
 
-        therapistSource.Should().NotContain("FORBIDDEN openings",
-            "L4 prompt must not contain style instructions — that goes in checkpoints");
-        therapistSource.Should().NotContain("PREFERRED alternative",
-            "Style guidance must not leak into system prompt");
-        therapistSource.Should().NotContain("NEVER start with",
-            "Formulaic opening rules belong in checkpoints, not system prompts");
+        // L4: no wire instruction OR key legend
+        source.Should().NotContain("ABSOLUTELY FORBIDDEN OPENINGS");
+        source.Should().NotContain("Analyst memo keys:");
+        source.Should().NotContain("Supervisor memo keys:");
+        source.Should().NotContain("em=emotional state");
 
-        // Allowed: functional guidance
-        therapistSource.Should().Contain("You are an empathetic therapist",
-            "System prompt should describe the task");
+        // L4 Pure Implicit: zero format hints in system prompt
+        source.Should().NotContain("Use the information below");
+        source.Should().NotContain("structured clinical context");
+        source.Should().NotContain("Read the M| messages");
+        source.Should().NotContain("memo keys");
+
+        // L1/L7 translators: no wire instruction
+        source.Should().NotContain("Respond EXACTLY as a single M|");
+        source.Should().NotContain("Output ONLY one line starting with M|");
+
+        // Allowed: prose task descriptions
+        source.Should().Contain("You are a translator working");
+        source.Should().Contain("You are an empathetic therapist.");
+        source.Should().Contain("You are a therapeutic response editor.");
+        source.Should().Contain("You are a Polish translator.");
     }
 
     // ── Checkpoint structure ─────────────────────────────────────────────────
@@ -90,41 +104,33 @@ public sealed class ImplicitPrimingTests
     public void TherapyAnalystPing_HasAtLeastTwoExamples()
     {
         var ping = HybridTherapist.Application.Hand.HandCheckpointLibrary.TherapyAnalystPing;
-        ping.Exchanges.Should().HaveCountGreaterThan(1,
-            "At least 2 diverse examples prevent model from copying a single pattern verbatim");
+        ping.Exchanges.Should().HaveCountGreaterThan(1);
     }
 
     [Fact]
     public void TherapySupervisorPing_HasAtLeastTwoExamples()
     {
         var ping = HybridTherapist.Application.Hand.HandCheckpointLibrary.TherapySupervisorPing;
-        ping.Exchanges.Should().HaveCountGreaterThan(1,
-            "At least 2 diverse examples prevent model from copying a single pattern verbatim");
+        ping.Exchanges.Should().HaveCountGreaterThan(1);
     }
 
     [Fact]
     public void TherapySupervisorPing_AlignedWithFallbackApproach()
     {
         var ping = HybridTherapist.Application.Hand.HandCheckpointLibrary.TherapySupervisorPing;
-        // The first example should match the behavioral_activation fallback
-        ping.Exchanges[0].AssistantWire.Should().Contain("ap=behavioral_activation",
-            "First checkpoint example must align with the fallback approach so the model " +
-            "never learns a pattern that contradicts the safety net");
+        ping.Exchanges[0].AssistantWire.Should().Contain("p3=behavioral_activation");
     }
 
     [Fact]
     public void AllCheckpointExchanges_AreNonDomain()
     {
-        // Both pings use [SYSTEM_PROTOCOL_PING] as user text — domain-neutral
         var analystPing = HybridTherapist.Application.Hand.HandCheckpointLibrary.TherapyAnalystPing;
         var supervisorPing = HybridTherapist.Application.Hand.HandCheckpointLibrary.TherapySupervisorPing;
 
         foreach (var ex in analystPing.Exchanges)
-            ex.UserText.Should().Be("[SYSTEM_PROTOCOL_PING]",
-                "User text must be non-domain to avoid context pollution");
+            ex.UserText.Should().Be("[SYSTEM_PROTOCOL_PING]");
 
         foreach (var ex in supervisorPing.Exchanges)
-            ex.UserText.Should().Be("[SYSTEM_PROTOCOL_PING]",
-                "User text must be non-domain to avoid context pollution");
+            ex.UserText.Should().Be("[SYSTEM_PROTOCOL_PING]");
     }
 }

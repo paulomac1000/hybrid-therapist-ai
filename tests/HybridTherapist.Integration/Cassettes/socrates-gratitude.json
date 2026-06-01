@@ -23,7 +23,7 @@
         "model": "hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M",
         "message": {
           "role": "assistant",
-          "content": "M|L=2|em=gratitude|sv=low|ri=none|cp=none|ev=thank_you"
+          "content": "M|L=2|e7=gratitude|s9=low|x4=none|y1=none|q3=thank_you"
         },
         "done": true
       }
@@ -37,7 +37,7 @@
         "model": "hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M",
         "message": {
           "role": "assistant",
-          "content": "M|L=3|ap=warm_acknowledgement|tk=brief_reflection|kq=How_are_you_feeling_right_now?|rn=none"
+          "content": "M|L=3|p3=warm_acknowledgement|t5=brief_reflection|k2=How_are_you_feeling_right_now?|r8=none"
         },
         "done": true
       }

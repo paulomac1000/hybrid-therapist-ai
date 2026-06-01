@@ -13,6 +13,10 @@ public sealed class TopicRegistryTests
     [InlineData("mój mąż mnie zdradził", "relationships")]
     [InlineData("po stracie mamy nie umiem żyć dalej", "grief")]
     [InlineData("praca mnie wykończyła, wypaliłam się", "work")]
+    [InlineData("nie mogę się skupić i ciągle zapominam, co robiłam", "cognitive")]
+    [InlineData("od tygodni mam gonitwę myśli i martwię się o wszystko", "worry")]
+    [InlineData("nic już nie sprawia mi radości", "anhedonia")]
+    [InlineData("wczoraj miałam atak paniki i nie mogłam oddychać", "panic")]
     [InlineData("I cannot sleep at all", "sleep")]
     [InlineData("just lonely all the time", "loneliness")]
     public void ExtractTopics_DetectsCanonicalTopic(string input, string expectedTopic)

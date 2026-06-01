@@ -4,7 +4,7 @@ namespace HybridTherapist.Domain.Services;
 
 /// <summary>
 /// Picks a <see cref="ResponseStrategy"/> from phase × severity × rupture.
-/// Cortexa parity: <c>Cortexa.Orchestrator.Domain.Services.Therapy.ResponseStrategySelector</c>.
+/// Selects the response strategy for the current phase, severity and rupture state.
 /// </summary>
 public static class ResponseStrategySelector
 {

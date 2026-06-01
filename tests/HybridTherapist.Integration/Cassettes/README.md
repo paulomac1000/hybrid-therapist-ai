@@ -14,9 +14,9 @@ last_verified: 2026-05-23
 owners: ["hybrid-therapist"]
 ---
 
-# Ollama Cassettes — Recorded Pipeline Interactions
+# Kasety Ollama — nagrane interakcje pipeline'u
 
-Each cassette is a JSON file describing a sequence of Ollama `/api/chat` request/response pairs for one therapy scenario. The cassettes let us run the full 6-layer Socrates pipeline **offline** in CI — no live Ollama, no GPU, no model downloads.
+Każda kaseta to plik JSON opisujący sekwencję par request/response Ollama `/api/chat` dla jednego scenariusza terapeutycznego. Kasety pozwalają uruchomić pełny 6-warstwowy pipeline Socrates **offline** w CI — bez żywej Ollamy, bez GPU, bez pobierania modeli.
 
 ## Format
 
@@ -53,7 +53,7 @@ For a new scenario:
 1. Run hybrid-therapist with debug logging against a live Ollama with the right models pulled:
    ```bash
    docker run --rm --name therapist-recorder \
-     --network cortexa_llm-network \
+      --network therapist-net \
      -p 8086:8080 \
      -e Ollama__BaseUrl=http://ollama:11434 \
      -e Logging__LogLevel__HybridTherapist=Debug \
@@ -80,5 +80,16 @@ The trade-off: cassettes don't capture full HTTP fidelity (headers, exact stream
 |------|----------|---------------|
 | `socrates-insomnia.json` | "nie mogę zasnąć od trzech tygodni" | Full 6-layer happy path, INIT phase, medium severity (insomnia heuristic), no disclaimer |
 | `socrates-gratitude.json` | "dziękuję" | Short positive turn, brief layer outputs, INIT phase |
+| `hand-anxiety.json` | chroniczne zamartwianie się | L2 `e7=anxiety`, L3 cognitive_restructuring approach |
+| `hand-depression.json` | utrata radości i celu | L2 `e7=hopelessness`, L3 behavioral_activation |
+| `hand-work-stress.json` | wypalenie zawodowe | L2 `e7=frustration_with_burnout`, L3 boundary_setting |
+| `hand-insomnia.json` | 6 tygodni bezsenności | L2 chronic_insomnia, L3 sleep_hygiene |
+| `hand-anger.json` | przewlekła złość | L2 `e7=anger`, L3 grounding (body awareness) |
+| `hand-burnout.json` | pustka emocjonalna | L2 `s9=high` burnout, L3 grounding, depersonalization flag |
+| `hand-grief.json` | żałoba po stracie rodzica | Grief topic, L3 reflective_listening, validate_emotion |
+| `hand-anhedonia.json` | całkowity brak przyjemności | L2 `s9=high` anhedonia, L3 behavioral_activation |
+| `hand-panic.json` | ataki paniki | L2 panic detection, L3 breathing technique |
+| `hand-cognitive.json` | problemy z koncentracją | L2 cognitive_exhaustion, L3 cognitive_restructuring |
+| `hand-optimistic.json` | dobry dzień — poprawa | L2 positive_shift, L3 celebrate_progress |
 
 Crisis hard-stop (`"chcę skończyć z sobą"`) is **not** in the cassette set because it never reaches Ollama — `CrisisGate` stops at layer -1 and the canned helpline response is returned. That path is covered by `CrisisGateTests` and `TherapistFlowIntegrationTests.Crisis_HardStops_Before_Reaching_LLM`.

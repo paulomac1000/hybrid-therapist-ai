@@ -46,8 +46,8 @@ public sealed class LayerFallbackTests
             Array.Empty<ChatMessage>(), Array.Empty<string>());
 
         result.Ok.Should().BeTrue();
-        result.Memo.Should().Contain("em=unknown");
-        result.Memo.Should().Contain("sv=low");
+        result.Memo.Should().Contain("e7=unknown");
+        result.Memo.Should().Contain("s9=low");
         result.Memo.Should().Contain("decoder_level5_fallback");
         result.Memo.Should().StartWith("M|L=2|");
 
@@ -66,8 +66,8 @@ public sealed class LayerFallbackTests
             Array.Empty<ChatMessage>(), Array.Empty<string>());
 
         result.Ok.Should().BeFalse();
-        result.Memo.Should().Contain("em=unknown");
-        result.Memo.Should().Contain("sv=low");
+        result.Memo.Should().Contain("e7=unknown");
+        result.Memo.Should().Contain("s9=low");
         result.Memo.Should().Contain("note=llm_error");
         result.Memo.Should().StartWith("M|L=2|");
         result.Error.Should().Be("connection refused");
@@ -76,15 +76,15 @@ public sealed class LayerFallbackTests
     [Fact]
     public async Task Analyst_LlmReturnsValidMWire_ParsesCorrectly()
     {
-        var fake = new FakeOllamaAdapter("M|L=2|em=anxiety|sv=moderate|ri=insomnia|cp=worry|ev=sleep_quote");
+        var fake = new FakeOllamaAdapter("M|L=2|e7=anxiety|s9=moderate|x4=insomnia|y1=worry|q3=sleep_quote");
         var analyst = MakeAnalyst(fake);
 
         AnalystResult result = await analyst.RunAsync("sess_test", "I cannot sleep",
             Array.Empty<ChatMessage>(), Array.Empty<string>());
 
         result.Ok.Should().BeTrue();
-        result.Memo.Should().Contain("em=anxiety");
-        result.Memo.Should().Contain("sv=moderate");
+        result.Memo.Should().Contain("e7=anxiety");
+        result.Memo.Should().Contain("s9=moderate");
         result.Memo.Should().NotContain("decoder_level5");
     }
 
@@ -97,11 +97,11 @@ public sealed class LayerFallbackTests
         var supervisor = MakeSupervisor(fake);
 
         SupervisorResult result = await supervisor.RunAsync("sess_test", "I cannot sleep",
-            "M|L=2|em=anxiety|sv=moderate", ResponseStrategy.Intake);
+            "M|L=2|e7=anxiety|s9=moderate", ResponseStrategy.Intake);
 
         result.Ok.Should().BeTrue();
-        result.Memo.Should().Contain("ap=behavioral_activation");
-        result.Memo.Should().Contain("tk=schedule_one_small_activity");
+        result.Memo.Should().Contain("p3=behavioral_activation");
+        result.Memo.Should().Contain("t5=schedule_one_small_activity");
         result.Memo.Should().Contain("decoder_level5_fallback");
         result.Memo.Should().StartWith("M|L=3|");
         result.Approach.Should().Be("behavioral_activation");
@@ -118,11 +118,11 @@ public sealed class LayerFallbackTests
         var supervisor = MakeSupervisor(fake);
 
         SupervisorResult result = await supervisor.RunAsync("sess_test", "I cannot sleep",
-            "M|L=2|em=anxiety|sv=moderate", ResponseStrategy.Intake);
+            "M|L=2|e7=anxiety|s9=moderate", ResponseStrategy.Intake);
 
         result.Ok.Should().BeFalse();
-        result.Memo.Should().Contain("ap=behavioral_activation");
-        result.Memo.Should().Contain("tk=schedule_one_small_activity");
+        result.Memo.Should().Contain("p3=behavioral_activation");
+        result.Memo.Should().Contain("t5=schedule_one_small_activity");
         result.Memo.Should().Contain("note=llm_error");
         result.Memo.Should().StartWith("M|L=3|");
         result.Error.Should().Be("timeout");
@@ -131,15 +131,15 @@ public sealed class LayerFallbackTests
     [Fact]
     public async Task Supervisor_LlmReturnsValidMWire_ParsesCorrectly()
     {
-        var fake = new FakeOllamaAdapter("M|L=3|ap=CBT|tk=cognitive_restructuring|kq=What_evidence_supports_that?|rn=none");
+        var fake = new FakeOllamaAdapter("M|L=3|p3=CBT|t5=cognitive_restructuring|k2=What_evidence_supports_that?|r8=none");
         var supervisor = MakeSupervisor(fake);
 
         SupervisorResult result = await supervisor.RunAsync("sess_test", "I cannot sleep",
-            "M|L=2|em=anxiety|sv=moderate", ResponseStrategy.Intake);
+            "M|L=2|e7=anxiety|s9=moderate", ResponseStrategy.Intake);
 
         result.Ok.Should().BeTrue();
-        result.Memo.Should().Contain("ap=CBT");
-        result.Memo.Should().Contain("tk=cognitive_restructuring");
+        result.Memo.Should().Contain("p3=CBT");
+        result.Memo.Should().Contain("t5=cognitive_restructuring");
         result.Approach.Should().Be("CBT");
         result.Memo.Should().NotContain("decoder_level5");
     }
@@ -147,7 +147,7 @@ public sealed class LayerFallbackTests
     [Fact]
     public void Supervisor_ExtractApproach_FromValidMemo()
     {
-        string approach = SupervisorLayer.ExtractApproach("M|L=3|ap=CBT|tk=reframing|kq=test|rn=none");
+        string approach = SupervisorLayer.ExtractApproach("M|L=3|p3=CBT|t5=reframing|k2=test|r8=none");
         approach.Should().Be("CBT");
     }
 

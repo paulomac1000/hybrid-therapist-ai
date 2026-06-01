@@ -1,6 +1,7 @@
 using System.Text.Json;
 using HybridTherapist.Application.Flows;
 using HybridTherapist.Domain.Models;
+using Microsoft.Extensions.Logging;
 
 namespace HybridTherapist.Api.Endpoints;
 
@@ -20,20 +21,53 @@ public static class ChatEndpoints
         TherapistFlow flow,
         CancellationToken ct)
     {
-        ChatCompletionRequest? request;
+        ChatCompletionRequest request;
+
         try
         {
-            request = await ctx.Request.ReadFromJsonAsync<ChatCompletionRequest>(ct);
-        }
-        catch
-        {
-            await WriteJsonAsync(ctx, 400, new { error = "Invalid JSON body." }, ct);
-            return;
-        }
+            ctx.Request.EnableBuffering();
+            using JsonDocument doc = await JsonDocument.ParseAsync(ctx.Request.Body, cancellationToken: ct);
 
-        if (request is null)
+            JsonElement root = doc.RootElement;
+            request = new ChatCompletionRequest
+            {
+                Model = root.TryGetProperty("model", out JsonElement m) ? m.GetString() ?? "" : "",
+                Stream = root.TryGetProperty("stream", out JsonElement s) && s.ValueKind == JsonValueKind.True,
+                User = root.TryGetProperty("user", out JsonElement u) && u.ValueKind == JsonValueKind.String ? u.GetString() : null,
+            };
+
+            if (root.TryGetProperty("messages", out JsonElement msgs) && msgs.ValueKind == JsonValueKind.Array)
+            {
+                request.Messages = msgs.EnumerateArray()
+                    .Select(msg => new ChatMessage
+                    {
+                        Role = msg.TryGetProperty("role", out JsonElement r) ? r.GetString() ?? "user" : "user",
+                        Content = msg.TryGetProperty("content", out JsonElement c) ? c.GetString() ?? "" : "",
+                    })
+                    .ToList();
+            }
+            else
+            {
+                request.Messages = [];
+            }
+        }
+        catch (Exception ex)
         {
-            await WriteJsonAsync(ctx, 400, new { error = "Request body is required." }, ct);
+            // Capture raw body for debugging — stream may already be consumed
+            string rawBody = "<unreadable>";
+            try
+            {
+                ctx.Request.Body.Position = 0;
+                using var reader = new StreamReader(ctx.Request.Body);
+                rawBody = await reader.ReadToEndAsync(ct);
+            }
+            catch { /* body already consumed — ignore */ }
+
+            var logger = ctx.RequestServices.GetRequiredService<ILoggerFactory>()
+                .CreateLogger(nameof(ChatEndpoints));
+            logger.LogWarning("JSON parse FAILED — {Error} | body({Len}): {Body}",
+                ex.Message, rawBody.Length, rawBody.Length > 300 ? rawBody[..300] + "..." : rawBody);
+            await WriteJsonAsync(ctx, 400, new { error = "Invalid JSON body." }, ct);
             return;
         }
 
@@ -51,8 +85,8 @@ public static class ChatEndpoints
 
         FlowExecutionResult result = await flow.ExecuteAsync(request, ct);
 
-        ctx.Response.Headers["X-Cortexa-Flow"] = "hybrid-therapist";
-        ctx.Response.Headers["X-Cortexa-Fallback"] = result.Fallback ? "true" : "false";
+        ctx.Response.Headers["X-HT-Flow"] = "hybrid-therapist";
+        ctx.Response.Headers["X-HT-Fallback"] = result.Fallback ? "true" : "false";
 
         if (request.Stream)
         {

@@ -1,0 +1,109 @@
+{
+  "name": "hand-cognitive",
+  "description": "User reports memory and concentration problems. Tests cognitive complaints detection.",
+  "expected_quality": {
+    "pass": true,
+    "min_quality_score": 3,
+    "required_topics": [
+      "cognitive",
+      "focus"
+    ],
+    "required_phrases_pl": [
+      "mgła",
+      "umysł"
+    ],
+    "forbidden_phrases": [
+      "zrób sudoku",
+      "ćwicz mózg"
+    ]
+  },
+  "interactions": [
+    {
+      "layer": "L1_translator_pl_en",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "You are a translator"
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.90|V=I cannot focus on anything anymore, I forget what I was doing five minutes ago, my head is foggy all day"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L2_analyst",
+      "request_match": {
+        "model_contains": "MentaLLaMA"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "M|L=2|e7=cognitive_exhaustion|s9=moderate|x4=concentration_loss,memory_issues|y1=self_criticism,overload|q3=I_cannot_focus_on_anything_anymore"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L3_supervisor",
+      "request_match": {
+        "model_contains": "PsyLLM"
+      },
+      "response": {
+        "model": "hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "M|L=3|p3=cognitive_restructuring|t5=externalize_cognitive_load|k2=When_did_your_mind_last_feel_clear?|r8=none"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L4_therapist",
+      "request_match": {
+        "model_contains": "PsychoCounsel"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/PsychoCounsel-Llama3-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.87\nBrain fog is not a character flaw — it is your mind's way of saying the cognitive load has exceeded what any human can carry. You are not broken, you are overloaded.\n\nWhen did your mind last feel clear?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L6_calibrator",
+      "request_match": {
+        "model_contains": "dolphin"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "Brain fog is not a character flaw — it is your mind's way of saying the cognitive load has exceeded what any human can carry. You are not broken, you are overloaded.\n\nWhen did your mind last feel clear?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L7_translator_en_pl",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "You are a Polish translator"
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.91\nMgła mózgowa to nie wada charakteru — to sposób Twojego umysłu na powiedzenie, że obciążenie poznawcze przekroczyło to, co jakikolwiek człowiek może unieść. Nie jesteś zepsuty, jesteś przeciążony.\n\nKiedy Twój umysł ostatnio czuł się czysty?"
+        },
+        "done": true
+      }
+    }
+  ],
+  "user_input_pl": "Nie mogę się na niczym skupić, zapominam co robiłam pięć minut temu."
+}

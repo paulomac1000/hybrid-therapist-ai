@@ -31,16 +31,57 @@ The hybrid-therapist uses 6 local LLMs behind HandCodec to deliver a therapy ses
 
 ## WALKTHROUGH
 
-The sections below walk through each component of the Socrates pipeline, from idea through implementation.
+### Performatives — how the layers communicate
 
-## PITFALLS
+The pipeline uses two H.A.N.D. performatives:
 
-N/A
+**`M|` (Memo) — Analyst → Supervisor → Therapist.** The analyst emits a compact clinical report in a single line:
+```text
+M|L=2|e7=anxiety|s9=moderate|x4=insomnia|y1=worry
+```
+The supervisor reads this wire, picks an approach, and emits its own memo:
+```text
+M|L=3|p3=reflective_listening|t5=open_question|k2=What keeps you up at night?
+```
+Both memos feed directly into the therapist's prompt — raw, compact, with no expansion. The model learns to read the fields from checkpoint examples, not from a legend in the prompt.
 
-## RELATED_DOCS
+**`R|` (Result) — Therapist → Calibrator → User.** The therapist generates a response with metadata on the first line:
+```text
+R|C=0.88
+I hear that sleep has become a struggle for you. What tends to occupy your mind
+when you lie down at night?
+```
+This Data/Narrative Split keeps the transformer's attention mechanism from hunting for confidence scores buried at the end of a long therapeutic response.
 
-- sys.socrates-pipeline — architecture and layer responsibilities
-- ref.glossary — domain terminology
+### Implicit Priming — teaching by example, not instruction
+
+The models were **never told** about H.A.N.D. No system prompt says "respond in format R|C=...". Instead, before each LLM call, the orchestrator silently injects a single non-therapeutic exchange into the conversation history:
+
+```text
+User:      [SYSTEM_PROTOCOL_PING]
+Assistant: R|C=1.0
+           [SYSTEM_PROTOCOL_ACK]
+```
+
+The model sees the pattern and subconsciously continues it. It learns the format the same way it learns anything — by **mimicking what it sees in context**. This is a stateless cache: every call starts fresh with the same ping.
+
+### Resilience Ladder — when small models stumble
+
+Every layer runs the model's output through `HandResiliencePipeline` — a 5-level degradation ladder:
+
+| Level | Strategy | What it does |
+|-------|----------|--------------|
+| 1 | Strict | Perfect format — passes unchanged |
+| 2 | Lenient | Minor format deviations — repaired |
+| 3 | Markdown Strip | Wire wrapped in ``` fences — stripped |
+| 4 | Semantic Extraction | Model ignored format and wrote prose — regex extracts fields |
+| 5 | Fallback | Everything failed — safe replacement memo |
+
+This means the pipeline never throws HTTP 500 when a small model makes a mistake. Level 5 (unstructured passthrough) triggers a safe fallback memo for L2/L3, so downstream layers never see a broken input.
+
+### Why this works — H.A.N.D. in practice
+
+Five small models. One ~$200 GPU. Zero cloud APIs. Zero per-token billing. The models talk to each other in a pidgin language they learned by imitation — and the pipeline gracefully survives their mistakes. The therapist is the proof of concept.
 
 ## What this architecture buys vs single-model
 
@@ -76,8 +117,8 @@ Returns a JSON document with one event per layer call:
       "duration_ms": 5327,
       "outcome": "ok",
       "input": "(prompt truncated to 2000 chars)",
-      "output": "M|L=2|em=exhaustion|sv=moderate|ri=chronic_insomnia|cp=none",
-      "wire_format": "M|L=2|em=exhaustion|sv=moderate|..."
+      "output": "M|L=2|e7=exhaustion|s9=moderate|x4=chronic_insomnia|y1=none",
+      "wire_format": "M|L=2|e7=exhaustion|s9=moderate|..."
     }
   ]
 }

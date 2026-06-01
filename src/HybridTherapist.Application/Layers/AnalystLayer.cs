@@ -47,11 +47,11 @@ public sealed class AnalystLayer
         CancellationToken ct = default)
     {
         string historyContext = history.Count > 0
-            ? "CONVERSATION HISTORY:\n" + string.Join("\n", history.Select(m => $"{m.Role}: {m.Content}")) + "\n\n"
+            ? "CONVERSATION HISTORY:\n" + string.Join("\n", history.TakeLast(6).Select(m => $"{m.Role}: {m.Content}")) + "\n\n"
             : string.Empty;
 
         string topicsContext = activeTopics.Count > 0
-            ? $"SESSION TOPICS (already discussed): {string.Join(", ", activeTopics)}\n\n"
+            ? $"Session topics: {string.Join(", ", activeTopics)}\n\n"
             : string.Empty;
 
         string systemPrompt =
@@ -60,8 +60,8 @@ public sealed class AnalystLayer
             historyContext +
             "Analyze the user's emotional state, severity, risk indicators, cognitive patterns, " +
             "and provide evidence from their message.\n\n" +
-            "CRITICAL: Only analyze themes the user EXPLICITLY mentioned " +
-            "OR that appear in SESSION TOPICS. Do NOT infer or fabricate new themes.";
+            "Only analyze themes the user EXPLICITLY mentioned or that appear in session topics. " +
+            "Do NOT infer or fabricate new themes.";
 
         IReadOnlyList<HandTurn> messages = HandConversationBuilder.Build(
             systemPrompt,

@@ -1,5 +1,34 @@
 # Changelog
 
+## v0.3.0 (2026-06-01)
+
+### Codec G — random keys experiment
+- All inter-agent wire keys replaced with arbitrary identifiers: `em→e7`, `sv→s9`, `ri→x4`, `cp→y1`, `ev→q3`, `ap→p3`, `tk→t5`, `kq→k2`, `rn→r8`
+- L2 Analyst and L3 Supervisor emit Codec G via checkpoint-based implicit priming
+- L4 Therapist receives raw `M|` memo lines without any key legend in system prompt (Pure Implicit mode)
+- `STRICT_CODEC_G` flag in `TokenSavingsTracker` — blocks verbose-key fallback for research benchmarks
+
+### Benchmark hardening
+- 11 scenario-specific cassettes (`hand-*.json`) with per-scenario `user_input_pl`
+- `HandBenchmarkTests`: L2/L3 Codec G validated from trace, token economy computed from memo wire (not final response)
+- `HandBenchmarkNegativeTests`: old semantic keys (`em`, `sv`, `ap`) cause benchmark failure; English output fails Polish diacritic check
+- `HandBenchmarkValidator`: strict prompt purity, fallback hard-fail, required_topic/phrase hard assertions
+- `run-hand-benchmark.sh`: `--cassette`/`--live`/`--all` modes, measured (not hardcoded) token savings
+- Token economy measured per-benchmark from `TokenSavingsTracker.ExpandMemoToPlaintext()` in strict mode
+
+### Documentation
+- `docs/benchmarks/hand-codec-g.md`: full benchmark report (hypothesis, setup, scenarios, results, limitations)
+- `docs/benchmarks/benchmark-matrix.md`: planned comparison matrix (JSON vs H.A.N.D., checkpoints count, model swap)
+- All active docs updated to Codec G keys; stale "dictionary keys in the system prompt" references removed
+- `afds_config.yaml`: exempted `docs/benchmarks/` from AFDS validation
+- Cassettes `README.md`: new benchmark scenario table
+
+### Tests
+- 277 unit tests (+5 new: prompt purity, topic registry, therapist layer service)
+- 19 benchmark/integration tests (+3 new: negative tests, validator)
+
+---
+
 ## v0.2.0 (2026-05-24)
 
 ### Therapy logic overhaul (#7)

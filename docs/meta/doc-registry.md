@@ -17,15 +17,6 @@ owners: ["hybrid-therapist"]
 
 # Document Registry
 
-## PURPOSE
-
-Single source of truth listing every documentation file in this project, its type, status, and dependencies.
-
-## SCOPE
-
-- INCLUDED: All AFDS-governed documentation files under `docs/`.
-- EXCLUDED: README.md (human-first, exempt from AFDS), source code, CI/CD configs.
-
 ## RULES
 
 | doc_id | Path | Type | Status | Description |
@@ -38,28 +29,13 @@ Single source of truth listing every documentation file in this project, its typ
 | `ref.glossary` | `docs/meta/glossary.md` | ref | active | Domain term glossary |
 | `ref.doc-registry` | `docs/meta/doc-registry.md` | ref | active | This file — document registry |
 | `ref.health-report` | `docs/meta/health-report.md` | ref | active | CI-generated documentation health metrics |
+| `bench.hand-codec-g` | `docs/benchmarks/hand-codec-g.md` | benchmark | active | Codec G implicit priming experiment — benchmark report |
+| `bench.benchmark-matrix` | `docs/benchmarks/benchmark-matrix.md` | benchmark | active | Planned comparison matrix for H.A.N.D. benchmark variants |
 
-## DEFINITIONS
-
-N/A
-
-## INTERFACES
-
-- INPUT: Manual updates on document create/move/deprecate.
-- OUTPUT: Single index for AI retrieval and CI validation.
-
-## STATE
-
-- Assumptions: Registry is manually maintained. CI may validate consistency.
-- Known Limitations: Does not track external references (HandCodec docs, GitHub READMEs).
 
 ## EDGE_CASES
 
-- CASE: New document added without registry update → EXPECTED: CI flags mismatch between filesystem and registry.
-
-## EXAMPLES
-
-N/A
+- CASE: A new document is added without a registry update → EXPECTED: CI flags a mismatch between the filesystem and the registry.
 
 ## NON_GOALS
 

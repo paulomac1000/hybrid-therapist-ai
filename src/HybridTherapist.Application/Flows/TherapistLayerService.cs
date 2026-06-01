@@ -63,7 +63,11 @@ public sealed class TherapistLayerService
     public async Task<LayerResult> RunL1TranslatePlToEnAsync(string sessionId, string userTextPl, CancellationToken ct = default)
     {
         const string SystemPrompt =
-            "You are a translator. Translate the Polish text the user sends to natural English. " +
+            "You are a translator working in a mental health therapy context. " +
+            "Translate the following Polish message from a therapy patient to natural, conversational English. " +
+            "The user is Polish — interpret words in their psychological and everyday meaning, not literal dictionary translations. " +
+            "\"Wakacje\" means vacation/time off, not Christmas holidays. " +
+            "\"Urlop\" means time off work. " +
             "Output ONLY the English translation. " +
             "Do NOT explain. Do NOT continue the conversation. Do NOT echo the prompt.";
 
@@ -110,16 +114,7 @@ public sealed class TherapistLayerService
             "Respond as an empathetic therapist. Keep under 200 words. " +
             "NEVER repeat or echo the user's words. Generate an original therapeutic response.";
 
-        string phaseGuidance = SessionPhase.GetPhaseSystemPrompt(currentPhase);
-        string systemPrompt =
-            "You are an empathetic therapist. Respond with warmth and clinical insight. " +
-            "Do not give direct advice. Ask one open question to continue.\n\n" +
-            "[ANALYST MEMO DICTIONARY]\n" +
-            "em=emotional_state, sv=severity, ri=risk_indicators, cp=cognitive_patterns\n\n" +
-            "[SUPERVISOR MEMO DICTIONARY]\n" +
-            "ap=approach, tk=technique, kq=key_question, rn=risk_note\n\n" +
-            $"Read the M| messages below as structured clinical context.\n\n" +
-            $"[PHASE GUIDANCE — {currentPhase}]\n{phaseGuidance}";
+        string systemPrompt = BuildL4SystemPrompt();
 
         IReadOnlyList<HandTurn> messages = HandConversationBuilder.Build(
             systemPrompt, HandCheckpointLibrary.SystemPing, prompt,
@@ -315,6 +310,10 @@ public sealed class TherapistLayerService
 
         return sb.ToString();
     }
+
+    internal static string BuildL4SystemPrompt() =>
+        "You are an empathetic therapist. Respond with warmth and clinical insight. " +
+        "Do not give direct advice. Ask one open question to continue.";
 
     // ── Helpers ──────────────────────────────────────────────────────────────
 

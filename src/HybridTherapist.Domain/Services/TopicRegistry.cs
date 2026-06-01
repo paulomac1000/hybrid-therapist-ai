@@ -6,21 +6,31 @@ namespace HybridTherapist.Domain.Services;
 /// across the session. Used by <c>CheckThematicAlignment</c> to prevent the analyst from
 /// fabricating themes the user never raised.
 ///
-/// Cortexa parity: <c>Cortexa.Orchestrator.Application.Services.TopicRegistry</c>.
+/// Topic ids are intentionally stable because downstream tests and metadata use them.
 /// </summary>
 public static class TopicRegistry
 {
     // Polish + English keyword → canonical topic id. Multiple keywords can map to one topic.
     private static readonly (string Topic, string[] Keywords)[] TopicMap =
     [
-        ("sleep", ["zasnąć", "zasypia", "zasnac", "bezsenność", "bezsennosc", "śpię", "śpij", "spie", "sen ", "sleep", "insomnia", "wybudz", "budzę"]),
-        ("anxiety", ["lęk", "lek ", "niepokój", "niepokoj", "boję się", "boje sie", "anxiety", "panic", "panika", "stres", "stress", "zdenerwowany", "zdenerwowana"]),
-        ("depression", ["depresj", "smutek", "smutn", "przygnębi", "przygnebi", "beznadziej", "bez sensu", "depress", "down", "empty"]),
+        ("sleep", ["zasnąć", "zasypia", "zasnac", "bezsenność", "bezsennosc", "śpię", "śpij", "spie", "sen ", "sleep", "insomnia", "wybudz", "budzę", "przespa", "nocy"]),
+        ("insomnia", ["bezsenność", "bezsennosc", "insomnia", "nie przespa", "nie śpię", "nie spie", "przespa"]),
+        ("anxiety", ["lęk", "lek ", "niepokój", "niepokoj", "boję się", "boje sie", "anxiety", "panic", "panik", "stres", "stress", "zdenerwowany", "zdenerwowana", "martw", "gonitw"]),
+        ("worry", ["martw", "zmartw", "worry", "gonitw"]),
+        ("panic", ["panik", "atak paniki", "serce wali", "oddych"]),
+        ("depression", ["depresj", "smutek", "smutn", "przygnębi", "przygnebi", "beznadziej", "bez sensu", "depress", "down", "empty", "radości", "radosc", "przyjemn", "pust"]),
+        ("anhedonia", ["anhedon", "przyjemn", "radości", "radosc", "nic już nie sprawia", "nic juz nie sprawia", "płaskie", "plaskie"]),
         ("relationships", ["partner", "mąż", "maz", "żona", "zona", "chłopak", "chlopak", "dziewczyn", "związek", "zwiazek", "relacj", "rodzin", "rozwód", "rozwod", "zdrada", "betrayal", "marriage"]),
-        ("work", ["praca", "robota", "szef", "kolega", "koledzy", "wypal", "burnout", "kariera", "job", "boss", "work"]),
+        ("work", ["praca", "pracę", "pracuje", "pracuję", "robota", "szef", "kolega", "koledzy", "wypal", "burnout", "kariera", "job", "boss", "work"]),
+        ("stress", ["stres", "stress", "po godzinach", "zadań", "zadan", "wykończ", "wykoncz", "szef"]),
+        ("burnout", ["wypal", "burnout", "pust", "wyczerp", "wykończ", "wykoncz", "nic ze mnie nie zostało", "nic ze mnie nie zostalo"]),
+        ("exhaustion", ["wyczerp", "wykończ", "wykoncz", "zmęcz", "zmecz", "pust", "nic ze mnie nie zostało", "nic ze mnie nie zostalo"]),
+        ("cognitive", ["skupi", "koncentrac", "zapomin", "mgła", "mgla", "mózg", "mozg", "rozkojarz"]),
+        ("focus", ["skupi", "koncentrac", "focus", "zapomin"]),
         ("loneliness", ["samotn", "lonely", "alone", "izolac", "nie mam nikogo"]),
         ("anger", ["złość", "zlosc", "wściek", "wsciek", "wkurz", "frustracj", "anger", "angry", "irrit"]),
-        ("grief", ["żałob", "zalob", "strat", "zmarł", "zmarl", "śmierć", "smierc", "po stracie", "grief", "mourning", "loss"]),
+        ("grief", ["żałob", "zalob", "strat", "zmarł", "zmarl", "odeszł", "odeszla", "śmierć", "smierc", "płacz", "placz", "po stracie", "grief", "mourning", "loss"]),
+        ("loss", ["strat", "zmarł", "zmarl", "odeszł", "odeszla", "śmierć", "smierc", "loss"]),
         ("trauma", ["trauma", "krzywd", "abuse", "molestow", "gwałt", "gwalt", "przemoc"]),
         ("self_worth", ["wartość", "wartosc", "bezwartoś", "bezwartos", "nie zasługuj", "nie zasluguj", "self-worth", "worth", "useless"]),
         ("health", ["choroba", "choruj", "lekarz", "ból", "bol ", "headache", "migrena", "illness", "diagnoz"]),

@@ -23,7 +23,7 @@
         "model": "hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M",
         "message": {
           "role": "assistant",
-          "content": "M|L=2|em=exhaustion|sv=high|ri=chronic_insomnia|cp=none|ev=cannot_sleep_three_weeks"
+          "content": "M|L=2|e7=exhaustion|s9=high|x4=chronic_insomnia|y1=none|q3=cannot_sleep_three_weeks"
         },
         "done": true
       }
@@ -37,7 +37,7 @@
         "model": "hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M",
         "message": {
           "role": "assistant",
-          "content": "M|L=3|ap=reflective_listening|tk=validate_exhaustion|kq=What_keeps_your_mind_awake_at_night?|rn=none"
+          "content": "M|L=3|p3=reflective_listening|t5=validate_exhaustion|k2=What_keeps_your_mind_awake_at_night?|r8=none"
         },
         "done": true
       }

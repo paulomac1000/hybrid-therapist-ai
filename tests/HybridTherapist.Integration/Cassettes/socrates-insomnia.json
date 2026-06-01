@@ -26,7 +26,7 @@
         "model": "hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M",
         "message": {
           "role": "assistant",
-          "content": "M|L=2|em=exhaustion_with_anxiety|sv=moderate|ri=chronic_insomnia|cp=worry,catastrophizing|ev=I_haven't_been_able_to_sleep_for_three_weeks"
+          "content": "M|L=2|e7=exhaustion_with_anxiety|s9=moderate|x4=chronic_insomnia|y1=worry,catastrophizing|q3=I_haven't_been_able_to_sleep_for_three_weeks"
         },
         "done": true
       }
@@ -40,7 +40,7 @@
         "model": "hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M",
         "message": {
           "role": "assistant",
-          "content": "M|L=3|ap=reflective_listening|tk=open_question|kq=What_tends_to_occupy_your_mind_when_you_lie_down_at_night?|rn=none"
+          "content": "M|L=3|p3=reflective_listening|t5=open_question|k2=What_tends_to_occupy_your_mind_when_you_lie_down_at_night?|r8=none"
         },
         "done": true
       }

@@ -1,0 +1,109 @@
+{
+  "name": "hand-work-stress",
+  "description": "User reports workplace burnout. Tests CBT approach selection, grounding technique detection.",
+  "expected_quality": {
+    "pass": true,
+    "min_quality_score": 3,
+    "required_topics": [
+      "stress",
+      "work"
+    ],
+    "required_phrases_pl": [
+      "przepracowanie",
+      "zadania"
+    ],
+    "forbidden_phrases": [
+      "rzuć pracę",
+      "po prostu"
+    ]
+  },
+  "interactions": [
+    {
+      "layer": "L1_translator_pl_en",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "You are a translator"
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.90|V=My boss keeps piling on more work, I work overtime every day and I am completely exhausted"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L2_analyst",
+      "request_match": {
+        "model_contains": "MentaLLaMA"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "M|L=2|e7=frustration_with_burnout|s9=moderate|x4=exhaustion|y1=helplessness,overwork_narrative|q3=My_boss_keeps_piling_on_more_work"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L3_supervisor",
+      "request_match": {
+        "model_contains": "PsyLLM"
+      },
+      "response": {
+        "model": "hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "M|L=3|p3=boundary_setting|t5=identify_one_recoverable_hour|k2=What_would_happen_if_you_said_no_to_one_extra_task_tomorrow?|r8=none"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L4_therapist",
+      "request_match": {
+        "model_contains": "PsychoCounsel"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/PsychoCounsel-Llama3-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.86\nBeing the one who always says yes can hollow you out from the inside. Chronic overwork is not a badge of honor — it is a slow leak of your energy.\n\nWhat would happen if you said no to one extra task tomorrow?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L6_calibrator",
+      "request_match": {
+        "model_contains": "dolphin"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "Being the one who always says yes can hollow you out from the inside. Chronic overwork is a slow leak of your energy.\n\nWhat would happen if you said no to one extra task tomorrow?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L7_translator_en_pl",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "You are a Polish translator"
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.89\nBycie osobą, która zawsze mówi tak, potrafi wydrążyć człowieka od środka. Chroniczne przepracowanie to nie odznaka — to powolny wyciek Twojej energii.\n\nCo by się stało, gdybyś jutro odmówiła jednego dodatkowego zadania?"
+        },
+        "done": true
+      }
+    }
+  ],
+  "user_input_pl": "Szef ciągle dokłada mi zadań, pracuję po godzinach i jestem wykończona."
+}

@@ -17,43 +17,6 @@ owners: ["hybrid-therapist"]
 
 # Hybrid Therapist — HTTP API
 
-## PURPOSE
-
-OpenAI-compatible HTTP API reference for the hybrid-therapist Socrates pipeline — describes all endpoints, request/response formats, streaming behaviour, and error responses.
-
-## SCOPE
-
-- INCLUDED: `/v1/chat/completions`, `/v1/models`, `/v1/trace/{sessionId}` endpoints, request schemas, response codes, SSE streaming format.
-- EXCLUDED: Internal pipeline architecture, security model, deployment instructions.
-
-## DEFINITIONS
-
-N/A
-
-## RULES
-
-N/A
-
-## INTERFACES
-
-N/A — endpoint details are in the sections below.
-
-## STATE
-
-N/A
-
-## EDGE_CASES
-
-N/A
-
-## EXAMPLES
-
-N/A — inline examples appear in each endpoint section below.
-
-## NON_GOALS
-
-N/A
-
 ## Endpoints
 
 | Method | Path | Purpose |
@@ -154,8 +117,8 @@ The flow uses per-layer temperatures (`0.1` for translation, `0.4-0.7` for gener
 
 | Header | Value | Meaning |
 |--------|-------|---------|
-| `X-Cortexa-Flow` | `hybrid-therapist` | Identifies which orchestration ran |
-| `X-Cortexa-Fallback` | `true` / `false` | True when L4 therapist call or L7 EN→PL translation degraded (fallback message returned) |
+| `X-HT-Flow` | `hybrid-therapist` | Identifies which orchestration ran |
+| `X-HT-Fallback` | `true` / `false` | True when L4 therapist call or L7 EN→PL translation degraded (fallback message returned) |
 
 ## Crisis hard-stop response
 
@@ -229,8 +192,8 @@ Returns every layer execution for a session, in order. Captures what each layer 
       "model": "hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M",
       "duration_ms": 5327,
       "outcome": "ok",
-      "output": "M|L=2|em=exhaustion|sv=moderate|ri=insomnia|cp=none",
-      "wire_format": "M|L=2|em=exhaustion|sv=moderate|ri=insomnia|cp=none"
+      "output": "M|L=2|e7=exhaustion|s9=moderate|x4=insomnia|y1=none",
+      "wire_format": "M|L=2|e7=exhaustion|s9=moderate|x4=insomnia|y1=none"
     }
     // ...L3, L4, L6, L7
   ]

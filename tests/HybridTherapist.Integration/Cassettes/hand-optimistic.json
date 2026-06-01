@@ -1,0 +1,106 @@
+{
+  "name": "hand-optimistic",
+  "description": "Short positive message — user reports feeling better after previous sessions. Tests positive-tone handling, minimal escalation.",
+  "expected_quality": {
+    "pass": true,
+    "min_quality_score": 3,
+    "required_topics": [],
+    "required_phrases_pl": [
+      "dobre dni",
+      "cieszę"
+    ],
+    "forbidden_phrases": [
+      "nie przesadzaj z optymizmem",
+      "to tylko chwilowe"
+    ]
+  },
+  "interactions": [
+    {
+      "layer": "L1_translator_pl_en",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "You are a translator"
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.95|V=Today is a good day, I actually woke up feeling rested for the first time in months"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L2_analyst",
+      "request_match": {
+        "model_contains": "MentaLLaMA"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "M|L=2|e7=positive_shift|s9=low|x4=none|y1=grateful,hopeful|q3=Today_is_a_good_day"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L3_supervisor",
+      "request_match": {
+        "model_contains": "PsyLLM"
+      },
+      "response": {
+        "model": "hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "M|L=3|p3=reflective_listening|t5=celebrate_progress|k2=What_do_you_think_made_today_different?|r8=none"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L4_therapist",
+      "request_match": {
+        "model_contains": "PsychoCounsel"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/PsychoCounsel-Llama3-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.92\nThose good days are not accidents — they are proof that healing is happening even when you cannot see it day to day. I am genuinely glad to hear this.\n\nWhat do you think made today different?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L6_calibrator",
+      "request_match": {
+        "model_contains": "dolphin"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "Those good days are not accidents — they are proof that healing is happening even when you cannot see it. I am genuinely glad to hear this.\n\nWhat do you think made today different?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L7_translator_en_pl",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "You are a Polish translator"
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.94\nDobre dni to nie przypadek — to dowód, że gojenie się dzieje, nawet jeśli nie widzisz go na co dzień. Szczerze się cieszę, że to słyszę.\n\nJak myślisz, co sprawiło, że dzisiaj było inaczej?"
+        },
+        "done": true
+      }
+    }
+  ],
+  "user_input_pl": "Dzisiaj jest dobry dzień, pierwszy raz od miesięcy obudziłam się wypoczęta."
+}

@@ -6,7 +6,7 @@ namespace HybridTherapist.Domain.Services;
 /// Prevents the cascade: analyst fabricates "betrayal" → supervisor plans CBT for
 /// trust issues → therapist tells the user about betrayal they never mentioned.
 ///
-/// Cortexa parity: <c>CheckThematicAlignment</c> inside <c>TherapistFlow</c>.
+/// Checks whether analyst output stays aligned with explicit user topics.
 /// </summary>
 public static class ThematicAlignment
 {

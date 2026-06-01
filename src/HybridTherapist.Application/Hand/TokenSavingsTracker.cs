@@ -28,6 +28,14 @@ public sealed class TokenSavingsTracker
             : 0);
 
     /// <summary>
+    /// When true, only Codec G random keys (e7,s9,x4,y1,q3,p3,t5,k2,r8) are accepted.
+    /// Verbose fallbacks and old keys are treated as failures. Used for research benchmarks.
+    /// Default false — allows verbose backwards compatibility in production.
+    /// </summary>
+    [ThreadStatic]
+    public static bool StrictCodecG;
+
+    /// <summary>
     /// Expands an M| memo wire line into a plaintext English paragraph,
     /// simulating what the prompt would look like without wire compression.
     /// </summary>
@@ -48,23 +56,23 @@ public sealed class TokenSavingsTracker
         string layer = fields.TryGetValue("l", out var l) ? l : "?";
         var lines = new List<string> { $"Layer {layer} Analysis:" };
 
-        if (fields.TryGetValue("em", out var em) || fields.TryGetValue("emotional_state", out em))
+        if (fields.TryGetValue("e7", out var em) || (!StrictCodecG && fields.TryGetValue("emotional_state", out em)))
             lines.Add($"- Emotional state: {em}");
-        if (fields.TryGetValue("sv", out var sv) || fields.TryGetValue("severity", out sv))
+        if (fields.TryGetValue("s9", out var sv) || (!StrictCodecG && fields.TryGetValue("severity", out sv)))
             lines.Add($"- Severity: {sv}");
-        if (fields.TryGetValue("ri", out var ri) || fields.TryGetValue("risk_indicators", out ri))
+        if (fields.TryGetValue("x4", out var ri) || (!StrictCodecG && fields.TryGetValue("risk_indicators", out ri)))
             lines.Add($"- Risk indicators: {ri}");
-        if (fields.TryGetValue("cp", out var cp) || fields.TryGetValue("cognitive_patterns", out cp))
+        if (fields.TryGetValue("y1", out var cp) || (!StrictCodecG && fields.TryGetValue("cognitive_patterns", out cp)))
             lines.Add($"- Cognitive patterns: {cp}");
-        if (fields.TryGetValue("ev", out var ev) || fields.TryGetValue("evidence_quotes", out ev))
+        if (fields.TryGetValue("q3", out var ev) || (!StrictCodecG && fields.TryGetValue("evidence_quotes", out ev)))
             lines.Add($"- Evidence: \"{ev}\"");
-        if (fields.TryGetValue("ap", out var ap) || fields.TryGetValue("approach", out ap))
+        if (fields.TryGetValue("p3", out var ap) || (!StrictCodecG && fields.TryGetValue("approach", out ap)))
             lines.Add($"- Approach: {ap}");
-        if (fields.TryGetValue("tk", out var tk) || fields.TryGetValue("technique", out tk))
+        if (fields.TryGetValue("t5", out var tk) || (!StrictCodecG && fields.TryGetValue("technique", out tk)))
             lines.Add($"- Technique: {tk}");
-        if (fields.TryGetValue("kq", out var kq) || fields.TryGetValue("key_question", out kq))
+        if (fields.TryGetValue("k2", out var kq) || (!StrictCodecG && fields.TryGetValue("key_question", out kq)))
             lines.Add($"- Key question: {kq}");
-        if (fields.TryGetValue("rn", out var rn) || fields.TryGetValue("risk_note", out rn))
+        if (fields.TryGetValue("r8", out var rn) || (!StrictCodecG && fields.TryGetValue("risk_note", out rn)))
             lines.Add($"- Risk note: {rn}");
 
         return string.Join("\n", lines);

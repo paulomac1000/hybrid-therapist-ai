@@ -3,7 +3,19 @@ default_paths:
   - docs/
 excluded_dirs:
   - archived
+  - artifacts
 exempt_files:
   - README.md
   - CHANGELOG.md
 default_doc_id_prefix: ref
+types:
+  ref:
+    sections: []
+  system:
+    sections: []
+  guide:
+    sections: []
+  benchmark:
+    id_prefix: bench
+    default_ttl: 365
+    sections: []

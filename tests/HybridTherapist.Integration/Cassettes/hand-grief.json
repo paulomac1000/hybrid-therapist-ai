@@ -1,0 +1,109 @@
+{
+  "name": "hand-grief",
+  "description": "User reports grief after losing a parent. Tests grief topic detection, reflective listening approach.",
+  "expected_quality": {
+    "pass": true,
+    "min_quality_score": 4,
+    "required_topics": [
+      "grief",
+      "loss"
+    ],
+    "required_phrases_pl": [
+      "łzy",
+      "wspomnienie"
+    ],
+    "forbidden_phrases": [
+      "czas leczy rany",
+      "wszystko będzie dobrze"
+    ]
+  },
+  "interactions": [
+    {
+      "layer": "L1_translator_pl_en",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "You are a translator"
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.92|V=It has been three months since my mom died and I still cannot stop crying every day"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L2_analyst",
+      "request_match": {
+        "model_contains": "MentaLLaMA"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "M|L=2|e7=grief|s9=moderate|x4=persistent_crying,social_withdrawal|y1=rumination,idealization_of_lost_relationship|q3=three_months_since_my_mom_died"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L3_supervisor",
+      "request_match": {
+        "model_contains": "PsyLLM"
+      },
+      "response": {
+        "model": "hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "M|L=3|p3=reflective_listening|t5=validate_emotion|k2=What_is_one_memory_of_her_that_makes_you_smile_even_through_the_tears?|r8=none"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L4_therapist",
+      "request_match": {
+        "model_contains": "PsychoCounsel"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/PsychoCounsel-Llama3-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.86\nThree months is both an eternity and the blink of an eye when you are grieving someone who shaped your life. There is no calendar for this kind of pain — tears are not a sign of weakness, they are proof of love still looking for where to go.\n\nWhat is one memory of her that makes you smile even through the tears?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L6_calibrator",
+      "request_match": {
+        "model_contains": "dolphin"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "Three months is both an eternity and the blink of an eye when you are grieving someone who shaped your life. There is no calendar for this kind of pain — tears are proof of love still looking for where to go.\n\nWhat is one memory of her that makes you smile even through the tears?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L7_translator_en_pl",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "You are a Polish translator"
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.91\nTrzy miesiące to jednocześnie wieczność i mgnienie oka, gdy opłakuje się kogoś, kto ukształtował Twoje życie. Nie ma kalendarza dla tego rodzaju bólu — łzy nie są oznaką słabości, są dowodem miłości, która wciąż szuka miejsca, dokąd pójść.\n\nJakie jest jedno wspomnienie o niej, które sprawia, że się uśmiechasz — nawet przez łzy?"
+        },
+        "done": true
+      }
+    }
+  ],
+  "user_input_pl": "Minęły trzy miesiące odkąd mama odeszła, a ja nadal płaczę codziennie."
+}

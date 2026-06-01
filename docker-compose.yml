@@ -93,7 +93,8 @@ services:
     ports:
       - "3080:3080"
     volumes:
-      - ./config/librechat.yaml:/app/librechat.yaml:Z,ro
+      - ./config/librechat.yaml:/app/librechat.yaml:Z
+      - ./config/librechat.yaml:/app/data/librechat.yaml:Z
       - ./data/librechat:/app/data:Z
       - ./data/librechat-logs:/app/api/logs:Z
     environment:

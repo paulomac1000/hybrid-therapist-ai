@@ -1,215 +1,188 @@
 # Hybrid Therapist
 
-A self-contained, OpenAI-compatible Polish therapy AI using a Socrates multi-agent pipeline.
-Communicates between layers via [HandCodec](../hand-codec) wire format.
+Eksperymentalny, wieloagentowy psycholog AI działający w języku polskim.
+Działa w całości lokalnie — bez chmury, bez opłat za tokeny, na jednej karcie graficznej za ~200 USD.
 
-## Architecture — Socrates Pipeline
+---
 
-```
-User (Polish) → CrisisGate → PrivacySanitizer
-                    ↓
-              L1 Bielik PL→EN
-                    ↓
-              L2 MentaLLaMA (Analyst)
-                    ↓
-              L3 PsyLLM (Supervisor)
-                    ↓
-              L5 MemoryService (compaction)
-                    ↓
-              L4 PsychoCounsel (Therapist)
-                    ↓
-              L6 Llama4-Dolphin (Calibrator)
-                    ↓
-              L7 Bielik EN→PL
-                    ↓
-              User (Polish response)
-```
+## Co to jest?
 
-**Layer order is enforced**: CrisisGate and PrivacySanitizer always execute first.
+Hybrid Therapist używa **17-warstwowego pipeline'u Socrates** — zespołu sześciu wyspecjalizowanych,
+lokalnych modeli LLM (przez Ollamę), z których każdy wykonuje jedno zadanie: tłumaczenie,
+analizę emocji, planowanie terapeutyczne, generowanie odpowiedzi i kontrolę jakości.
 
-## Powered by H.A.N.D. Codec
+Zamiast pytać jeden duży model "bądź psychologiem", pipeline rozdziela odpowiedzialność:
+każdy model robi to, w czym jest najlepszy, a ich wyniki są łączone w spójną odpowiedź terapeutyczną.
 
-The Socrates pipeline was built as a **living proof-of-concept** for the
-[H.A.N.D. Codec](../hand-codec) — a probabilistic transport layer that lets small,
-local LLMs communicate reliably in a structured pidgin language without being
-instructed about the format.
+**To nie jest zamiennik profesjonalnej terapii.** To eksperyment badawczy sprawdzający,
+czy zespół małych, lokalnych modeli może działać lepiej w rozmowie terapeutycznej
+niż pojedynczy model ogólnego przeznaczenia.
 
-### How the layers talk
+## Dlaczego wiele modeli zamiast jednego?
 
-Instead of verbose plaintext (which burns tokens and confuses small models),
-the agents use two H.A.N.D. performatives:
+Pojedynczy model — nawet duży — musi jednocześnie:
+- wykryć kryzys (czy użytkownik mówi o samobójstwie?)
+- oczyścić dane osobowe
+- zrozumieć stan emocjonalny
+- wybrać strategię terapeutyczną
+- wygenerować empatyczną odpowiedź po polsku
+- sprawdzić jakość tej odpowiedzi
 
-**`M|` (Memo) — Analyst → Supervisor → Therapist.** The analyst emits a compact
-clinical report in a single line:
-```
-M|L=2|em=anxiety|sv=moderate|ri=insomnia|cp=worry
-```
-The supervisor reads this raw wire, picks an approach, and emits its own memo:
-```
-M|L=3|ap=reflective_listening|tk=open_question|kq=What keeps you up at night?
-```
-Both memos feed directly into the therapist's prompt — raw, compact, zero expansion.
-A dictionary key in the system prompt teaches the model to read the fields.
+Pipeline Socrates rozkłada te zadania na osobne warstwy. Każda warstwa używa
+modelu dostrojonego do swojego zadania (MentaLLaMA do analizy klinicznej,
+PsyLLM do planowania terapii, PsychoCounsel do generowania odpowiedzi).
 
-**`R|` (Result) — Therapist → Calibrator → User.** The therapist generates a response
-with metadata on the first line and prose after a newline:
-```
-R|C=0.88
-I hear that sleep has become a struggle for you. What tends to occupy your mind
-when you lie down at night?
-```
-This Data/Narrative Split keeps the transformer's attention mechanism from hunting
-for confidence scores buried at the end of a long therapeutic response.
+Dzięki temu:
+- **Lepsza jakość** — każdy model robi jedną rzecz dobrze
+- **Wykrywalne błędy** — ślad po każdej warstwie (trace), wiadomo co zawiodło
+- **Lokalnie** — wszystko na Twoim sprzęcie, dane nie opuszczają maszyny
+- **Tanio** — zero kosztów API, jedna karta graficzna
 
-### Implicit Priming — teaching by example, not instruction
+## Czym jest Socrates Pipeline?
 
-The models were **never told** about H.A.N.D. No system prompt says "respond in format
-R|C=...". Instead, before each LLM call, the orchestrator silently injects a single
-non-therapeutic exchange into the conversation history:
+```text
+Użytkownik (PL) → CrisisGate → PrivacySanitizer
+                       ↓
+                 L1 Tłumacz PL→EN (Bielik 7B)
+                       ↓
+                 L2 Analityk (MentaLLaMA 7B)  ← wykrywa emocje, nasilenie
+                       ↓
+                 L3 Supervisor (PsyLLM 8B)    ← wybiera strategię
+                       ↓
+                 L4 Terapeuta (PsychoCounsel 8B) ← generuje odpowiedź
+                       ↓
+                 L6 Kalibrator (Llama4-Dolphin 8B) ← poprawia styl
+                       ↓
+                 L7 Tłumacz EN→PL (Bielik 7B)
+                       ↓
+                 Użytkownik (odpowiedź po polsku)
+```text
 
-```
-User:      [SYSTEM_PROTOCOL_PING]
-Assistant: R|C=1.0
-           [SYSTEM_PROTOCOL_ACK]
-```
+Każda warstwa ma jedną odpowiedzialność:
 
-The model sees the pattern and subconsciously continues it. It learns the format the
-same way it learns anything — by **mimicking what it sees in context**. This is a
-stateless cache: every call starts fresh with the same ping.
+| Warstwa | Co robi |
+|---------|---------|
+| CrisisGate | Wykrywa myśli samobójcze — zwraca numer 116 123, blokuje dalsze przetwarzanie |
+| PrivacySanitizer | Usuwa e-maile, telefony, PESEL zanim trafią do LLM |
+| L1/L7 Tłumacz | Tłumaczy PL↔EN (Bielik — polski model 7B) |
+| L2 Analityk | Ocenia stan emocjonalny (MentaLLaMA — model kliniczny) |
+| L3 Supervisor | Wybiera podejście terapeutyczne (PsyLLM — model terapeutyczny) |
+| L4 Terapeuta | Generuje odpowiedź (PsychoCounsel — model doradczy) |
+| L6 Kalibrator | Poprawia styl, usuwa sztampowe otwarcia |
+| QA (EN + PL) | Sprawdza czy odpowiedź jest po polsku i nie zawiera wycieków promptu |
 
-### Resilience — when small models stumble
+Warstwy komunikują się przez **H.A.N.D. Codec** — kompaktowy format wire, dzięki któremu
+małe modele wymieniają dane kliniczne bez marnowania tokenów na rozwlekły plaintext.
+Szczegóły protokołu: [docs/socrates-pipeline.md](docs/socrates-pipeline.md).
 
-Every layer runs the model's output through `HandResiliencePipeline` — a 5-level
-degradation ladder. If the model writes perfect wire (Level 1), great. If it wraps
-the wire in markdown fences (Level 3), the codec strips them. If it ignores the
-format entirely and writes prose like *"The emotional state is anxiety..."* (Level 4),
-regex extracts the fields and builds a valid memo. If everything fails (Level 5),
-a safe fallback memo keeps the pipeline running. No HTTP 500. No crashes.
+## Co potrafi
 
-### Why this matters
+- **Pełna prywatność** — wszystko lokalnie, zero chmury, zero API zewnętrznych
+- **Wykrywanie kryzysu** — twarde blokowanie myśli samobójczych, numer 116 123
+- **Ochrona danych** — automatyczne usuwanie PESEL, e-maili, telefonów
+- **Ślad diagnostyczny** — `/v1/trace/{sessionId}` pokazuje co zrobiła każda warstwa
+- **API kompatybilne z OpenAI** — `/v1/chat/completions`, działa z LibreChat
+- **Odporność na błędy** — awaria jednego modelu nie wywala całego pipeline'u
+- **Świadomość fazy sesji** — inny styl na początku rozmowy, inny przy pogłębianiu
 
-Five small models. One $200 GPU. Zero cloud APIs. Zero per-token billing. They talk
-to each other in a pidgin language they learned by imitation — and the pipeline
-survives their mistakes gracefully. This is the promise of H.A.N.D. The therapist
-is the proof.
+## H.A.N.D. Codec — eksperyment komunikacji międzyagentowej
 
-## Quick start
+Hybrid Therapist testuje [H.A.N.D. Codec](https://github.com/paulomac1000/hand-codec) jako protokół
+komunikacji między małymi modelami. Obecny eksperyment **Codec G** używa losowo przemianowanych
+kluczy (`e7`, `s9`, `p3`, `k2`...) — bez znaczenia semantycznego. L4 terapeuta otrzymuje surowe
+linie `M|` **bez legendy i instrukcji formatu** — uczy się wzorca wyłącznie przez przykłady w
+historii konwersacji (implicit priming).
+
+Benchmark H.A.N.D. Codec G sprawdza teraz cały łańcuch: L2 generuje Codec G, L3
+generuje Codec G, L4 dostaje surowe `M|` memo bez legendy, a finalna odpowiedź
+pozostaje po polsku. Aktualne wyniki nie są wpisywane w README; generuje je:
 
 ```bash
-# 1. Start Ollama and the therapist service
+./scripts/run-hand-benchmark.sh --cassette --report
+```
+
+[Pełny opis benchmarku](docs/benchmarks/hand-codec-g.md) | [Macierz porównawcza](docs/benchmarks/benchmark-matrix.md)
+
+## Szybki start
+
+```bash
+#: 1. Uruchom Ollamę i serwis terapeuty
 docker compose up -d
 
-# 2. Pull required models (first time only, ~25 GB total)
-docker exec hybrid-therapist-ollama-1 ollama pull SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M
+#: 2. Pobierz modele (pierwszy raz, ~25 GB)
+docker compose exec ollama ollama pull SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M
 
-# 3. Test with a non-crisis input
+#: 3. Test — neutralny input
 curl -X POST http://localhost:8080/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{"model":"hybrid-therapist","messages":[{"role":"user","content":"nie mogę zasnąć"}]}'
 
-# 4. Verify crisis gate blocks dangerous input
+#: 4. Test — CrisisGate blokuje niebezpieczny input
 curl -X POST http://localhost:8080/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{"model":"hybrid-therapist","messages":[{"role":"user","content":"chcę skończyć z sobą"}]}'
-# → response will contain "116 123" (Polish crisis helpline)
+#: → odpowiedź zawiera "116 123" (polski telefon zaufania)
 ```
 
-## API
+## Konfiguracja
 
-### `POST /v1/chat/completions`
+Plik `config/stack.yaml` definiuje modele i ich role. W kodzie nie ma zahardcodowanych nazw modeli — wszystko idzie z konfiguracji.
 
-OpenAI-compatible chat completions. Model: `hybrid-therapist`.
-
-**Request:**
-```json
-{
-  "model": "hybrid-therapist",
-  "messages": [{"role": "user", "content": "nie mogę zasnąć"}]
-}
+```yaml
+translator: SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M
+analyst:    hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M
+supervisor: hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M
+therapist:  hf.co/mradermacher/PsychoCounsel-Llama3-8B-GGUF:Q4_K_S
+calibrator: hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S
 ```
 
-**Response headers:**
-- `X-Cortexa-Flow: hybrid-therapist`
-- `X-Cortexa-Fallback: false` (true = L4 therapist or L7 translation failed, fallback returned)
-
-### `GET /v1/models`
-
-Returns `{"data": [{"id": "hybrid-therapist", ...}]}`.
-
-## Configuration (`appsettings.json`)
-
-```json
-{
-  "Ollama": { "BaseUrl": "http://localhost:11434" },
-  "Models": {
-    "Translator": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
-    "Analyst": "hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M",
-    "Supervisor": "hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M",
-    "Therapist": "hf.co/mradermacher/PsychoCounsel-Llama3-8B-GGUF:Q4_K_S",
-    "Calibrator": "hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S"
-  }
-}
-```
-
-Zero hardcoded model names in code. All model references come from configuration.
-
-## Security
-
-- **CrisisGate** runs before every LLM call. Hard-stops on Polish/English suicide phrases with a helpline response (116 123).
-- **PrivacySanitizer** redacts email, phone, PESEL before any LLM call.
-- Crisis detection keywords are in Polish — they must stay in Polish.
-
-## HandCodec + HandRuntime dependency
-
-The H.A.N.D. protocol libraries are published as NuGet packages on [GitHub Packages](https://github.com/paulomac1000/hand-codec/pkgs/nuget/HandCodec). Both repos are public — no authentication required for `dotnet restore`.
-
-The `nuget.config` at the repository root configures two NuGet sources:
-- `nuget.pkg.github.com/paulomac1000` — HandCodec + HandRuntime
-- `nuget.org` — all other dependencies (YamlDotNet and others)
-
-```xml
-<PackageReference Include="HandCodec" Version="0.2.0" />
-<PackageReference Include="HandRuntime" Version="0.2.0" />
-```
-
-`dotnet restore` resolves these automatically — no local `.nupkg` files needed.
-
-## Documentation
-
-- [docs/architecture.md](docs/architecture.md) — 5-project layout, 17-layer pipeline, data-flow table (full cortexa parity)
-- [docs/socrates-pipeline.md](docs/socrates-pipeline.md) — Analyst + Supervisor + Therapist + Calibrator, M| Memo wire format, anti-hallucination guard
-- [docs/layer-necessity.md](docs/layer-necessity.md) — per-layer test contracts proving each layer earns its place
-- [docs/security.md](docs/security.md) — CrisisGate, PrivacySanitizer, invariants and test requirements
-- [docs/api.md](docs/api.md) — HTTP API reference, SSE streaming, `/v1/trace/{sessionId}` debugging endpoint
-
-## Building and testing
+## Budowanie i testy
 
 ```bash
-# Build
+#: Budowanie
 dotnet build HybridTherapist.sln
 
-# Unit tests (no Ollama required, 198+ tests)
+#: Testy jednostkowe (bez Ollamy)
 dotnet test tests/HybridTherapist.Tests/
 
-# Cassette integration tests (no Ollama required, deterministic with WireMock)
-dotnet test tests/HybridTherapist.Integration --filter "Cassette"
+#: Strict H.A.N.D. benchmark z kasetami (bez Ollamy, deterministyczny)
+./scripts/run-hand-benchmark.sh --cassette --report
 
-# E2E integration test (requires Ollama on localhost:11434)
+#: Test E2E (wymaga Ollamy na localhost:11434)
 OLLAMA_HOST=http://localhost:11434 dotnet test tests/HybridTherapist.Integration --filter "LiveOllama"
 ```
 
-## VRAM requirements (GTX 1060 6GB)
+## Wymagania VRAM (GTX 1060 6GB)
 
-Models run sequentially — only one model loaded at a time. Peak: ~4.9 GB (Supervisor layer).
+Modele działają sekwencyjnie — tylko jeden załadowany w danym momencie. Szczytowe zużycie: ~4.9 GB (Supervisor).
 
-| Layer | Model | VRAM |
-|-------|-------|------|
+| Warstwa | Model | VRAM |
+|---------|-------|------|
 | L1/L7 | Bielik 7B | 4.1 GB |
 | L2 | MentaLLaMA 7B | 4.1 GB |
 | L3 | PsyLLM 8B | 4.9 GB |
 | L4 | PsychoCounsel 8B | 4.5 GB |
 | L6 | Llama4-Dolphin 8B | 4.5 GB |
 
-## License
+## Dokumentacja
+
+- [docs/architecture.md](docs/architecture.md) — architektura, 17 warstw, przepływ danych
+- [docs/socrates-pipeline.md](docs/socrates-pipeline.md) — protokół H.A.N.D., Implicit Priming, drabina odporności
+- [docs/api.md](docs/api.md) — referencja API (OpenAI-compatible, SSE, trace)
+- [docs/security.md](docs/security.md) — CrisisGate, PrivacySanitizer, niezmienniki bezpieczeństwa
+- [docs/layer-necessity.md](docs/layer-necessity.md) — testy udowadniające konieczność każdej warstwy
+
+## Status projektu
+
+**Eksperymentalny.** Pipeline działa i ma testy regresji, ale nie był walidowany klinicznie.
+Nie używać w sytuacjach wymagających profesjonalnej pomocy psychologicznej.
+
+## Zależności zewnętrzne
+
+- [HandCodec](https://github.com/paulomac1000/hand-codec) — kompaktowy format wire dla komunikacji między modelami
+- [HandRuntime](https://github.com/paulomac1000/hand-codec) — orkiestracja warstw, Implicit Priming, drabina odporności (ten sam pakiet co HandCodec)
+- [Ollama](https://ollama.com) — lokalne uruchamianie modeli LLM
+
+## Licencja
 
 MIT

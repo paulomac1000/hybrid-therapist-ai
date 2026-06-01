@@ -14,16 +14,13 @@ public sealed class InMemoryTherapyStateRepository : ITherapyConversationStateRe
 
     public Task<TherapyConversationState> GetAsync(string sessionId, CancellationToken ct = default)
     {
-        if (!_store.TryGetValue(sessionId, out TherapyConversationState? state))
+        TherapyConversationState state = _store.GetOrAdd(sessionId, _ => new TherapyConversationState
         {
-            state = new TherapyConversationState
-            {
-                SessionId = sessionId,
-                CurrentPhase = "INIT",
-                Topics = [],
-                History = [],
-            };
-        }
+            SessionId = sessionId,
+            CurrentPhase = "INIT",
+            Topics = [],
+            History = [],
+        });
 
         return Task.FromResult(state);
     }

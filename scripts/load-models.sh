@@ -1,6 +1,6 @@
 #!/bin/sh
 # Pull Ollama models declared under `models:` in stack.yaml.
-# Cortexa parity: same input file format, same provider semantics.
+# Uses the same stack.yaml input file format and provider semantics as the app.
 # Skips entries with provider != ollama (cloud models pull on demand).
 set -u
 

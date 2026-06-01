@@ -6,7 +6,7 @@ namespace HybridTherapist.Domain.Services;
 /// Stage-2 QA — runs AFTER the calibrator and BEFORE the EN→PL translator.
 /// Catches common failure modes that slip past per-layer parsing:
 /// echo (response repeats user input), too short, wrong language, placeholder leak.
-/// Cortexa parity: <c>Cortexa.Domain.Services.QualityValidator</c>.
+/// Quality gate for English drafts and final Polish responses.
 /// </summary>
 public static class QualityValidator
 {

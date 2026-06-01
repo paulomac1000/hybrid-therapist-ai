@@ -248,7 +248,7 @@ public sealed class TherapistFlow : ITherapistFlow
             savings.TokensSaved, savings.SavingsPercent);
 
         // ── Save state ────────────────────────────────────────────────────────
-        state.History.Add(new ChatMessage { Role = "user", Content = userText });
+        state.History.Add(new ChatMessage { Role = "user", Content = sanitized });
         state.History.Add(new ChatMessage { Role = "assistant", Content = plResponse });
         if (state.History.Count > 40)
             state.History = state.History.TakeLast(40).ToList();
@@ -259,7 +259,7 @@ public sealed class TherapistFlow : ITherapistFlow
             Model = request.Model,
             Content = plResponse,
             Fallback = fallback,
-            CrisisDetected = l7.HasCrisisSignal,
+            CrisisDetected = crisis.IsHardStop || crisis.IsEscalation,
             Metadata =
             {
                 ["phase"] = state.CurrentPhase,
@@ -297,11 +297,17 @@ public sealed class TherapistFlow : ITherapistFlow
         },
     };
 
-    private static string ResolveSessionId(ChatCompletionRequest request)
+    internal static string ResolveSessionId(ChatCompletionRequest request)
     {
+        if (!string.IsNullOrWhiteSpace(request.User))
+        {
+            byte[] hash = SHA256.HashData(Encoding.UTF8.GetBytes(request.User));
+            return $"user_{Convert.ToHexString(hash)[..16].ToLowerInvariant()}";
+        }
+
         string firstUser = request.Messages.FirstOrDefault(m => m.Role == "user")?.Content ?? string.Empty;
         if (firstUser.Length == 0) return Guid.NewGuid().ToString();
-        byte[] hash = SHA256.HashData(Encoding.UTF8.GetBytes(firstUser));
-        return $"sess_{Convert.ToHexString(hash)[..8].ToLowerInvariant()}";
+        byte[] msgHash = SHA256.HashData(Encoding.UTF8.GetBytes(firstUser));
+        return $"sess_{Convert.ToHexString(msgHash)[..16].ToLowerInvariant()}";
     }
 }
