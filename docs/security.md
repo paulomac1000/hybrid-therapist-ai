@@ -15,46 +15,9 @@ last_verified: 2026-05-23
 owners: ["hybrid-therapist"]
 ---
 
-# Hybrid Therapist — Security Model
+# Hybrid Therapist — Bezpieczeństwo
 
-## PURPOSE
-
-Documents the security invariants, crisis detection rules, PII redaction policy, and failure-mode mitigations for the hybrid-therapist pipeline.
-
-## SCOPE
-
-- INCLUDED: CrisisGate regex tiers, PrivacySanitizer patterns, behavioural matrix (crisis vs phase), failure-mode table, testing requirements.
-- EXCLUDED: Transport security, authentication, rate limiting — these are deployment-layer concerns.
-
-## DEFINITIONS
-
-N/A
-
-## RULES
-
-N/A — covered in "Invariants" and "CrisisGate" sections below.
-
-## INTERFACES
-
-N/A
-
-## STATE
-
-N/A
-
-## EDGE_CASES
-
-N/A
-
-## EXAMPLES
-
-N/A
-
-## NON_GOALS
-
-N/A — see "What is NOT secured by this codebase" below.
-
-## Invariants
+## Niezmienniki
 
 1. **`CrisisGate.Check()` runs before any LLM call.** Layer -1 in the pipeline. No exception, no skip flag.
 2. **`PrivacySanitizer.Sanitize()` runs before any LLM call.** Layer 0. PII never reaches Ollama or OpenRouter.
@@ -76,7 +39,7 @@ Four regex tiers, ordered by severity:
 
 Patterns use compile-time `[GeneratedRegex]` with a 200 ms timeout to defeat ReDoS. `RegexMatchTimeoutException` is caught and treated as "safe" — fail-open is the right move because the model is still bounded by other gates.
 
-**Polish patterns stay in Polish.** They are user-facing — translating them would break detection. This is a `[STRICT]` rule in cortexa's `security-gates.md` and applies here unchanged.
+**Wzorce po polsku zostają po polsku.** Są interfejsem użytkownika — tłumaczenie złamałoby detekcję.
 
 ## PrivacySanitizer
 
@@ -101,7 +64,7 @@ Current coverage (`tests/HybridTherapist.Tests/CrisisGateTests.cs`):
 - Negative: ambiguous phrases ("chcę skończyć z tym projektem", "want to die laughing") do not fire
 - Boundary: empty input, whitespace, very long input
 
-## What is NOT secured by this codebase
+## Czego ten kod NIE zabezpiecza
 
 - **Transport security.** Run behind TLS-terminating reverse proxy in production.
 - **Authentication.** No API key check on `/v1/chat/completions`. Add via ASP.NET Core middleware if needed.

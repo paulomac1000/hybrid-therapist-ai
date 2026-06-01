@@ -31,16 +31,57 @@ The hybrid-therapist uses 6 local LLMs behind HandCodec to deliver a therapy ses
 
 ## WALKTHROUGH
 
-The sections below walk through each component of the Socrates pipeline, from idea through implementation.
+### Performatives — jak warstwy ze sobą rozmawiają
 
-## PITFALLS
+Pipeline używa dwóch performatywów H.A.N.D.:
 
-N/A
+**`M|` (Memo) — Analityk → Supervisor → Terapeuta.** Analityk emituje zwięzły raport kliniczny w jednej linii:
+```
+M|L=2|em=anxiety|sv=moderate|ri=insomnia|cp=worry
+```
+Supervisor odczytuje ten wire, wybiera podejście i emituje własne memo:
+```
+M|L=3|ap=reflective_listening|tk=open_question|kq=What keeps you up at night?
+```
+Oba mema trafiają bezpośrednio do promptu terapeuty — surowe, skompresowane, bez rozwijania. Klucz w system prompcie uczy model czytać pola.
 
-## RELATED_DOCS
+**`R|` (Result) — Terapeuta → Kalibrator → Użytkownik.** Terapeuta generuje odpowiedź z metadanymi w pierwszej linii:
+```
+R|C=0.88
+Słyszę, że sen stał się dla Ciebie walką. Co zaprząta Ci myśli,
+kiedy kładziesz się spać?
+```
+Ten podział na dane i narrację (Data/Narrative Split) zapobiega polowaniu uwagi transformera na wyniki konfidencji ukryte na końcu długiej odpowiedzi terapeutycznej.
 
-- sys.socrates-pipeline — architecture and layer responsibilities
-- ref.glossary — domain terminology
+### Implicit Priming — uczenie przez przykład, nie przez instrukcję
+
+Modele **nigdy nie dostały instrukcji** o formacie H.A.N.D. Żaden system prompt nie mówi "odpowiadaj w formacie R|C=...". Zamiast tego, przed każdym wywołaniem LLM, orkiestrator po cichu wstrzykuje jedną nieterepeutyczną wymianę do historii konwersacji:
+
+```
+User:      [SYSTEM_PROTOCOL_PING]
+Assistant: R|C=1.0
+           [SYSTEM_PROTOCOL_ACK]
+```
+
+Model widzi wzorzec i podświadomie go kontynuuje. Uczy się formatu tak samo jak wszystkiego innego — **naśladując to, co widzi w kontekście**. To jest bezstanowy cache: każde wywołanie zaczyna się od nowa z tym samym pingiem.
+
+### Drabina odporności — gdy małe modele się potykają
+
+Każda warstwa przepuszcza output modelu przez `HandResiliencePipeline` — 5-stopniową drabinę degradacji:
+
+| Poziom | Strategia | Co robi |
+|--------|-----------|---------|
+| 1 | Strict | Format idealny — przechodzi bez zmian |
+| 2 | Lenient | Drobne odstępstwa od formatu — naprawiane |
+| 3 | Markdown Strip | Wire owinięty w ``` fences — ściągane |
+| 4 | Semantic Extraction | Model zignorował format i napisał prozą — regex wyciąga pola |
+| 5 | Fallback | Wszystko zawiodło — bezpieczne memo zastępcze |
+
+Dzięki temu pipeline nie rzuca HTTP 500 gdy mały model się pomyli. Poziom 5 (nieustrukturyzowany pass-through) wyzwala bezpieczne memo awaryjne dla L2/L3, więc warstwy downstream nigdy nie widzą zepsutego wejścia.
+
+### Dlaczego to działa — H.A.N.D. w praktyce
+
+Pięć małych modeli. Jedna karta graficzna za ~200 USD. Zero API w chmurze. Zero opłat za token. Modele rozmawiają ze sobą w języku pidgin, którego nauczyły się przez naśladownictwo — a pipeline przeżywa ich błędy z gracją. Terapeuta jest dowodem koncepcji.
 
 ## What this architecture buys vs single-model
 

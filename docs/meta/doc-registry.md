@@ -15,16 +15,7 @@ last_verified: 2026-05-23
 owners: ["hybrid-therapist"]
 ---
 
-# Document Registry
-
-## PURPOSE
-
-Single source of truth listing every documentation file in this project, its type, status, and dependencies.
-
-## SCOPE
-
-- INCLUDED: All AFDS-governed documentation files under `docs/`.
-- EXCLUDED: README.md (human-first, exempt from AFDS), source code, CI/CD configs.
+# Rejestr dokumentów
 
 ## RULES
 
@@ -39,29 +30,12 @@ Single source of truth listing every documentation file in this project, its typ
 | `ref.doc-registry` | `docs/meta/doc-registry.md` | ref | active | This file — document registry |
 | `ref.health-report` | `docs/meta/health-report.md` | ref | active | CI-generated documentation health metrics |
 
-## DEFINITIONS
-
-N/A
-
-## INTERFACES
-
-- INPUT: Manual updates on document create/move/deprecate.
-- OUTPUT: Single index for AI retrieval and CI validation.
-
-## STATE
-
-- Assumptions: Registry is manually maintained. CI may validate consistency.
-- Known Limitations: Does not track external references (HandCodec docs, GitHub READMEs).
 
 ## EDGE_CASES
 
-- CASE: New document added without registry update → EXPECTED: CI flags mismatch between filesystem and registry.
-
-## EXAMPLES
-
-N/A
+- CASE: Nowy dokument dodany bez aktualizacji rejestru → OCZEKIWANE: CI flaguje niezgodność między systemem plików a rejestrem.
 
 ## NON_GOALS
 
-- Does not list CI/CD workflow files.
-- Does not list source code files or NuGet packages.
+- Nie wymienia plików CI/CD.
+- Nie wymienia plików z kodem źródłowym ani pakietów NuGet.

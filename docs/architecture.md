@@ -15,49 +15,9 @@ last_verified: 2026-05-23
 owners: ["hybrid-therapist"]
 ---
 
-# Hybrid Therapist — Architecture
+# Architektura
 
-## PURPOSE
-
-Documents the 17-layer Socrates multi-agent therapy pipeline architecture with HandCodec wire format integration.
-
-## SCOPE
-
-Architecture of the hybrid-therapist service — layer orchestration, component interactions, data flow, and quality guarantees. Excludes API reference (see ref.api-reference) and security model details (see ref.security).
-
-## ARCHITECTURE
-
-N/A — detailed in the sections below.
-
-## ENTITY_REFERENCE
-
-N/A
-
-## INTERFACES
-
-N/A — described in "Data flow between layers" section below.
-
-## STATE
-
-N/A — covered in "Session phase machine" and "State storage" sections below.
-
-## EDGE_CASES
-
-N/A
-
-## FAILURE_MODES
-
-N/A
-
-## TESTING
-
-N/A — covered in ref.layer-necessity and integration test suite.
-
-## TROUBLESHOOTING
-
-N/A
-
-## High-level
+## Przegląd
 
 ```
                     HTTP /v1/chat/completions
@@ -106,11 +66,11 @@ External dependencies:
 - `HandCodec` — wire format codec (pipe-delimited `key=value`), Resilience Ladder, MemoBuilder
 - `HandRuntime` — Implicit Priming orchestration (ConversationBuilder, CheckpointLibrary, WireConvention, ResponseDecoder)
 
-## Zero cloud
+## Bez chmury — wszystko lokalnie
 
-The Socrates pipeline runs **entirely on local Ollama**. No OpenRouter. No cloud APIs. All models run locally via Ollama. Every LLM call goes to `http://ollama:11434/api/chat`. Translator quality is safeguarded by a quality gate: Bielik 7B single pass → static Polish fallback if output still looks like English.
+Pipeline Socrates działa **w całości na lokalnej Ollamie**. Bez OpenRouter. Bez zewnętrznych API. Wszystkie wywołania LLM idą do `http://ollama:11434/api/chat`. Jakość tłumaczenia jest zabezpieczona bramką: Bielik 7B, pojedyncze przejście → statyczny fallback po polsku, jeśli wynik nadal wygląda na angielski.
 
-## The 17-layer Socrates pipeline
+## 17-warstwowy pipeline Socrates
 
 ```
 Layer  Name                  Implementation                                       Feeds downstream
@@ -347,8 +307,8 @@ DELETE /v1/trace/{sessionId}  manual trace eviction
 LibreChat sends `stream:true` by default — the SSE response emits `delta.role` and `delta.content` chunks followed by `[DONE]`.
 
 Custom response headers:
-- `X-Cortexa-Flow: hybrid-therapist`
-- `X-Cortexa-Fallback: true|false`
+- `X-HT-Flow: hybrid-therapist`
+- `X-HT-Fallback: true|false`
 
 Custom response metadata fields:
 - `session_id`, `trace_url`

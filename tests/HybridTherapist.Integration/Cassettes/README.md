@@ -14,9 +14,9 @@ last_verified: 2026-05-23
 owners: ["hybrid-therapist"]
 ---
 
-# Ollama Cassettes — Recorded Pipeline Interactions
+# Kasety Ollama — nagrane interakcje pipeline'u
 
-Each cassette is a JSON file describing a sequence of Ollama `/api/chat` request/response pairs for one therapy scenario. The cassettes let us run the full 6-layer Socrates pipeline **offline** in CI — no live Ollama, no GPU, no model downloads.
+Każda kaseta to plik JSON opisujący sekwencję par request/response Ollama `/api/chat` dla jednego scenariusza terapeutycznego. Kasety pozwalają uruchomić pełny 6-warstwowy pipeline Socrates **offline** w CI — bez żywej Ollamy, bez GPU, bez pobierania modeli.
 
 ## Format
 
@@ -53,7 +53,7 @@ For a new scenario:
 1. Run hybrid-therapist with debug logging against a live Ollama with the right models pulled:
    ```bash
    docker run --rm --name therapist-recorder \
-     --network cortexa_llm-network \
+      --network therapist-net \
      -p 8086:8080 \
      -e Ollama__BaseUrl=http://ollama:11434 \
      -e Logging__LogLevel__HybridTherapist=Debug \
