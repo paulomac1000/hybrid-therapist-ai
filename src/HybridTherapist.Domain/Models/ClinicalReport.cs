@@ -25,7 +25,7 @@ public sealed record TherapeuticPlan(
 
 /// <summary>
 /// 10 response strategies, picked by phase × severity in <c>ResponseStrategySelector</c>.
-/// Cortexa parity: <c>Cortexa.Orchestrator.Domain.Models.Therapy.ResponseStrategy</c>.
+/// Pipeline strategy enum used by the Socrates orchestration layer.
 /// </summary>
 public enum ResponseStrategy
 {

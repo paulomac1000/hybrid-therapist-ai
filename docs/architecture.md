@@ -90,7 +90,7 @@ Layer  Name                  Implementation                                     
                                Implicit Priming (MemoPing checkpoint)
   10   L5 MemoryService        every 8 msg OR phase change → summary + truncate    state.SessionSummary → L4
   11   L4 Therapist            PsychoCounsel 8B reads both raw M| memos +          EN draft → L6
-                               dictionary key in system prompt + summary +
+                               pure therapeutic system prompt + summary +
                                SessionPhase.GetPhaseSystemPrompt(phase)
  12   L6 Calibrator           Llama4-Dolphin 8B polishes draft                    EN polished → QA1
  13   QualityValidator (QA1)  EN-side: echo, length, prompt-leakage check         pass-through or L4 draft
@@ -128,9 +128,9 @@ The lightweight layers ARE the production hardening. Removing CrisisGate or Priv
 | PhaseMachine + SessionPhase | `GetPhaseSystemPrompt(phase)` | L4 system prompt | "this is first contact" vs "session winding down" |
 | RuptureDetector | `Result.Detected` (bool) | ResponseStrategySelector | Forces `Repair` strategy regardless of phase |
 | ResponseStrategy | enum value | L3 Supervisor system prompt | Supervisor tailors approach |
-| L2 Analyst | `M|L=2|em=...|sv=...` wire | L3 Supervisor + ThematicAlignment | Structured emotional state (raw wire, parsed by HandParser) |
+| L2 Analyst | `M|L=2|e7=...|s9=...` wire | L3 Supervisor + ThematicAlignment | Structured emotional state (raw wire, parsed by HandParser) |
 | ThematicAlignment | bool + redacted memo | L3 Supervisor | Anti-hallucination |
-| L3 Supervisor | `M|L=3|ap=...|tk=...|kq=...` wire | L4 Therapist | Structured therapeutic plan (raw wire, dictionary in L4 system prompt) |
+| L3 Supervisor | `M|L=3|p3=...|t5=...|k2=...` wire | L4 Therapist | Structured therapeutic plan (raw wire) |
 | L5 MemoryService | `state.SessionSummary` (text) | L4 Therapist prompt | Long-term context across history compaction |
 | L4 Therapist | EN draft | L6 Calibrator | Source of truth for facts |
 | QualityValidator | verdict (ok/echo/leak/...) | flow control | EN-side gate before L7 |
@@ -168,17 +168,16 @@ from a single `[SYSTEM_PROTOCOL_PING]` exchange in their conversation history (M
 never from instruction in the system prompt.
 
 ```
-L2 emits:  M|L=2|em=anxiety|sv=moderate|ri=insomnia,worry|cp=catastrophizing
+L2 emits:  M|L=2|e7=anxiety|s9=moderate|x4=insomnia,worry|y1=catastrophizing
 L3 reads:  raw M| wire parsed via HandParser → injected directly into L3 prompt as [ANALYST MEMO]
-L3 emits:  M|L=3|ap=reflective_listening|tk=open_question|kq=What keeps you up?
-L4 reads:  both raw M| wires as [ANALYST MEMO] and [SUPERVISOR MEMO] blocks,
-           with dictionary keys in the system prompt teaching field interpretation
+L3 emits:  M|L=3|p3=reflective_listening|t5=open_question|k2=What keeps you up?
+L4 reads:  both raw M| wires as [ANALYST MEMO] and [SUPERVISOR MEMO] blocks
 ```
 
 **Key architectural change (May 2026):** `MemoToPlainText()` has been **removed**.
 Raw `M|` wire enters L3 and L4 prompts directly. The old invariant — "M| never enters
-a model-facing prompt" — is replaced by: **"M| enters prompts as raw wire; dictionaries
-in system prompts teach field parsing."**
+a model-facing prompt" — is replaced by: **"M| enters prompts as raw wire; checkpoint
+examples teach the compact field pattern."**
 
 This saves ~120 tokens per turn by eliminating the plaintext expansion step.
 The compact `M|` format reduces prompt context consumed by downstream transformers.
@@ -234,26 +233,26 @@ The session_id is returned in `metadata.session_id` of every chat-completion res
 ### L2 Analyst — observation only
 
 Generates a native `M|` Memo wire via Implicit Priming (MemoPing checkpoint).
-The system prompt teaches the field dictionary; the model emits a single line:
+Checkpoint examples teach the field pattern; the model emits a single line:
 ```
-M|L=2|em=exhaustion_with_anxiety|sv=moderate|ri=chronic_insomnia|cp=catastrophizing
+M|L=2|e7=exhaustion_with_anxiety|s9=moderate|x4=chronic_insomnia|y1=catastrophizing
 ```
 Output decoded by `HandResiliencePipeline` (levels 1-5). Level 5 triggers a safe
-fallback memo (`M|L=2|em=unknown|sv=low|note=decoder_level5_fallback`).
+fallback memo (`M|L=2|e7=unknown|s9=low|note=decoder_level5_fallback`).
 
 ### L3 Supervisor — strategy only
 
 Receives the analyst's raw `M|` memo (as `[ANALYST MEMO]`) plus the strategy enum
 picked by phase × severity. Generates a native `M|` Memo via Implicit Priming:
 ```
-M|L=3|ap=reflective_listening|tk=open_question|kq=What_keeps_you_up_at_night?|rn=none
+M|L=3|p3=reflective_listening|t5=open_question|k2=What_keeps_you_up_at_night?|r8=none
 ```
 Raw `M|` wire passes directly to L4. **The supervisor never produces user-facing text.**
 
 ### L4 Therapist — the user-facing voice
 
-Receives both raw `M|` memos (as `[ANALYST MEMO]` and `[SUPERVISOR MEMO]`) with
-dictionary keys in the system prompt. Generates the actual therapeutic response in
+Receives both raw `M|` memos (as `[ANALYST MEMO]` and `[SUPERVISOR MEMO]`).
+Generates the actual therapeutic response in
 English using the `R|` Result wire format (SystemPing checkpoint). Hard constraints
 in the prompt: no echo, ask one open question, under 200 words.
 

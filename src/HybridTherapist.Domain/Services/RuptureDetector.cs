@@ -7,7 +7,7 @@ namespace HybridTherapist.Domain.Services;
 /// assistant response missed the mark. When a rupture fires, the flow forces
 /// <see cref="Models.ResponseStrategy.Repair"/> regardless of phase/severity.
 ///
-/// Cortexa parity: <c>Cortexa.Orchestrator.Domain.Services.Therapy.RuptureDetector</c>.
+/// Detects user corrections or frustration that should switch the response to repair mode.
 /// </summary>
 public static partial class RuptureDetector
 {

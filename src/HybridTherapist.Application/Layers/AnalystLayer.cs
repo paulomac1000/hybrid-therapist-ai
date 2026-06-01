@@ -46,10 +46,18 @@ public sealed class AnalystLayer
         IReadOnlyList<string> activeTopics,
         CancellationToken ct = default)
     {
+        string historyContext = history.Count > 0
+            ? "CONVERSATION HISTORY:\n" + string.Join("\n", history.TakeLast(6).Select(m => $"{m.Role}: {m.Content}")) + "\n\n"
+            : string.Empty;
+
+        string topicsContext = activeTopics.Count > 0
+            ? $"Session topics: {string.Join(", ", activeTopics)}\n\n"
+            : string.Empty;
+
         string systemPrompt =
             "You are a clinical mental health analyst.\n\n" +
-            (activeTopics.Count > 0 ? $"Session topics: {string.Join(", ", activeTopics)}\n\n" : "") +
-            (history.Count > 0 ? $"History: {history.Count} turns\n\n" : "") +
+            topicsContext +
+            historyContext +
             "Analyze the user's emotional state, severity, risk indicators, cognitive patterns, " +
             "and provide evidence from their message.\n\n" +
             "Only analyze themes the user EXPLICITLY mentioned or that appear in session topics. " +

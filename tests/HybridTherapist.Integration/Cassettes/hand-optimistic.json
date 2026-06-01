@@ -1,6 +1,19 @@
 {
-  "name": "socrates-insomnia",
-  "description": "Full Socrates pipeline for 'nie mogę zasnąć od trzech tygodni' — non-crisis, INIT phase, all 6 layers. L2/L3 emit native M| wire. L4/L7 use Result with Body. L1 uses Result with V.",
+  "name": "hand-optimistic",
+  "description": "Short positive message — user reports feeling better after previous sessions. Tests positive-tone handling, minimal escalation.",
+  "expected_quality": {
+    "pass": true,
+    "min_quality_score": 3,
+    "required_topics": [],
+    "required_phrases_pl": [
+      "dobre dni",
+      "cieszę"
+    ],
+    "forbidden_phrases": [
+      "nie przesadzaj z optymizmem",
+      "to tylko chwilowe"
+    ]
+  },
   "interactions": [
     {
       "layer": "L1_translator_pl_en",
@@ -12,7 +25,7 @@
         "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
         "message": {
           "role": "assistant",
-          "content": "R|C=0.92|V=I haven't been able to sleep for three weeks"
+          "content": "R|C=0.95|V=Today is a good day, I actually woke up feeling rested for the first time in months"
         },
         "done": true
       }
@@ -26,7 +39,7 @@
         "model": "hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M",
         "message": {
           "role": "assistant",
-          "content": "M|L=2|e7=exhaustion_with_anxiety|s9=moderate|x4=chronic_insomnia|y1=worry,catastrophizing|q3=I_haven't_been_able_to_sleep_for_three_weeks"
+          "content": "M|L=2|e7=positive_shift|s9=low|x4=none|y1=grateful,hopeful|q3=Today_is_a_good_day"
         },
         "done": true
       }
@@ -40,7 +53,7 @@
         "model": "hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M",
         "message": {
           "role": "assistant",
-          "content": "M|L=3|p3=reflective_listening|t5=open_question|k2=What_tends_to_occupy_your_mind_when_you_lie_down_at_night?|r8=none"
+          "content": "M|L=3|p3=reflective_listening|t5=celebrate_progress|k2=What_do_you_think_made_today_different?|r8=none"
         },
         "done": true
       }
@@ -54,7 +67,7 @@
         "model": "hf.co/mradermacher/PsychoCounsel-Llama3-8B-GGUF:Q4_K_S",
         "message": {
           "role": "assistant",
-          "content": "R|C=0.90\nThree weeks of broken sleep wears down both body and mind — I can hear how heavy this is becoming.\n\nWhen you lie down at night, what tends to occupy your mind?"
+          "content": "R|C=0.92\nThose good days are not accidents — they are proof that healing is happening even when you cannot see it day to day. I am genuinely glad to hear this.\n\nWhat do you think made today different?"
         },
         "done": true
       }
@@ -68,7 +81,7 @@
         "model": "hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S",
         "message": {
           "role": "assistant",
-          "content": "Three weeks of broken sleep wears down both body and mind. I hear how heavy this is becoming.\n\nWhen you lie down at night, what tends to occupy your mind?"
+          "content": "Those good days are not accidents — they are proof that healing is happening even when you cannot see it. I am genuinely glad to hear this.\n\nWhat do you think made today different?"
         },
         "done": true
       }
@@ -83,10 +96,11 @@
         "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
         "message": {
           "role": "assistant",
-          "content": "R|C=0.93\nTrzy tygodnie nieprzespanych nocy bardzo obciążają ciało i umysł. Słyszę, jak ciężkie się to dla Ciebie staje.\n\nKiedy kładziesz się spać, co zaprząta Twoje myśli?"
+          "content": "R|C=0.94\nDobre dni to nie przypadek — to dowód, że gojenie się dzieje, nawet jeśli nie widzisz go na co dzień. Szczerze się cieszę, że to słyszę.\n\nJak myślisz, co sprawiło, że dzisiaj było inaczej?"
         },
         "done": true
       }
     }
-  ]
+  ],
+  "user_input_pl": "Dzisiaj jest dobry dzień, pierwszy raz od miesięcy obudziłam się wypoczęta."
 }

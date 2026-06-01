@@ -29,6 +29,8 @@ owners: ["hybrid-therapist"]
 | `ref.glossary` | `docs/meta/glossary.md` | ref | active | Domain term glossary |
 | `ref.doc-registry` | `docs/meta/doc-registry.md` | ref | active | This file — document registry |
 | `ref.health-report` | `docs/meta/health-report.md` | ref | active | CI-generated documentation health metrics |
+| `bench.hand-codec-g` | `docs/benchmarks/hand-codec-g.md` | benchmark | active | Codec G implicit priming experiment — benchmark report |
+| `bench.benchmark-matrix` | `docs/benchmarks/benchmark-matrix.md` | benchmark | active | Planned comparison matrix for H.A.N.D. benchmark variants |
 
 
 ## EDGE_CASES

@@ -37,13 +37,13 @@ Pipeline używa dwóch performatywów H.A.N.D.:
 
 **`M|` (Memo) — Analityk → Supervisor → Terapeuta.** Analityk emituje zwięzły raport kliniczny w jednej linii:
 ```
-M|L=2|em=anxiety|sv=moderate|ri=insomnia|cp=worry
+M|L=2|e7=anxiety|s9=moderate|x4=insomnia|y1=worry
 ```
 Supervisor odczytuje ten wire, wybiera podejście i emituje własne memo:
 ```
-M|L=3|ap=reflective_listening|tk=open_question|kq=What keeps you up at night?
+M|L=3|p3=reflective_listening|t5=open_question|k2=What keeps you up at night?
 ```
-Oba mema trafiają bezpośrednio do promptu terapeuty — surowe, skompresowane, bez rozwijania. Klucz w system prompcie uczy model czytać pola.
+Oba mema trafiają bezpośrednio do promptu terapeuty — surowe, skompresowane, bez rozwijania. L4 nie dostaje legendy kluczy; wzorzec `M|` pochodzi z checkpointów w historii konwersacji.
 
 **`R|` (Result) — Terapeuta → Kalibrator → Użytkownik.** Terapeuta generuje odpowiedź z metadanymi w pierwszej linii:
 ```
@@ -117,8 +117,8 @@ Returns a JSON document with one event per layer call:
       "duration_ms": 5327,
       "outcome": "ok",
       "input": "(prompt truncated to 2000 chars)",
-      "output": "M|L=2|em=exhaustion|sv=moderate|ri=chronic_insomnia|cp=none",
-      "wire_format": "M|L=2|em=exhaustion|sv=moderate|..."
+      "output": "M|L=2|e7=exhaustion|s9=moderate|x4=chronic_insomnia|y1=none",
+      "wire_format": "M|L=2|e7=exhaustion|s9=moderate|..."
     }
   ]
 }

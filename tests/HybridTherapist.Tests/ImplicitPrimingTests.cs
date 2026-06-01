@@ -47,6 +47,8 @@ public sealed class ImplicitPrimingTests
             "System prompt must NEVER list wire format dictionary");
         source.Should().NotContain("M|L=2|em=anxious|sv=moderate",
             "System prompt must NEVER contain wire format examples");
+        source.Should().NotContain("M|L=2|e7=anxious|s9=moderate",
+            "System prompt must NEVER contain wire format examples (codec G)");
 
         // Allowed: prose task description
         source.Should().Contain("clinical mental health analyst",
@@ -62,7 +64,7 @@ public sealed class ImplicitPrimingTests
         source.Should().NotContain("Respond EXACTLY as a single M|");
         source.Should().NotContain("Output ONLY one line starting with M|");
         source.Should().NotContain("Dictionary:");
-        source.Should().NotContain("M|L=3|ap=CBT");
+        source.Should().NotContain("M|L=3|p3=CBT");
 
         source.Should().Contain("clinical supervisor");
     }
@@ -73,10 +75,17 @@ public sealed class ImplicitPrimingTests
         string source = File.ReadAllText(
             SrcPath("src/HybridTherapist.Application/Flows/TherapistLayerService.cs"));
 
-        // L4: no wire instruction
+        // L4: no wire instruction OR key legend
         source.Should().NotContain("ABSOLUTELY FORBIDDEN OPENINGS");
-        source.Should().NotContain("PREFERRED ALTERNATIVE");
-        source.Should().NotContain("NEVER start with: 'I understand that'");
+        source.Should().NotContain("Analyst memo keys:");
+        source.Should().NotContain("Supervisor memo keys:");
+        source.Should().NotContain("em=emotional state");
+
+        // L4 Pure Implicit: zero format hints in system prompt
+        source.Should().NotContain("Use the information below");
+        source.Should().NotContain("structured clinical context");
+        source.Should().NotContain("Read the M| messages");
+        source.Should().NotContain("memo keys");
 
         // L1/L7 translators: no wire instruction
         source.Should().NotContain("Respond EXACTLY as a single M|");
@@ -109,7 +118,7 @@ public sealed class ImplicitPrimingTests
     public void TherapySupervisorPing_AlignedWithFallbackApproach()
     {
         var ping = HybridTherapist.Application.Hand.HandCheckpointLibrary.TherapySupervisorPing;
-        ping.Exchanges[0].AssistantWire.Should().Contain("ap=behavioral_activation");
+        ping.Exchanges[0].AssistantWire.Should().Contain("p3=behavioral_activation");
     }
 
     [Fact]

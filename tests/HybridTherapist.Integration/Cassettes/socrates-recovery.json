@@ -40,7 +40,7 @@
         "model": "hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M",
         "message": {
           "role": "assistant",
-          "content": "M|L=3|ap=reflective_listening|tk=open_question|kq=What_tends_to_occupy_your_mind_at_night?|rn=none"
+          "content": "M|L=3|p3=reflective_listening|t5=open_question|k2=What_tends_to_occupy_your_mind_at_night?|r8=none"
         },
         "done": true
       }

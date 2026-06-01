@@ -65,7 +65,7 @@ public sealed class StackConfig
 
     /// <summary>
     /// Resolve a model name, only accepting entries whose provider matches.
-    /// Cortexa stack.yaml uses the same key (e.g. <c>translator</c>) for both
+    /// The stack.yaml format uses the same key (e.g. <c>translator</c>) for both
     /// cloud and local variants in different deployments — this lets the caller
     /// require an Ollama-runnable entry for L1-L7 layers, and an OpenRouter entry
     /// for the cloud fallback slot.

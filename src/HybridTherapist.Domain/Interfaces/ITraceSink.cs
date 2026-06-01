@@ -3,7 +3,7 @@ namespace HybridTherapist.Domain.Interfaces;
 /// <summary>
 /// Captures per-layer trace events for a therapy session. Used to debug what each
 /// layer received, what it emitted, how long it took, and which model handled it.
-/// Cortexa parity: <c>IAuditRepository</c> wrote similar events to SQLite; here we
+/// Trace parity: the previous audit repository wrote similar events to SQLite; here we
 /// keep them in memory + expose via <c>/v1/trace/{sessionId}</c>.
 /// </summary>
 public interface ITraceSink

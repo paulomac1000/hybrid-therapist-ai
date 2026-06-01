@@ -1,6 +1,22 @@
 {
-  "name": "socrates-insomnia",
-  "description": "Full Socrates pipeline for 'nie mogę zasnąć od trzech tygodni' — non-crisis, INIT phase, all 6 layers. L2/L3 emit native M| wire. L4/L7 use Result with Body. L1 uses Result with V.",
+  "name": "hand-insomnia",
+  "description": "User reports 6-week insomnia. Tests sleep_hygiene approach, INIT phase behavior.",
+  "expected_quality": {
+    "pass": true,
+    "min_quality_score": 4,
+    "required_topics": [
+      "sleep",
+      "insomnia"
+    ],
+    "required_phrases_pl": [
+      "sześć tygodni",
+      "sen"
+    ],
+    "forbidden_phrases": [
+      "po prostu idź spać",
+      "policz owce"
+    ]
+  },
   "interactions": [
     {
       "layer": "L1_translator_pl_en",
@@ -12,7 +28,7 @@
         "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
         "message": {
           "role": "assistant",
-          "content": "R|C=0.92|V=I haven't been able to sleep for three weeks"
+          "content": "R|C=0.94|V=I have not slept properly in six weeks, I lie awake for hours every night"
         },
         "done": true
       }
@@ -26,7 +42,7 @@
         "model": "hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M",
         "message": {
           "role": "assistant",
-          "content": "M|L=2|e7=exhaustion_with_anxiety|s9=moderate|x4=chronic_insomnia|y1=worry,catastrophizing|q3=I_haven't_been_able_to_sleep_for_three_weeks"
+          "content": "M|L=2|e7=exhaustion_with_anxiety|s9=moderate|x4=chronic_insomnia,irritability|y1=anticipatory_anxiety,rumination_at_bedtime|q3=I_have_not_slept_properly_in_six_weeks"
         },
         "done": true
       }
@@ -40,7 +56,7 @@
         "model": "hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M",
         "message": {
           "role": "assistant",
-          "content": "M|L=3|p3=reflective_listening|t5=open_question|k2=What_tends_to_occupy_your_mind_when_you_lie_down_at_night?|r8=none"
+          "content": "M|L=3|p3=sleep_hygiene|t5=no_screen_30min_before|k2=What_is_the_last_thing_you_do_before_getting_into_bed?|r8=monitor_deepening_insomnia"
         },
         "done": true
       }
@@ -54,7 +70,7 @@
         "model": "hf.co/mradermacher/PsychoCounsel-Llama3-8B-GGUF:Q4_K_S",
         "message": {
           "role": "assistant",
-          "content": "R|C=0.90\nThree weeks of broken sleep wears down both body and mind — I can hear how heavy this is becoming.\n\nWhen you lie down at night, what tends to occupy your mind?"
+          "content": "R|C=0.88\nSix weeks without proper rest changes everything — your mood, your patience, how you see the world. When sleep abandons you, even small things feel monumental.\n\nWhat is the last thing you do before getting into bed?"
         },
         "done": true
       }
@@ -68,7 +84,7 @@
         "model": "hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S",
         "message": {
           "role": "assistant",
-          "content": "Three weeks of broken sleep wears down both body and mind. I hear how heavy this is becoming.\n\nWhen you lie down at night, what tends to occupy your mind?"
+          "content": "Six weeks without proper rest changes everything — your mood, your patience, how you see the world. When sleep abandons you, even small things feel monumental.\n\nWhat is the last thing you do before getting into bed?"
         },
         "done": true
       }
@@ -83,10 +99,11 @@
         "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
         "message": {
           "role": "assistant",
-          "content": "R|C=0.93\nTrzy tygodnie nieprzespanych nocy bardzo obciążają ciało i umysł. Słyszę, jak ciężkie się to dla Ciebie staje.\n\nKiedy kładziesz się spać, co zaprząta Twoje myśli?"
+          "content": "R|C=0.93\nSześć tygodni bez porządnego odpoczynku zmienia wszystko — nastrój, cierpliwość, sposób patrzenia na świat. Kiedy sen Cię opuszcza, nawet małe rzeczy stają się ogromne.\n\nCo jest ostatnią rzeczą, którą robisz przed położeniem się do łóżka?"
         },
         "done": true
       }
     }
-  ]
+  ],
+  "user_input_pl": "Od sześciu tygodni nie przespałam porządnie ani jednej nocy."
 }

@@ -192,8 +192,8 @@ Returns every layer execution for a session, in order. Captures what each layer 
       "model": "hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M",
       "duration_ms": 5327,
       "outcome": "ok",
-      "output": "M|L=2|em=exhaustion|sv=moderate|ri=insomnia|cp=none",
-      "wire_format": "M|L=2|em=exhaustion|sv=moderate|ri=insomnia|cp=none"
+      "output": "M|L=2|e7=exhaustion|s9=moderate|x4=insomnia|y1=none",
+      "wire_format": "M|L=2|e7=exhaustion|s9=moderate|x4=insomnia|y1=none"
     }
     // ...L3, L4, L6, L7
   ]

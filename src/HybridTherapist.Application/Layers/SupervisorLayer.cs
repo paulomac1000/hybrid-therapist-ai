@@ -14,12 +14,12 @@ namespace HybridTherapist.Application.Layers;
 
 /// <summary>
 /// L3 Supervisor — reads the analyst's M| Memo, picks an approach/technique,
-/// and generates its own native M|L=3|ap=...|tk=...|kq=... Memo wire line.
+/// and generates its own native M|L=3|p3=...|t5=...|k2=... Codec G memo line.
 /// Uses Implicit Priming (MemoPing checkpoint). No longer parses plaintext
 /// via C# regex — the model emits M| directly.
 ///
 /// MemoToPlainText() has been removed: raw M| enters downstream prompts directly
-/// with a dictionary key in the system prompt. This saves ~120 tokens per turn.
+/// without a key legend in the L4 system prompt.
 ///
 /// On total decode failure, returns a safe fallback memo.
 /// </summary>
@@ -94,8 +94,8 @@ public sealed class SupervisorLayer
         }
         else if (parsed.Message.Performative == Performative.Memo)
         {
-            approach = parsed.Message.Get("ap") ?? "behavioral_activation";
-            memo = parsed.Message.Get("ap") is null
+            approach = parsed.Message.Get("p3") ?? "behavioral_activation";
+            memo = parsed.Message.Get("p3") is null
                 ? BuildFallbackMemo("missing_ap")
                 : parsed.Message.RawMessage;
         }
@@ -150,7 +150,7 @@ public sealed class SupervisorLayer
     {
         if (string.IsNullOrWhiteSpace(memoWire)) return "unknown";
         ParsedHandMessage? parsed = HandParser.Parse(memoWire);
-        return parsed?.Get("ap") ?? "unknown";
+        return parsed?.Get("p3") ?? "unknown";
     }
 }
 

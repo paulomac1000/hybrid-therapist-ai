@@ -134,6 +134,30 @@ public sealed class TherapistLayerServiceTests
     }
 
     [Fact]
+    public void BuildL4SystemPrompt_IsPureTherapeuticInstruction()
+    {
+        string prompt = TherapistLayerService.BuildL4SystemPrompt();
+
+        prompt.Should().Be(
+            "You are an empathetic therapist. Respond with warmth and clinical insight. " +
+            "Do not give direct advice. Ask one open question to continue.");
+
+        prompt.Should().NotContain("M|");
+        prompt.Should().NotContain("memo");
+        prompt.Should().NotContain("wire");
+        prompt.Should().NotContain("format");
+        prompt.Should().NotContain("schema");
+        prompt.Should().NotContain("key");
+        prompt.Should().NotContain("structured clinical context");
+        prompt.Should().NotContain("Read the M| messages");
+        prompt.Should().NotContain("Use the information below");
+        prompt.Should().NotContain("Analyst memo keys");
+        prompt.Should().NotContain("Supervisor memo keys");
+        prompt.Should().NotContain("em=emotional state");
+        prompt.Should().NotContain("e7=emotional");
+    }
+
+    [Fact]
     public async Task RunL4Therapist_ReceivesRawMemos_ParsesResponse()
     {
         var fake = new FakeOllamaAdapter("R|C=0.88\nI hear that sleep has become a struggle. What keeps you up at night?");
@@ -141,8 +165,8 @@ public sealed class TherapistLayerServiceTests
 
         LayerResult result = await service.RunL4TherapistAsync(
             "sess_test", "I cannot sleep",
-            analystMemoWire: "M|L=2|em=anxiety|sv=moderate|ri=insomnia|cp=worry",
-            supervisorMemoWire: "M|L=3|ap=reflective_listening|tk=open_question|kq=What keeps you up?|rn=none",
+            analystMemoWire: "M|L=2|e7=anxiety|s9=moderate|x4=insomnia|y1=worry|q3=I_cannot_sleep",
+            supervisorMemoWire: "M|L=3|p3=reflective_listening|t5=open_question|k2=What_keeps_you_up?|r8=none",
             "INIT", Array.Empty<ChatMessage>());
 
         result.Ok.Should().BeTrue();
@@ -158,8 +182,8 @@ public sealed class TherapistLayerServiceTests
 
         LayerResult result = await service.RunL4TherapistAsync(
             "sess_test", "hello",
-            "M|L=2|em=low|sv=low",
-            "M|L=3|ap=reflective|tk=open|kq=How are you?|rn=none",
+            "M|L=2|e7=low|s9=low|q3=hello",
+            "M|L=3|p3=reflective|t5=open|k2=How_are_you?|r8=none",
             "INIT", Array.Empty<ChatMessage>());
 
         result.Ok.Should().BeFalse();

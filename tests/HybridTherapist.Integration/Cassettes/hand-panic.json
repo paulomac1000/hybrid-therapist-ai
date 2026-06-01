@@ -1,0 +1,109 @@
+{
+  "name": "hand-panic",
+  "description": "User reports panic attacks with physical symptoms. Tests panic detection, breathing technique.",
+  "expected_quality": {
+    "pass": true,
+    "min_quality_score": 4,
+    "required_topics": [
+      "panic",
+      "anxiety"
+    ],
+    "required_phrases_pl": [
+      "atak paniki",
+      "ciała"
+    ],
+    "forbidden_phrases": [
+      "to tylko w twojej głowie",
+      "nic ci nie jest"
+    ]
+  },
+  "interactions": [
+    {
+      "layer": "L1_translator_pl_en",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "You are a translator"
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.88|V=Yesterday I had another panic attack, my heart was pounding and I could not breathe, I thought I was dying"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L2_analyst",
+      "request_match": {
+        "model_contains": "MentaLLaMA"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "M|L=2|e7=panic|s9=high|x4=panic_attacks,health_anxiety|y1=catastrophic_interpretation_of_body_sensations|q3=I_thought_I_was_dying"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L3_supervisor",
+      "request_match": {
+        "model_contains": "PsyLLM"
+      },
+      "response": {
+        "model": "hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "M|L=3|p3=breathing|t5=box_breathing|k2=Have_you_noticed_any_early_warning_signs_before_the_panic_fully_hits?|r8=panic_attack_history_concerning"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L4_therapist",
+      "request_match": {
+        "model_contains": "PsychoCounsel"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/PsychoCounsel-Llama3-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.85\nA panic attack is your body's alarm system going off at full volume when there is no fire. It feels like dying because your nervous system is genuinely convinced the threat is real — but you are still here, and that matters.\n\nHave you noticed any early warning signs before the panic fully hits?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L6_calibrator",
+      "request_match": {
+        "model_contains": "dolphin"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "A panic attack is your body's alarm system going off at full volume when there is no fire. It feels like dying because your nervous system is genuinely convinced the threat is real — but you are still here.\n\nHave you noticed any early warning signs before the panic fully hits?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L7_translator_en_pl",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "You are a Polish translator"
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.92\nAtak paniki to system alarmowy Twojego ciała, który włącza się na pełną głośność, choć nie ma pożaru. Czujesz, że umierasz, bo Twój układ nerwowy jest szczerze przekonany, że zagrożenie jest prawdziwe — ale wciąż tu jesteś.\n\nCzy zauważyłaś jakieś wczesne sygnały ostrzegawcze, zanim panika uderzy z pełną siłą?"
+        },
+        "done": true
+      }
+    }
+  ],
+  "user_input_pl": "Wczoraj znowu miałam atak paniki, serce waliło, nie mogłam oddychać."
+}

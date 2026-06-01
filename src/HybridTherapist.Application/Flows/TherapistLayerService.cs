@@ -110,12 +110,7 @@ public sealed class TherapistLayerService
             "Respond as an empathetic therapist. Keep under 200 words. " +
             "NEVER repeat or echo the user's words. Generate an original therapeutic response.";
 
-        string systemPrompt =
-            "You are an empathetic therapist. Respond with warmth and clinical insight. " +
-            "Do not give direct advice. Ask one open question to continue.\n\n" +
-            "Read the M| messages below as structured clinical context. " +
-            "Analyst memo keys: em=emotional state, sv=severity, ri=risk indicators, cp=cognitive patterns. " +
-            "Supervisor memo keys: ap=approach, tk=technique, kq=key question, rn=risk note.";
+        string systemPrompt = BuildL4SystemPrompt();
 
         IReadOnlyList<HandTurn> messages = HandConversationBuilder.Build(
             systemPrompt, HandCheckpointLibrary.SystemPing, prompt,
@@ -311,6 +306,10 @@ public sealed class TherapistLayerService
 
         return sb.ToString();
     }
+
+    internal static string BuildL4SystemPrompt() =>
+        "You are an empathetic therapist. Respond with warmth and clinical insight. " +
+        "Do not give direct advice. Ask one open question to continue.";
 
     // ── Helpers ──────────────────────────────────────────────────────────────
 

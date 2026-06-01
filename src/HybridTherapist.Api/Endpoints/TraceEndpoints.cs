@@ -4,7 +4,7 @@ namespace HybridTherapist.Api.Endpoints;
 
 /// <summary>
 /// Debug endpoints that expose the per-layer execution trace for a session.
-/// Cortexa parity: <c>IAuditRepository</c> wrote similar events to SQLite.
+/// Trace parity: the previous audit repository wrote similar events to SQLite.
 /// </summary>
 public static class TraceEndpoints
 {

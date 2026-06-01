@@ -4,6 +4,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace HybridTherapist.Integration;
 
@@ -17,6 +18,13 @@ public sealed class LiveOllamaE2ETests
 {
     private static readonly string OllamaBaseUrl =
         Environment.GetEnvironmentVariable("OLLAMA_HOST") ?? "http://localhost:11434";
+
+    private readonly ITestOutputHelper _output;
+
+    public LiveOllamaE2ETests(ITestOutputHelper output)
+    {
+        _output = output;
+    }
 
     [Fact]
     public async Task LiveOllama_InsomniaQuery_ReturnsPolishResponse_NoFallback()
@@ -67,7 +75,27 @@ public sealed class LiveOllamaE2ETests
         meta.GetProperty("fallback").GetBoolean().Should().BeFalse(
             "live pipeline should not fall back");
         meta.GetProperty("phase").GetString().Should().Be("INIT");
-        meta.GetProperty("session_id").GetString().Should().NotBeNullOrWhiteSpace();
+        string sessionId = meta.GetProperty("session_id").GetString()!;
+        sessionId.Should().NotBeNullOrWhiteSpace();
+
+        int tokensSaved = meta.GetProperty("token_savings_tokens").GetInt32();
+        double savingsPercent = meta.GetProperty("token_savings_percent").GetDouble();
+        double.IsFinite(savingsPercent).Should().BeTrue(
+            "live benchmark must report token economy from L2/L3 memo wire, even when the live run is inefficient");
+        _output.WriteLine($"Token save:   ~{tokensSaved} tokens ({savingsPercent}%)");
+
+        string traceUrl = meta.GetProperty("trace_url").GetString()!;
+        using HttpResponseMessage traceResponse = await client.GetAsync(traceUrl);
+        traceResponse.EnsureSuccessStatusCode();
+        using JsonDocument traceDoc = JsonDocument.Parse(await traceResponse.Content.ReadAsStringAsync());
+        string[] layers = traceDoc.RootElement.GetProperty("events")
+            .EnumerateArray()
+            .Select(e => e.GetProperty("layer").GetString()!)
+            .ToArray();
+        layers.Should().Contain("L2_analyst");
+        layers.Should().Contain("L3_supervisor");
+        layers.Should().Contain("L4_therapist");
+        _output.WriteLine($"Live trace:    {traceUrl}");
 
         // ── 5. Response headers ──
         response.Headers.GetValues("X-Cortexa-Fallback")

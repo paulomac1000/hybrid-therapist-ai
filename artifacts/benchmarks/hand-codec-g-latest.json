@@ -1,0 +1,33 @@
+{
+  "benchmark": "hand-codec-g",
+  "timestamp_utc": "2026-06-01T16:34:24Z",
+  "commit": "6c7022f",
+  "dotnet_version": "8.0.126",
+  "strict_codec_g": true,
+  "prompt_purity_status": "verified_by_tests",
+  "mode": "all",
+  "unit_tests": {
+    "passed": 277,
+    "failed": 0
+  },
+  "cassette_benchmark": {
+    "status": "passed",
+    "passed": 19,
+    "failed": 0,
+    "trx": "/home/pablo/Projects/hybrid-therapist/artifacts/benchmarks/hand-benchmark.trx",
+    "negative_trx": "/home/pablo/Projects/hybrid-therapist/artifacts/benchmarks/hand-benchmark-negative.trx"
+  },
+  "live_benchmark": {
+    "status": "passed",
+    "passed": 1,
+    "failed": 0,
+    "trx": "/home/pablo/Projects/hybrid-therapist/artifacts/benchmarks/hand-live.trx"
+  },
+  "token_savings_status": "measured",
+  "token_savings": {
+    "count": 12,
+    "avg_percent": 32.5,
+    "min_percent": 6.0,
+    "max_percent": 43.8
+  }
+}

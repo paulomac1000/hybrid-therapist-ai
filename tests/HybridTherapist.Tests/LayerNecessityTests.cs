@@ -123,8 +123,8 @@ public sealed class LayerNecessityTests
         ParsedHandMessage? parsed = HandParser.Parse(memo);
         parsed.Should().NotBeNull();
         parsed!.Performative.Should().Be(Performative.Memo);
-        parsed.Get("em").Should().Be("anxiety");
-        parsed.Get("sv").Should().Be("moderate");
+        parsed.Get("e7").Should().Be("anxiety");
+        parsed.Get("s9").Should().Be("moderate");
     }
 
     // ── Layer 10: SessionPhase guidance — must be different per phase ───────

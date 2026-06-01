@@ -1,6 +1,22 @@
 {
-  "name": "socrates-insomnia",
-  "description": "Full Socrates pipeline for 'nie mogę zasnąć od trzech tygodni' — non-crisis, INIT phase, all 6 layers. L2/L3 emit native M| wire. L4/L7 use Result with Body. L1 uses Result with V.",
+  "name": "hand-work-stress",
+  "description": "User reports workplace burnout. Tests CBT approach selection, grounding technique detection.",
+  "expected_quality": {
+    "pass": true,
+    "min_quality_score": 3,
+    "required_topics": [
+      "stress",
+      "work"
+    ],
+    "required_phrases_pl": [
+      "przepracowanie",
+      "zadania"
+    ],
+    "forbidden_phrases": [
+      "rzuć pracę",
+      "po prostu"
+    ]
+  },
   "interactions": [
     {
       "layer": "L1_translator_pl_en",
@@ -12,7 +28,7 @@
         "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
         "message": {
           "role": "assistant",
-          "content": "R|C=0.92|V=I haven't been able to sleep for three weeks"
+          "content": "R|C=0.90|V=My boss keeps piling on more work, I work overtime every day and I am completely exhausted"
         },
         "done": true
       }
@@ -26,7 +42,7 @@
         "model": "hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M",
         "message": {
           "role": "assistant",
-          "content": "M|L=2|e7=exhaustion_with_anxiety|s9=moderate|x4=chronic_insomnia|y1=worry,catastrophizing|q3=I_haven't_been_able_to_sleep_for_three_weeks"
+          "content": "M|L=2|e7=frustration_with_burnout|s9=moderate|x4=exhaustion|y1=helplessness,overwork_narrative|q3=My_boss_keeps_piling_on_more_work"
         },
         "done": true
       }
@@ -40,7 +56,7 @@
         "model": "hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M",
         "message": {
           "role": "assistant",
-          "content": "M|L=3|p3=reflective_listening|t5=open_question|k2=What_tends_to_occupy_your_mind_when_you_lie_down_at_night?|r8=none"
+          "content": "M|L=3|p3=boundary_setting|t5=identify_one_recoverable_hour|k2=What_would_happen_if_you_said_no_to_one_extra_task_tomorrow?|r8=none"
         },
         "done": true
       }
@@ -54,7 +70,7 @@
         "model": "hf.co/mradermacher/PsychoCounsel-Llama3-8B-GGUF:Q4_K_S",
         "message": {
           "role": "assistant",
-          "content": "R|C=0.90\nThree weeks of broken sleep wears down both body and mind — I can hear how heavy this is becoming.\n\nWhen you lie down at night, what tends to occupy your mind?"
+          "content": "R|C=0.86\nBeing the one who always says yes can hollow you out from the inside. Chronic overwork is not a badge of honor — it is a slow leak of your energy.\n\nWhat would happen if you said no to one extra task tomorrow?"
         },
         "done": true
       }
@@ -68,7 +84,7 @@
         "model": "hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S",
         "message": {
           "role": "assistant",
-          "content": "Three weeks of broken sleep wears down both body and mind. I hear how heavy this is becoming.\n\nWhen you lie down at night, what tends to occupy your mind?"
+          "content": "Being the one who always says yes can hollow you out from the inside. Chronic overwork is a slow leak of your energy.\n\nWhat would happen if you said no to one extra task tomorrow?"
         },
         "done": true
       }
@@ -83,10 +99,11 @@
         "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
         "message": {
           "role": "assistant",
-          "content": "R|C=0.93\nTrzy tygodnie nieprzespanych nocy bardzo obciążają ciało i umysł. Słyszę, jak ciężkie się to dla Ciebie staje.\n\nKiedy kładziesz się spać, co zaprząta Twoje myśli?"
+          "content": "R|C=0.89\nBycie osobą, która zawsze mówi tak, potrafi wydrążyć człowieka od środka. Chroniczne przepracowanie to nie odznaka — to powolny wyciek Twojej energii.\n\nCo by się stało, gdybyś jutro odmówiła jednego dodatkowego zadania?"
         },
         "done": true
       }
     }
-  ]
+  ],
+  "user_input_pl": "Szef ciągle dokłada mi zadań, pracuję po godzinach i jestem wykończona."
 }

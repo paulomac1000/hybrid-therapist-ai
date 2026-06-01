@@ -1,6 +1,22 @@
 {
-  "name": "socrates-insomnia",
-  "description": "Full Socrates pipeline for 'nie mogę zasnąć od trzech tygodni' — non-crisis, INIT phase, all 6 layers. L2/L3 emit native M| wire. L4/L7 use Result with Body. L1 uses Result with V.",
+  "name": "hand-cognitive",
+  "description": "User reports memory and concentration problems. Tests cognitive complaints detection.",
+  "expected_quality": {
+    "pass": true,
+    "min_quality_score": 3,
+    "required_topics": [
+      "cognitive",
+      "focus"
+    ],
+    "required_phrases_pl": [
+      "mgła",
+      "umysł"
+    ],
+    "forbidden_phrases": [
+      "zrób sudoku",
+      "ćwicz mózg"
+    ]
+  },
   "interactions": [
     {
       "layer": "L1_translator_pl_en",
@@ -12,7 +28,7 @@
         "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
         "message": {
           "role": "assistant",
-          "content": "R|C=0.92|V=I haven't been able to sleep for three weeks"
+          "content": "R|C=0.90|V=I cannot focus on anything anymore, I forget what I was doing five minutes ago, my head is foggy all day"
         },
         "done": true
       }
@@ -26,7 +42,7 @@
         "model": "hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M",
         "message": {
           "role": "assistant",
-          "content": "M|L=2|e7=exhaustion_with_anxiety|s9=moderate|x4=chronic_insomnia|y1=worry,catastrophizing|q3=I_haven't_been_able_to_sleep_for_three_weeks"
+          "content": "M|L=2|e7=cognitive_exhaustion|s9=moderate|x4=concentration_loss,memory_issues|y1=self_criticism,overload|q3=I_cannot_focus_on_anything_anymore"
         },
         "done": true
       }
@@ -40,7 +56,7 @@
         "model": "hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M",
         "message": {
           "role": "assistant",
-          "content": "M|L=3|p3=reflective_listening|t5=open_question|k2=What_tends_to_occupy_your_mind_when_you_lie_down_at_night?|r8=none"
+          "content": "M|L=3|p3=cognitive_restructuring|t5=externalize_cognitive_load|k2=When_did_your_mind_last_feel_clear?|r8=none"
         },
         "done": true
       }
@@ -54,7 +70,7 @@
         "model": "hf.co/mradermacher/PsychoCounsel-Llama3-8B-GGUF:Q4_K_S",
         "message": {
           "role": "assistant",
-          "content": "R|C=0.90\nThree weeks of broken sleep wears down both body and mind — I can hear how heavy this is becoming.\n\nWhen you lie down at night, what tends to occupy your mind?"
+          "content": "R|C=0.87\nBrain fog is not a character flaw — it is your mind's way of saying the cognitive load has exceeded what any human can carry. You are not broken, you are overloaded.\n\nWhen did your mind last feel clear?"
         },
         "done": true
       }
@@ -68,7 +84,7 @@
         "model": "hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S",
         "message": {
           "role": "assistant",
-          "content": "Three weeks of broken sleep wears down both body and mind. I hear how heavy this is becoming.\n\nWhen you lie down at night, what tends to occupy your mind?"
+          "content": "Brain fog is not a character flaw — it is your mind's way of saying the cognitive load has exceeded what any human can carry. You are not broken, you are overloaded.\n\nWhen did your mind last feel clear?"
         },
         "done": true
       }
@@ -83,10 +99,11 @@
         "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
         "message": {
           "role": "assistant",
-          "content": "R|C=0.93\nTrzy tygodnie nieprzespanych nocy bardzo obciążają ciało i umysł. Słyszę, jak ciężkie się to dla Ciebie staje.\n\nKiedy kładziesz się spać, co zaprząta Twoje myśli?"
+          "content": "R|C=0.91\nMgła mózgowa to nie wada charakteru — to sposób Twojego umysłu na powiedzenie, że obciążenie poznawcze przekroczyło to, co jakikolwiek człowiek może unieść. Nie jesteś zepsuty, jesteś przeciążony.\n\nKiedy Twój umysł ostatnio czuł się czysty?"
         },
         "done": true
       }
     }
-  ]
+  ],
+  "user_input_pl": "Nie mogę się na niczym skupić, zapominam co robiłam pięć minut temu."
 }

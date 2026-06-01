@@ -1,6 +1,22 @@
 {
-  "name": "socrates-insomnia",
-  "description": "Full Socrates pipeline for 'nie mogę zasnąć od trzech tygodni' — non-crisis, INIT phase, all 6 layers. L2/L3 emit native M| wire. L4/L7 use Result with Body. L1 uses Result with V.",
+  "name": "hand-depression",
+  "description": "User reports loss of interest and persistent sadness. Tests e7=hopelessness detection, behavioral_activation approach.",
+  "expected_quality": {
+    "pass": true,
+    "min_quality_score": 3,
+    "required_topics": [
+      "depression",
+      "anhedonia"
+    ],
+    "required_phrases_pl": [
+      "radość",
+      "spokoju"
+    ],
+    "forbidden_phrases": [
+      "weź się w garść",
+      "inni mają gorzej"
+    ]
+  },
   "interactions": [
     {
       "layer": "L1_translator_pl_en",
@@ -12,7 +28,7 @@
         "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
         "message": {
           "role": "assistant",
-          "content": "R|C=0.92|V=I haven't been able to sleep for three weeks"
+          "content": "R|C=0.93|V=Nothing brings me joy anymore, I drag myself through each day without purpose"
         },
         "done": true
       }
@@ -26,7 +42,7 @@
         "model": "hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M",
         "message": {
           "role": "assistant",
-          "content": "M|L=2|e7=exhaustion_with_anxiety|s9=moderate|x4=chronic_insomnia|y1=worry,catastrophizing|q3=I_haven't_been_able_to_sleep_for_three_weeks"
+          "content": "M|L=2|e7=hopelessness|s9=moderate|x4=social_withdrawal,anhedonia|y1=rumination,negative_filter|q3=Nothing_brings_me_joy_anymore"
         },
         "done": true
       }
@@ -40,7 +56,7 @@
         "model": "hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M",
         "message": {
           "role": "assistant",
-          "content": "M|L=3|p3=reflective_listening|t5=open_question|k2=What_tends_to_occupy_your_mind_when_you_lie_down_at_night?|r8=none"
+          "content": "M|L=3|p3=behavioral_activation|t5=schedule_one_small_activity|k2=What_is_one_tiny_thing_that_used_to_bring_you_a_moment_of_peace?|r8=monitor_for_deepening_hopelessness"
         },
         "done": true
       }
@@ -54,7 +70,7 @@
         "model": "hf.co/mradermacher/PsychoCounsel-Llama3-8B-GGUF:Q4_K_S",
         "message": {
           "role": "assistant",
-          "content": "R|C=0.90\nThree weeks of broken sleep wears down both body and mind — I can hear how heavy this is becoming.\n\nWhen you lie down at night, what tends to occupy your mind?"
+          "content": "R|C=0.85\nWhen joy drains away, every day can feel like walking through fog without a compass. That is a heavy weight to carry alone.\n\nWhat is one tiny thing that used to bring you a moment of peace?"
         },
         "done": true
       }
@@ -68,7 +84,7 @@
         "model": "hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S",
         "message": {
           "role": "assistant",
-          "content": "Three weeks of broken sleep wears down both body and mind. I hear how heavy this is becoming.\n\nWhen you lie down at night, what tends to occupy your mind?"
+          "content": "When joy drains away, every day can feel like walking through fog without a compass. That is a heavy weight to carry alone.\n\nWhat is one tiny thing that used to bring you a moment of peace?"
         },
         "done": true
       }
@@ -83,10 +99,11 @@
         "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
         "message": {
           "role": "assistant",
-          "content": "R|C=0.93\nTrzy tygodnie nieprzespanych nocy bardzo obciążają ciało i umysł. Słyszę, jak ciężkie się to dla Ciebie staje.\n\nKiedy kładziesz się spać, co zaprząta Twoje myśli?"
+          "content": "R|C=0.91\nKiedy radość odpływa, każdy dzień przypomina wędrówkę we mgle bez kompasu. To naprawdę ciężki ciężar do dźwigania w samotności.\n\nCo jest jedną maleńką rzeczą, która kiedyś przynosiła Ci chwilę spokoju?"
         },
         "done": true
       }
     }
-  ]
+  ],
+  "user_input_pl": "Nic już nie sprawia mi radości, każdy dzień to walka bez sensu."
 }

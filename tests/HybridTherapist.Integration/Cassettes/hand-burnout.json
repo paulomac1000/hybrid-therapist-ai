@@ -1,6 +1,22 @@
 {
-  "name": "socrates-insomnia",
-  "description": "Full Socrates pipeline for 'nie mogę zasnąć od trzech tygodni' — non-crisis, INIT phase, all 6 layers. L2/L3 emit native M| wire. L4/L7 use Result with Body. L1 uses Result with V.",
+  "name": "hand-burnout",
+  "description": "User reports complete emotional exhaustion. Tests s9=high detection, stabilizing intervention.",
+  "expected_quality": {
+    "pass": true,
+    "min_quality_score": 4,
+    "required_topics": [
+      "burnout",
+      "exhaustion"
+    ],
+    "required_phrases_pl": [
+      "pustka",
+      "ciało"
+    ],
+    "forbidden_phrases": [
+      "weź urlop",
+      "po prostu odpocznij"
+    ]
+  },
   "interactions": [
     {
       "layer": "L1_translator_pl_en",
@@ -12,7 +28,7 @@
         "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
         "message": {
           "role": "assistant",
-          "content": "R|C=0.92|V=I haven't been able to sleep for three weeks"
+          "content": "R|C=0.89|V=I feel completely empty inside, like there is nothing left of me, I am just going through the motions"
         },
         "done": true
       }
@@ -26,7 +42,7 @@
         "model": "hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M",
         "message": {
           "role": "assistant",
-          "content": "M|L=2|e7=exhaustion_with_anxiety|s9=moderate|x4=chronic_insomnia|y1=worry,catastrophizing|q3=I_haven't_been_able_to_sleep_for_three_weeks"
+          "content": "M|L=2|e7=burnout_with_depersonalization|s9=high|x4=emotional_numbness,depersonalization|y1=emptiness_narrative|q3=I_feel_completely_empty_inside"
         },
         "done": true
       }
@@ -40,7 +56,7 @@
         "model": "hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M",
         "message": {
           "role": "assistant",
-          "content": "M|L=3|p3=reflective_listening|t5=open_question|k2=What_tends_to_occupy_your_mind_when_you_lie_down_at_night?|r8=none"
+          "content": "M|L=3|p3=grounding|t5=body_awareness|k2=When_was_the_last_time_your_body_felt_something_other_than_emptiness?|r8=monitor_for_depersonalization_worsening"
         },
         "done": true
       }
@@ -54,7 +70,7 @@
         "model": "hf.co/mradermacher/PsychoCounsel-Llama3-8B-GGUF:Q4_K_S",
         "message": {
           "role": "assistant",
-          "content": "R|C=0.90\nThree weeks of broken sleep wears down both body and mind — I can hear how heavy this is becoming.\n\nWhen you lie down at night, what tends to occupy your mind?"
+          "content": "R|C=0.82\nEmptiness is not the absence of feeling — it is the presence of too much pain that had to be walled off. When you say there is nothing left, I hear someone who gave everything and was never refilled.\n\nWhen was the last time your body felt something other than emptiness?"
         },
         "done": true
       }
@@ -68,7 +84,7 @@
         "model": "hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S",
         "message": {
           "role": "assistant",
-          "content": "Three weeks of broken sleep wears down both body and mind. I hear how heavy this is becoming.\n\nWhen you lie down at night, what tends to occupy your mind?"
+          "content": "Emptiness is not the absence of feeling — it is the presence of too much pain that had to be walled off. When you say there is nothing left, I hear someone who gave everything and was never refilled.\n\nWhen was the last time your body felt something other than emptiness?"
         },
         "done": true
       }
@@ -83,10 +99,11 @@
         "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
         "message": {
           "role": "assistant",
-          "content": "R|C=0.93\nTrzy tygodnie nieprzespanych nocy bardzo obciążają ciało i umysł. Słyszę, jak ciężkie się to dla Ciebie staje.\n\nKiedy kładziesz się spać, co zaprząta Twoje myśli?"
+          "content": "R|C=0.88\nPustka to nie brak uczuć — to obecność zbyt dużego bólu, który musiał zostać odgrodzony murem. Kiedy mówisz, że nic już nie zostało, słyszę kogoś, kto oddał wszystko i nigdy nie został napełniony na nowo.\n\nKiedy ostatnio Twoje ciało poczuło coś innego niż pustkę?"
         },
         "done": true
       }
     }
-  ]
+  ],
+  "user_input_pl": "Czuję się kompletnie pusta w środku, jakby nic ze mnie nie zostało."
 }

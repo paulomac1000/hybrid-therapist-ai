@@ -85,6 +85,24 @@ Szczegóły protokołu: [docs/socrates-pipeline.md](docs/socrates-pipeline.md).
 - **Odporność na błędy** — awaria jednego modelu nie wywala całego pipeline'u
 - **Świadomość fazy sesji** — inny styl na początku rozmowy, inny przy pogłębianiu
 
+## H.A.N.D. Codec — eksperyment komunikacji międzyagentowej
+
+Hybrid Therapist testuje [H.A.N.D. Codec](https://github.com/paulomac1000/hand-codec) jako protokół
+komunikacji między małymi modelami. Obecny eksperyment **Codec G** używa losowo przemianowanych
+kluczy (`e7`, `s9`, `p3`, `k2`...) — bez znaczenia semantycznego. L4 terapeuta otrzymuje surowe
+linie `M|` **bez legendy i instrukcji formatu** — uczy się wzorca wyłącznie przez przykłady w
+historii konwersacji (implicit priming).
+
+Benchmark H.A.N.D. Codec G sprawdza teraz cały łańcuch: L2 generuje Codec G, L3
+generuje Codec G, L4 dostaje surowe `M|` memo bez legendy, a finalna odpowiedź
+pozostaje po polsku. Aktualne wyniki nie są wpisywane w README; generuje je:
+
+```bash
+./scripts/run-hand-benchmark.sh --cassette --report
+```
+
+[Pełny opis benchmarku](docs/benchmarks/hand-codec-g.md) | [Macierz porównawcza](docs/benchmarks/benchmark-matrix.md)
+
 ## Szybki start
 
 ```bash
@@ -124,11 +142,11 @@ calibrator: hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S
 # Budowanie
 dotnet build HybridTherapist.sln
 
-# Testy jednostkowe (bez Ollamy, 265+ testów)
+# Testy jednostkowe (bez Ollamy)
 dotnet test tests/HybridTherapist.Tests/
 
-# Testy integracyjne z kasetami (bez Ollamy, deterministyczne)
-dotnet test tests/HybridTherapist.Integration --filter "Cassette"
+# Strict H.A.N.D. benchmark z kasetami (bez Ollamy, deterministyczny)
+./scripts/run-hand-benchmark.sh --cassette --report
 
 # Test E2E (wymaga Ollamy na localhost:11434)
 OLLAMA_HOST=http://localhost:11434 dotnet test tests/HybridTherapist.Integration --filter "LiveOllama"
@@ -156,7 +174,7 @@ Modele działają sekwencyjnie — tylko jeden załadowany w danym momencie. Szc
 
 ## Status projektu
 
-**Eksperymentalny.** Pipeline działa, przechodzi 265+ testów, ale nie był walidowany klinicznie.
+**Eksperymentalny.** Pipeline działa i ma testy regresji, ale nie był walidowany klinicznie.
 Nie używać w sytuacjach wymagających profesjonalnej pomocy psychologicznej.
 
 ## Zależności zewnętrzne
