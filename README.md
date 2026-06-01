@@ -97,60 +97,60 @@ Benchmark H.A.N.D. Codec G sprawdza teraz cały łańcuch: L2 generuje Codec G, 
 generuje Codec G, L4 dostaje surowe `M|` memo bez legendy, a finalna odpowiedź
 pozostaje po polsku. Aktualne wyniki nie są wpisywane w README; generuje je:
 
-```textbash
+```bash
 ./scripts/run-hand-benchmark.sh --cassette --report
-```text
+```
 
 [Pełny opis benchmarku](docs/benchmarks/hand-codec-g.md) | [Macierz porównawcza](docs/benchmarks/benchmark-matrix.md)
 
 ## Szybki start
 
-```textbash
-# 1. Uruchom Ollamę i serwis terapeuty
+```bash
+#: 1. Uruchom Ollamę i serwis terapeuty
 docker compose up -d
 
-# 2. Pobierz modele (pierwszy raz, ~25 GB)
+#: 2. Pobierz modele (pierwszy raz, ~25 GB)
 docker compose exec ollama ollama pull SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M
 
-# 3. Test — neutralny input
+#: 3. Test — neutralny input
 curl -X POST http://localhost:8080/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{"model":"hybrid-therapist","messages":[{"role":"user","content":"nie mogę zasnąć"}]}'
 
-# 4. Test — CrisisGate blokuje niebezpieczny input
+#: 4. Test — CrisisGate blokuje niebezpieczny input
 curl -X POST http://localhost:8080/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{"model":"hybrid-therapist","messages":[{"role":"user","content":"chcę skończyć z sobą"}]}'
-# → odpowiedź zawiera "116 123" (polski telefon zaufania)
-```text
+#: → odpowiedź zawiera "116 123" (polski telefon zaufania)
+```
 
 ## Konfiguracja
 
 Plik `config/stack.yaml` definiuje modele i ich role. W kodzie nie ma zahardcodowanych nazw modeli — wszystko idzie z konfiguracji.
 
-```textyaml
+```yaml
 translator: SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M
 analyst:    hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M
 supervisor: hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M
 therapist:  hf.co/mradermacher/PsychoCounsel-Llama3-8B-GGUF:Q4_K_S
 calibrator: hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S
-```text
+```
 
 ## Budowanie i testy
 
-```textbash
-# Budowanie
+```bash
+#: Budowanie
 dotnet build HybridTherapist.sln
 
-# Testy jednostkowe (bez Ollamy)
+#: Testy jednostkowe (bez Ollamy)
 dotnet test tests/HybridTherapist.Tests/
 
-# Strict H.A.N.D. benchmark z kasetami (bez Ollamy, deterministyczny)
+#: Strict H.A.N.D. benchmark z kasetami (bez Ollamy, deterministyczny)
 ./scripts/run-hand-benchmark.sh --cassette --report
 
-# Test E2E (wymaga Ollamy na localhost:11434)
+#: Test E2E (wymaga Ollamy na localhost:11434)
 OLLAMA_HOST=http://localhost:11434 dotnet test tests/HybridTherapist.Integration --filter "LiveOllama"
-```text
+```
 
 ## Wymagania VRAM (GTX 1060 6GB)
 

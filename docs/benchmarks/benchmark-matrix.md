@@ -40,7 +40,7 @@ roadmap — it lists planned experiments, not yet-executed ones.
 | **Pass rate** | % of benchmark scenarios meeting quality criteria |
 | **Quality score** | Heuristic score based on phrase presence/absence and response structure |
 | **Fallback rate** | % of runs where any layer degraded to fallback |
-| **Token count (wire)** | Characters in the `M|` memo line ÷ 3.5 (token estimate) |
+| **Token count (wire)** | Characters in the `` `M\|` `` memo line ÷ 3.5 (token estimate) |
 | **Token count (plaintext)** | Estimated characters in an equivalent natural-language memo |
 | **Token savings** | % reduction from plaintext to wire |
 | **Resilience level** | Average HandResiliencePipeline recovery level (1 = perfect, 5 = full fallback) |

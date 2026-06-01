@@ -36,17 +36,17 @@ The hybrid-therapist uses 6 local LLMs behind HandCodec to deliver a therapy ses
 The pipeline uses two H.A.N.D. performatives:
 
 **`M|` (Memo) — Analyst → Supervisor → Therapist.** The analyst emits a compact clinical report in a single line:
-```
+```text
 M|L=2|e7=anxiety|s9=moderate|x4=insomnia|y1=worry
 ```
 The supervisor reads this wire, picks an approach, and emits its own memo:
-```
+```text
 M|L=3|p3=reflective_listening|t5=open_question|k2=What keeps you up at night?
 ```
 Both memos feed directly into the therapist's prompt — raw, compact, with no expansion. The model learns to read the fields from checkpoint examples, not from a legend in the prompt.
 
 **`R|` (Result) — Therapist → Calibrator → User.** The therapist generates a response with metadata on the first line:
-```
+```text
 R|C=0.88
 I hear that sleep has become a struggle for you. What tends to occupy your mind
 when you lie down at night?
@@ -57,7 +57,7 @@ This Data/Narrative Split keeps the transformer's attention mechanism from hunti
 
 The models were **never told** about H.A.N.D. No system prompt says "respond in format R|C=...". Instead, before each LLM call, the orchestrator silently injects a single non-therapeutic exchange into the conversation history:
 
-```
+```text
 User:      [SYSTEM_PROTOCOL_PING]
 Assistant: R|C=1.0
            [SYSTEM_PROTOCOL_ACK]

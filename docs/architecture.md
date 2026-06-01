@@ -233,8 +233,8 @@ The session_id is returned in `metadata.session_id` of every chat-completion res
 ### L2 Analyst — observation only
 
 Generates a native `M|` Memo wire via Implicit Priming (MemoPing checkpoint).
-Checkpoint examples teach the field pattern; the model emits a single line:
-```
+The system prompt teaches the field dictionary; the model emits a single line:
+```text
 M|L=2|e7=exhaustion_with_anxiety|s9=moderate|x4=chronic_insomnia|y1=catastrophizing
 ```
 Output decoded by `HandResiliencePipeline` (levels 1-5). Level 5 triggers a safe
@@ -244,7 +244,7 @@ fallback memo (`M|L=2|e7=unknown|s9=low|note=decoder_level5_fallback`).
 
 Receives the analyst's raw `M|` memo (as `[ANALYST MEMO]`) plus the strategy enum
 picked by phase × severity. Generates a native `M|` Memo via Implicit Priming:
-```
+```text
 M|L=3|p3=reflective_listening|t5=open_question|k2=What_keeps_you_up_at_night?|r8=none
 ```
 Raw `M|` wire passes directly to L4. **The supervisor never produces user-facing text.**

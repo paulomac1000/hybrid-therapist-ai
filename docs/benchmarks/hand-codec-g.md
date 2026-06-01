@@ -58,7 +58,7 @@ carry no semantic meaning — without explicit format instructions in system pro
 | **L6 Calibrator** | Llama4-Dolphin 8B (Q4_K_S) — editorial polish |
 | **Runtime** | Ollama, local only, zero cloud APIs |
 | **Checkpoints per layer** | 3 diverse examples via `TherapyAnalystPing` / `TherapySupervisorPing` |
-| **L4 system prompt** | Pure therapeutic instruction — no legend, no `M|` mention, no key explanation |
+| **L4 system prompt** | Pure therapeutic instruction — no legend, no `` `M\|` `` mention, no key explanation |
 | **Strict mode** | `TokenSavingsTracker.StrictCodecG = true` — no verbose-key fallback |
 
 ## Codec G key mapping
