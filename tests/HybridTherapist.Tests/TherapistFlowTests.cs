@@ -315,4 +315,32 @@ public sealed class TherapistFlowTests
 
         session1.Should().NotBe(session2, "different Users must get different sessions");
     }
+
+    [Fact]
+    public void ResolveSessionId_EmptyUser_FallsBackToMessageHash()
+    {
+        var req = new ChatCompletionRequest
+        {
+            Model = "hybrid-therapist",
+            Messages = [new ChatMessage { Role = "user", Content = "cześć" }],
+            User = "",
+        };
+
+        string session = TherapistFlow.ResolveSessionId(req);
+        session.Should().StartWith("sess_", "empty User must fall back to message hash");
+    }
+
+    [Fact]
+    public void ResolveSessionId_WhitespaceUser_FallsBackToMessageHash()
+    {
+        var req = new ChatCompletionRequest
+        {
+            Model = "hybrid-therapist",
+            Messages = [new ChatMessage { Role = "user", Content = "cześć" }],
+            User = "   ",
+        };
+
+        string session = TherapistFlow.ResolveSessionId(req);
+        session.Should().StartWith("sess_", "whitespace User must fall back to message hash");
+    }
 }
