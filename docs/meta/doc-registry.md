@@ -15,7 +15,7 @@ last_verified: 2026-05-23
 owners: ["hybrid-therapist"]
 ---
 
-# Rejestr dokumentów
+# Document Registry
 
 ## RULES
 
@@ -35,9 +35,9 @@ owners: ["hybrid-therapist"]
 
 ## EDGE_CASES
 
-- CASE: Nowy dokument dodany bez aktualizacji rejestru → OCZEKIWANE: CI flaguje niezgodność między systemem plików a rejestrem.
+- CASE: A new document is added without a registry update → EXPECTED: CI flags a mismatch between the filesystem and the registry.
 
 ## NON_GOALS
 
-- Nie wymienia plików CI/CD.
-- Nie wymienia plików z kodem źródłowym ani pakietów NuGet.
+- Does not list CI/CD workflow files.
+- Does not list source code files or NuGet packages.

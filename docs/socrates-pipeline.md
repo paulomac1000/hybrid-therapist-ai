@@ -31,31 +31,31 @@ The hybrid-therapist uses 6 local LLMs behind HandCodec to deliver a therapy ses
 
 ## WALKTHROUGH
 
-### Performatives — jak warstwy ze sobą rozmawiają
+### Performatives — how the layers communicate
 
-Pipeline używa dwóch performatywów H.A.N.D.:
+The pipeline uses two H.A.N.D. performatives:
 
-**`M|` (Memo) — Analityk → Supervisor → Terapeuta.** Analityk emituje zwięzły raport kliniczny w jednej linii:
+**`M|` (Memo) — Analyst → Supervisor → Therapist.** The analyst emits a compact clinical report in a single line:
 ```
 M|L=2|e7=anxiety|s9=moderate|x4=insomnia|y1=worry
 ```
-Supervisor odczytuje ten wire, wybiera podejście i emituje własne memo:
+The supervisor reads this wire, picks an approach, and emits its own memo:
 ```
 M|L=3|p3=reflective_listening|t5=open_question|k2=What keeps you up at night?
 ```
-Oba mema trafiają bezpośrednio do promptu terapeuty — surowe, skompresowane, bez rozwijania. L4 nie dostaje legendy kluczy; wzorzec `M|` pochodzi z checkpointów w historii konwersacji.
+Both memos feed directly into the therapist's prompt — raw, compact, with no expansion. The model learns to read the fields from checkpoint examples, not from a legend in the prompt.
 
-**`R|` (Result) — Terapeuta → Kalibrator → Użytkownik.** Terapeuta generuje odpowiedź z metadanymi w pierwszej linii:
+**`R|` (Result) — Therapist → Calibrator → User.** The therapist generates a response with metadata on the first line:
 ```
 R|C=0.88
-Słyszę, że sen stał się dla Ciebie walką. Co zaprząta Ci myśli,
-kiedy kładziesz się spać?
+I hear that sleep has become a struggle for you. What tends to occupy your mind
+when you lie down at night?
 ```
-Ten podział na dane i narrację (Data/Narrative Split) zapobiega polowaniu uwagi transformera na wyniki konfidencji ukryte na końcu długiej odpowiedzi terapeutycznej.
+This Data/Narrative Split keeps the transformer's attention mechanism from hunting for confidence scores buried at the end of a long therapeutic response.
 
-### Implicit Priming — uczenie przez przykład, nie przez instrukcję
+### Implicit Priming — teaching by example, not instruction
 
-Modele **nigdy nie dostały instrukcji** o formacie H.A.N.D. Żaden system prompt nie mówi "odpowiadaj w formacie R|C=...". Zamiast tego, przed każdym wywołaniem LLM, orkiestrator po cichu wstrzykuje jedną nieterapeutyczną wymianę do historii konwersacji:
+The models were **never told** about H.A.N.D. No system prompt says "respond in format R|C=...". Instead, before each LLM call, the orchestrator silently injects a single non-therapeutic exchange into the conversation history:
 
 ```
 User:      [SYSTEM_PROTOCOL_PING]
@@ -63,25 +63,25 @@ Assistant: R|C=1.0
            [SYSTEM_PROTOCOL_ACK]
 ```
 
-Model widzi wzorzec i podświadomie go kontynuuje. Uczy się formatu tak samo jak wszystkiego innego — **naśladując to, co widzi w kontekście**. To jest bezstanowy cache: każde wywołanie zaczyna się od nowa z tym samym pingiem.
+The model sees the pattern and subconsciously continues it. It learns the format the same way it learns anything — by **mimicking what it sees in context**. This is a stateless cache: every call starts fresh with the same ping.
 
-### Drabina odporności — gdy małe modele się potykają
+### Resilience Ladder — when small models stumble
 
-Każda warstwa przepuszcza output modelu przez `HandResiliencePipeline` — 5-stopniową drabinę degradacji:
+Every layer runs the model's output through `HandResiliencePipeline` — a 5-level degradation ladder:
 
-| Poziom | Strategia | Co robi |
-|--------|-----------|---------|
-| 1 | Strict | Format idealny — przechodzi bez zmian |
-| 2 | Lenient | Drobne odstępstwa od formatu — naprawiane |
-| 3 | Markdown Strip | Wire owinięty w ``` fences — ściągane |
-| 4 | Semantic Extraction | Model zignorował format i napisał prozą — regex wyciąga pola |
-| 5 | Fallback | Wszystko zawiodło — bezpieczne memo zastępcze |
+| Level | Strategy | What it does |
+|-------|----------|--------------|
+| 1 | Strict | Perfect format — passes unchanged |
+| 2 | Lenient | Minor format deviations — repaired |
+| 3 | Markdown Strip | Wire wrapped in ``` fences — stripped |
+| 4 | Semantic Extraction | Model ignored format and wrote prose — regex extracts fields |
+| 5 | Fallback | Everything failed — safe replacement memo |
 
-Dzięki temu pipeline nie rzuca HTTP 500 gdy mały model się pomyli. Poziom 5 (nieustrukturyzowany pass-through) wyzwala bezpieczne memo awaryjne dla L2/L3, więc warstwy downstream nigdy nie widzą zepsutego wejścia.
+This means the pipeline never throws HTTP 500 when a small model makes a mistake. Level 5 (unstructured passthrough) triggers a safe fallback memo for L2/L3, so downstream layers never see a broken input.
 
-### Dlaczego to działa — H.A.N.D. w praktyce
+### Why this works — H.A.N.D. in practice
 
-Pięć małych modeli. Jedna karta graficzna za ~200 USD. Zero API w chmurze. Zero opłat za token. Modele rozmawiają ze sobą w języku pidgin, którego nauczyły się przez naśladownictwo — a pipeline przeżywa ich błędy z gracją. Terapeuta jest dowodem koncepcji.
+Five small models. One ~$200 GPU. Zero cloud APIs. Zero per-token billing. The models talk to each other in a pidgin language they learned by imitation — and the pipeline gracefully survives their mistakes. The therapist is the proof of concept.
 
 ## What this architecture buys vs single-model
 

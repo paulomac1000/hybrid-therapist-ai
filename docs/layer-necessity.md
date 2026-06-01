@@ -15,9 +15,9 @@ last_verified: 2026-05-23
 owners: ["hybrid-therapist"]
 ---
 
-# Konieczność warstw — dlaczego każda warstwa zarabia na swoje miejsce
+# Layer Necessity — Why Each Layer Earns Its Place
 
-Każda warstwa w pipeline Socrates ma mierzalny wpływ na końcowy output. Pakiet `LayerNecessityTests` przypina te kontrakty: każdy test kończy się porażką, jeśli okablowanie odpowiadającej warstwy zostanie usunięte.
+Every layer in the Socrates pipeline has a measurable contribution to the final output. The `LayerNecessityTests` suite pins these contracts: each test fails if the corresponding layer's wiring is removed.
 
 ## Map
 

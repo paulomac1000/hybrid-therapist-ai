@@ -15,9 +15,9 @@ last_verified: 2026-05-23
 owners: ["hybrid-therapist"]
 ---
 
-# Architektura
+# Architecture
 
-## Przegląd
+## Overview
 
 ```
                     HTTP /v1/chat/completions
@@ -66,9 +66,9 @@ External dependencies:
 - `HandCodec` — wire format codec (pipe-delimited `key=value`), Resilience Ladder, MemoBuilder
 - `HandRuntime` — Implicit Priming orchestration (ConversationBuilder, CheckpointLibrary, WireConvention, ResponseDecoder)
 
-## Bez chmury — wszystko lokalnie
+## Zero cloud — all local
 
-Pipeline Socrates działa **w całości na lokalnej Ollamie**. Bez OpenRouter. Bez zewnętrznych API. Wszystkie wywołania LLM idą do `http://ollama:11434/api/chat`. Jakość tłumaczenia jest zabezpieczona bramką: Bielik 7B, pojedyncze przejście → statyczny fallback po polsku, jeśli wynik nadal wygląda na angielski.
+The Socrates pipeline runs **entirely on local Ollama**. No OpenRouter. No external APIs. All LLM calls go to `http://ollama:11434/api/chat`. Translator quality is safeguarded by a quality gate: Bielik 7B, single pass → static Polish fallback if output still looks like English.
 
 ## 17-warstwowy pipeline Socrates
 

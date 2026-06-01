@@ -15,9 +15,9 @@ last_verified: 2026-05-23
 owners: ["hybrid-therapist"]
 ---
 
-# Hybrid Therapist — Bezpieczeństwo
+# Hybrid Therapist — Security
 
-## Niezmienniki
+## Invariants
 
 1. **`CrisisGate.Check()` runs before any LLM call.** Layer -1 in the pipeline. No exception, no skip flag.
 2. **`PrivacySanitizer.Sanitize()` runs before any LLM call.** Layer 0. PII never reaches Ollama or OpenRouter.
@@ -39,7 +39,7 @@ Four regex tiers, ordered by severity:
 
 Patterns use compile-time `[GeneratedRegex]` with a 200 ms timeout to defeat ReDoS. `RegexMatchTimeoutException` is caught and treated as "safe" — fail-open is the right move because the model is still bounded by other gates.
 
-**Wzorce po polsku zostają po polsku.** Są interfejsem użytkownika — tłumaczenie złamałoby detekcję.
+**Polish patterns stay in Polish.** They are the user-facing interface — translating them would break detection.
 
 ## PrivacySanitizer
 
@@ -64,7 +64,7 @@ Current coverage (`tests/HybridTherapist.Tests/CrisisGateTests.cs`):
 - Negative: ambiguous phrases ("chcę skończyć z tym projektem", "want to die laughing") do not fire
 - Boundary: empty input, whitespace, very long input
 
-## Czego ten kod NIE zabezpiecza
+## What this code does NOT secure
 
 - **Transport security.** Run behind TLS-terminating reverse proxy in production.
 - **Authentication.** No API key check on `/v1/chat/completions`. Add via ASP.NET Core middleware if needed.
