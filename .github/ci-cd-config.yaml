@@ -1,7 +1,7 @@
 language: dotnet
 dotnet_version: "10.0.x"
 dotnet_solution: HybridTherapist.sln
-project: hybrid-therapist
+project: hybrid-therapist-ai
 use_docker: true
 use_semgrep: true
 use_dependabot: true
