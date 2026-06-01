@@ -25,10 +25,9 @@ public static class ChatEndpoints
 
         try
         {
+            ctx.Request.EnableBuffering();
             using JsonDocument doc = await JsonDocument.ParseAsync(ctx.Request.Body, cancellationToken: ct);
 
-            // Manually extract fields to be maximally tolerant of LibreChat v0.8.x request shapes.
-            // LibreChat's agent system may wrap the request in extra fields or nested objects.
             JsonElement root = doc.RootElement;
             request = new ChatCompletionRequest
             {
@@ -37,7 +36,6 @@ public static class ChatEndpoints
                 User = root.TryGetProperty("user", out JsonElement u) && u.ValueKind == JsonValueKind.String ? u.GetString() : null,
             };
 
-            // Messages: accept both array at top level or nested
             if (root.TryGetProperty("messages", out JsonElement msgs) && msgs.ValueKind == JsonValueKind.Array)
             {
                 request.Messages = msgs.EnumerateArray()
@@ -55,9 +53,20 @@ public static class ChatEndpoints
         }
         catch (Exception ex)
         {
+            // Capture raw body for debugging — stream may already be consumed
+            string rawBody = "<unreadable>";
+            try
+            {
+                ctx.Request.Body.Position = 0;
+                using var reader = new StreamReader(ctx.Request.Body);
+                rawBody = await reader.ReadToEndAsync(ct);
+            }
+            catch { /* body already consumed — ignore */ }
+
             var logger = ctx.RequestServices.GetRequiredService<ILoggerFactory>()
                 .CreateLogger(nameof(ChatEndpoints));
-            logger.LogWarning("JSON parse FAILED — {Error}", ex.Message);
+            logger.LogWarning("JSON parse FAILED — {Error} | body({Len}): {Body}",
+                ex.Message, rawBody.Length, rawBody.Length > 300 ? rawBody[..300] + "..." : rawBody);
             await WriteJsonAsync(ctx, 400, new { error = "Invalid JSON body." }, ct);
             return;
         }

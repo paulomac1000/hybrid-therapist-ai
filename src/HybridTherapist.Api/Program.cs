@@ -57,6 +57,14 @@ builder.Services.AddScoped<TherapistFlow>();
 
 var app = builder.Build();
 
+// Enable request body buffering so we can read it multiple times
+// (necessary for diagnostic logging in ChatEndpoints and LibreChat integration)
+app.Use(async (ctx, next) =>
+{
+    ctx.Request.EnableBuffering();
+    await next();
+});
+
 app.MapChatEndpoints();
 app.MapTraceEndpoints();
 
