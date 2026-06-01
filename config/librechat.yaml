@@ -8,16 +8,9 @@ endpoints:
       apiKey: dummy
       baseURL: http://therapist:8080/v1
       models:
-        default:
-          - hybrid-therapist
-      titleConvo: true
-      titleModel: current_model
+        default: ["hybrid-therapist"]
+        fetch: false
       modelDisplayLabel: "Psycholog AI"
-      iconURL: "https://raw.githubusercontent.com/paulomac1000/hybrid-therapist/main/docs/favicon.ico"
-      addParams:
-        model:
-          default:
-            overrideProperty: model
       dropParams:
         - temperature
         - top_p

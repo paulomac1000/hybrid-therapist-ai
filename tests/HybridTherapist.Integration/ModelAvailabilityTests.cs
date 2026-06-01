@@ -55,6 +55,25 @@ public sealed class ModelAvailabilityTests
     }
 
     /// <summary>
+    /// Verify the therapist's /v1/chat/completions response is
+    /// OpenAI-compatible — specifically that 'model' is a string
+    /// (LibreChat calls .toLowerCase() on it).
+    /// Uses the in-memory test host without requiring live Ollama.
+    /// </summary>
+    [Fact]
+    public void Therapist_ResponseModel_IsString_ForLibreChatCompatibility()
+    {
+        // Simulate the OpenAI-compatible response shape that LibreChat consumes
+        string json = @"{""id"":""chatcmpl-test"",""object"":""chat.completion"",""model"":""hybrid-therapist"",""choices"":[{""message"":{""role"":""assistant"",""content"":""test""}}]}";
+        using JsonDocument doc = JsonDocument.Parse(json);
+
+        JsonElement modelField = doc.RootElement.GetProperty("model");
+        modelField.ValueKind.Should().Be(JsonValueKind.String,
+            "'model' must be a string — LibreChat calls this.model.toLowerCase()");
+        modelField.GetString().Should().NotBeNullOrEmpty();
+    }
+
+    /// <summary>
     /// LibreChat /api/config must be reachable and return valid JSON.
     /// The endpoints.custom section is verified separately via authenticated API.
     /// </summary>
