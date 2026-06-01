@@ -248,7 +248,7 @@ public sealed class TherapistFlow : ITherapistFlow
             savings.TokensSaved, savings.SavingsPercent);
 
         // ── Save state ────────────────────────────────────────────────────────
-        state.History.Add(new ChatMessage { Role = "user", Content = userText });
+        state.History.Add(new ChatMessage { Role = "user", Content = sanitized });
         state.History.Add(new ChatMessage { Role = "assistant", Content = plResponse });
         if (state.History.Count > 40)
             state.History = state.History.TakeLast(40).ToList();
@@ -259,7 +259,7 @@ public sealed class TherapistFlow : ITherapistFlow
             Model = request.Model,
             Content = plResponse,
             Fallback = fallback,
-            CrisisDetected = l7.HasCrisisSignal,
+            CrisisDetected = crisis.IsHardStop || crisis.IsEscalation,
             Metadata =
             {
                 ["phase"] = state.CurrentPhase,

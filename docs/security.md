@@ -47,10 +47,10 @@ Replaces matching patterns with role-appropriate placeholders before the text re
 
 | Pattern | Replacement |
 |---------|-------------|
-| Email (`user@example.com`) | `[EMAIL]` |
-| Polish phone (`+48 123 456 789`, `123-456-789`) | `[TELEFON]` |
-| PESEL (11 digits) | `[PESEL]` |
-| Full name (heuristic) | `[OSOBA]` |
+| Email (`user@example.com`) | `[REDACTED_EMAIL]` |
+| Polish phone (`+48 123 456 789`, `123-456-789`) | `[REDACTED_PHONE]` |
+| PESEL (11 digits) | `[REDACTED_PESEL]` |
+| Full name (heuristic) | `[REDACTED_NAME]` |
 
 The sanitiser is intentionally aggressive — false positives in personal pronouns or place names are acceptable because the cost of a leaked PESEL is far higher than the cost of an over-redacted message.
 

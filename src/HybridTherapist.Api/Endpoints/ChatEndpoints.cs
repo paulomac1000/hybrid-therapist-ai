@@ -85,8 +85,8 @@ public static class ChatEndpoints
 
         FlowExecutionResult result = await flow.ExecuteAsync(request, ct);
 
-        ctx.Response.Headers["X-Cortexa-Flow"] = "hybrid-therapist";
-        ctx.Response.Headers["X-Cortexa-Fallback"] = result.Fallback ? "true" : "false";
+        ctx.Response.Headers["X-HT-Flow"] = "hybrid-therapist";
+        ctx.Response.Headers["X-HT-Fallback"] = result.Fallback ? "true" : "false";
 
         if (request.Stream)
         {

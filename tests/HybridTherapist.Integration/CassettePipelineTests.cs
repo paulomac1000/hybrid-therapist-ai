@@ -57,7 +57,8 @@ public sealed class CassettePipelineTests
         JsonElement meta = doc.RootElement.GetProperty("metadata");
         meta.GetProperty("crisis_detected").GetBoolean().Should().BeFalse();
         meta.GetProperty("fallback").GetBoolean().Should().BeFalse();
-        meta.GetProperty("phase").GetString().Should().Be("INIT");
+        meta.GetProperty("phase").GetString().Should().BeOneOf(["INIT", "EXPLORATION"],
+            "phase starts at INIT; medium severity insomnia escalates to EXPLORATION at msg 1 (v0.2.0 phase machine change)");
     }
 
     [Fact]

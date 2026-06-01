@@ -110,7 +110,7 @@ pozostaje po polsku. Aktualne wyniki nie są wpisywane w README; generuje je:
 docker compose up -d
 
 # 2. Pobierz modele (pierwszy raz, ~25 GB)
-docker exec hybrid-therapist-ollama-1 ollama pull SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M
+docker compose exec ollama ollama pull SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M
 
 # 3. Test — neutralny input
 curl -X POST http://localhost:8080/v1/chat/completions \

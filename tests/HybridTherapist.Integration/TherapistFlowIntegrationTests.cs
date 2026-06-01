@@ -139,9 +139,9 @@ public sealed class TherapistFlowIntegrationTests : IClassFixture<WebApplication
         // This will fail at L1 (no Ollama) and return fallback — but headers must still be set
         HttpResponseMessage response = await _client.PostAsJsonAsync("/v1/chat/completions", payload);
 
-        response.Headers.TryGetValues("X-Cortexa-Flow", out var flowValues).Should().BeTrue();
+        response.Headers.TryGetValues("X-HT-Flow", out var flowValues).Should().BeTrue();
         flowValues!.First().Should().Be("hybrid-therapist");
-        response.Headers.Contains("X-Cortexa-Fallback").Should().BeTrue();
+        response.Headers.Contains("X-HT-Fallback").Should().BeTrue();
     }
 
     [Fact]
@@ -208,7 +208,7 @@ public sealed class TherapistFlowIntegrationTests : IClassFixture<WebApplication
     }
 
     [Fact]
-    public async Task PostCompletions_StreamTrue_HasCortexaHeaders()
+    public async Task PostCompletions_StreamTrue_HasHTHeaders()
     {
         var payload = new
         {
@@ -218,7 +218,7 @@ public sealed class TherapistFlowIntegrationTests : IClassFixture<WebApplication
         };
 
         HttpResponseMessage response = await _client.PostAsJsonAsync("/v1/chat/completions", payload);
-        response.Headers.GetValues("X-Cortexa-Flow").First().Should().Be("hybrid-therapist");
-        response.Headers.Contains("X-Cortexa-Fallback").Should().BeTrue();
+        response.Headers.GetValues("X-HT-Flow").First().Should().Be("hybrid-therapist");
+        response.Headers.Contains("X-HT-Fallback").Should().BeTrue();
     }
 }
