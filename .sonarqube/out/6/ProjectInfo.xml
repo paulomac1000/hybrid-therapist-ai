@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ProjectInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.sonarsource.com/msbuild/integration/2015/1">
+  <ProjectName>HybridTherapist.Integration</ProjectName>
+  <ProjectLanguage>C#</ProjectLanguage>
+  <ProjectType>Test</ProjectType>
+  <ProjectGuid>75c79eb5-1d21-41fe-8bd1-e33179abf69b</ProjectGuid>
+  <FullPath>/home/pablo/Projects/hybrid-therapist/tests/HybridTherapist.Integration/HybridTherapist.Integration.csproj</FullPath>
+  <IsExcluded>false</IsExcluded>
+  <AnalysisResultFiles>
+    <AnalysisResultFile Id="FilesToAnalyze" Location="/home/pablo/Projects/hybrid-therapist/.sonarqube/conf/6/FilesToAnalyze.txt" />
+  </AnalysisResultFiles>
+  <AnalysisSettings>
+    <Property Name="sonar.cs.roslyn.reportFilePaths">/home/pablo/Projects/hybrid-therapist/.sonarqube/out/6/Issues.json</Property>
+    <Property Name="sonar.cs.analyzer.projectOutPaths">/home/pablo/Projects/hybrid-therapist/.sonarqube/out/6</Property>
+    <Property Name="sonar.cs.scanner.telemetry">/home/pablo/Projects/hybrid-therapist/.sonarqube/out/6/Telemetry.json</Property>
+  </AnalysisSettings>
+  <Configuration>Release</Configuration>
+  <Platform>AnyCPU</Platform>
+  <TargetFramework>net8.0</TargetFramework>
+</ProjectInfo>

@@ -1,0 +1,1 @@
+eRX/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Api/HybridTherapist.Api.csprojòCSharp12

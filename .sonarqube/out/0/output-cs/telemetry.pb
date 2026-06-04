@@ -1,0 +1,1 @@
+kR^/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Domain/HybridTherapist.Domain.csprojòCSharp12

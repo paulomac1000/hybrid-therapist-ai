@@ -1,0 +1,4 @@
+﻿/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Infrastructure/Adapters/IOllamaAdapter.cs
+/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Infrastructure/Adapters/OllamaAdapter.cs
+/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Infrastructure/State/InMemoryTherapyStateRepository.cs
+/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Infrastructure/Tracing/InMemoryTraceSink.cs

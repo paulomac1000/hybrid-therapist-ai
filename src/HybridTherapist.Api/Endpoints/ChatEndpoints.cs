@@ -68,8 +68,8 @@ public static class ChatEndpoints
 
             var logger = ctx.RequestServices.GetRequiredService<ILoggerFactory>()
                 .CreateLogger(nameof(ChatEndpoints));
-            logger.LogWarning("JSON parse FAILED — {Error} | body({Len}): {Body}",
-                ex.Message, rawBody.Length, rawBody.Length > 300 ? rawBody[..300] + "..." : rawBody);
+            logger.LogWarning(ex, "JSON parse FAILED — body({Len}): {Body}",
+                rawBody.Length, rawBody.Length > 300 ? rawBody[..300] + "..." : rawBody);
             await WriteJsonAsync(ctx, 400, new { error = "Invalid JSON body." }, ct);
             return;
         }
@@ -202,7 +202,7 @@ public static class ChatEndpoints
                 new
                 {
                     id = "hybrid-therapist",
-                    @object = "model",
+                    @object = ModelKey,
                     created = 1_700_000_000L,
                     owned_by = "hybrid-therapist",
                 },

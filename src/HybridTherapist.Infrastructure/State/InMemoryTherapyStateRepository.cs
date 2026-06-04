@@ -14,9 +14,9 @@ public sealed class InMemoryTherapyStateRepository : ITherapyConversationStateRe
 
     public Task<TherapyConversationState> GetAsync(string sessionId, CancellationToken ct = default)
     {
-        TherapyConversationState state = _store.GetOrAdd(sessionId, _ => new TherapyConversationState
+        TherapyConversationState state = _store.GetOrAdd(sessionId, id => new TherapyConversationState
         {
-            SessionId = sessionId,
+            SessionId = id,
             CurrentPhase = "INIT",
             Topics = [],
             History = [],

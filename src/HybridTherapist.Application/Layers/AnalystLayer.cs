@@ -105,7 +105,7 @@ public sealed class AnalystLayer
         }
         else if (_opts.HandWireVariant == HandWireVariant.Json)
         {
-            var (jsonMemo, ok) = ParseJsonMemo(sanitized);
+            var (jsonMemo, _) = ParseJsonMemo(sanitized);
             memo = jsonMemo;
         }
         else

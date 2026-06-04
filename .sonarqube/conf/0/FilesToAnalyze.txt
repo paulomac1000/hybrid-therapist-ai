@@ -1,0 +1,14 @@
+﻿/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Domain/Interfaces/ICrisisGate.cs
+/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Domain/Interfaces/ITherapistFlow.cs
+/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Domain/Interfaces/ITherapyConversationStateRepository.cs
+/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Domain/Interfaces/ITraceSink.cs
+/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Domain/Models/ClinicalReport.cs
+/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Domain/Models/FlowModels.cs
+/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Domain/Models/MemorySummary.cs
+/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Domain/Models/TherapyConversationState.cs
+/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Domain/Services/QualityValidator.cs
+/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Domain/Services/ResponseStrategySelector.cs
+/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Domain/Services/RuptureDetector.cs
+/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Domain/Services/SessionPhase.cs
+/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Domain/Services/ThematicAlignment.cs
+/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Domain/Services/TopicRegistry.cs

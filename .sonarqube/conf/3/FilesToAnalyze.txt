@@ -1,0 +1,16 @@
+﻿/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Application/Flows/TherapistFlow.cs
+/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Application/Flows/TherapistLayerService.cs
+/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Application/Hand/CrisisKeywordDetector.cs
+/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Application/Hand/HandCheckpointLibrary.cs
+/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Application/Hand/HandConversationBuilder.cs
+/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Application/Hand/HandResponseDecoder.cs
+/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Application/Hand/RuntimeAliases.cs
+/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Application/Hand/TherapistMemoBuilderExtensions.cs
+/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Application/Hand/TokenSavingsTracker.cs
+/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Application/Layers/AnalystLayer.cs
+/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Application/Layers/MemorySummaryParser.cs
+/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Application/Layers/SupervisorLayer.cs
+/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Application/Layers/TherapyMemoryService.cs
+/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Application/Options/StackConfig.cs
+/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Application/Options/StackYamlOptionsBinder.cs
+/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Application/Options/TherapistOptions.cs

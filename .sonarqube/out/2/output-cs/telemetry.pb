@@ -1,0 +1,1 @@
+{Rn/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Infrastructure/HybridTherapist.Infrastructure.csprojòCSharp12

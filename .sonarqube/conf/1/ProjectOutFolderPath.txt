@@ -1,0 +1,1 @@
+/home/pablo/Projects/hybrid-therapist/.sonarqube/out/1

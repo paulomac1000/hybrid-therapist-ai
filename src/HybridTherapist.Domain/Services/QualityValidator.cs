@@ -105,10 +105,7 @@ public static class QualityValidator
             return new Verdict(false, "prompt_leakage");
 
         // Polish output must contain some Polish characters
-        int diacritics = 0;
-        foreach (char c in trimmed)
-            if ("ąćęłńóśźżĄĆĘŁŃÓŚŹŻ".Contains(c, StringComparison.Ordinal))
-                diacritics++;
+        int diacritics = trimmed.Count(c => "ąćęłńóśźżĄĆĘŁŃÓŚŹŻ".Contains(c, StringComparison.Ordinal));
         if (trimmed.Length > 40 && diacritics == 0)
             return new Verdict(false, "not_polish");
 
