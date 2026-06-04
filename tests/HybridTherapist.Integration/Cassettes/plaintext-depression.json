@@ -1,0 +1,110 @@
+{
+  "name": "plaintext-depression",
+  "description": "User reports loss of interest and persistent sadness. Plaintext variant.",
+  "variant": "plaintext",
+  "expected_quality": {
+    "pass": true,
+    "min_quality_score": 3,
+    "required_topics": [
+      "depression",
+      "anhedonia"
+    ],
+    "required_phrases_pl": [
+      "radość",
+      "spokoju"
+    ],
+    "forbidden_phrases": [
+      "weź się w garść",
+      "inni mają gorzej"
+    ]
+  },
+  "interactions": [
+    {
+      "layer": "L1_translator_pl_en",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "You are a translator"
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.93|V=Nothing brings me joy anymore, I drag myself through each day without purpose"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L2_analyst",
+      "request_match": {
+        "model_contains": "MentaLLaMA"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "Emotional state: hopelessness. Severity: moderate. Risk: none. Patterns: anhedonia. Evidence: 'Nothing brings me joy'."
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L3_supervisor",
+      "request_match": {
+        "model_contains": "PsyLLM"
+      },
+      "response": {
+        "model": "hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "Approach: behavioral_activation. Technique: schedule_one_small_activity. Key question: What is one tiny thing that used to bring you a moment of peace? Risk note: monitor_for_deepening_hopelessness."
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L4_therapist",
+      "request_match": {
+        "model_contains": "PsychoCounsel"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/PsychoCounsel-Llama3-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.85\nWhen joy drains away, every day can feel like walking through fog without a compass. That is a heavy weight to carry alone.\n\nWhat is one tiny thing that used to bring you a moment of peace?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L6_calibrator",
+      "request_match": {
+        "model_contains": "dolphin"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "When joy drains away, every day can feel like walking through fog without a compass. That is a heavy weight to carry alone.\n\nWhat is one tiny thing that used to bring you a moment of peace?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L7_translator_en_pl",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "You are a Polish translator"
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.91\nKiedy radość odpływa, każdy dzień przypomina wędrówkę we mgle bez kompasu. To naprawdę ciężki ciężar do dźwigania w samotności.\n\nCo jest jedną maleńką rzeczą, która kiedyś przynosiła Ci chwilę spokoju?"
+        },
+        "done": true
+      }
+    }
+  ],
+  "user_input_pl": "Nic już nie sprawia mi radości, każdy dzień to walka bez sensu."
+}

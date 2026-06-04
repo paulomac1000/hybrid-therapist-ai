@@ -1,6 +1,6 @@
 ---
-description: H.A.N.D. Codec G benchmark — implicit priming experiment testing whether small LLMs learn an arbitrary inter-agent wire format from checkpoint examples alone
-doc_id: bench.hand-codec-g
+description: H.A.N.D. Compact benchmark — implicit priming experiment testing whether small LLMs learn an arbitrary compact inter-agent wire format from checkpoint examples alone
+doc_id: bench.hand-compact
 type: benchmark
 status: active
 rigor_tier: L1
@@ -11,30 +11,30 @@ source_of_truth: true
 upstream:
   - sys.socrates-pipeline
   - ref.glossary
-tags: ["hand-codec", "benchmark", "codec-g", "implicit-priming", "experiment"]
-last_verified: 2026-06-01
+tags: ["hand-codec", "benchmark", "hand-compact", "implicit-priming", "experiment"]
+last_verified: 2026-06-04
 owners: ["hybrid-therapist"]
 ---
 
-# H.A.N.D. Codec G — Implicit Priming Experiment
+# H.A.N.D. Compact — Implicit Priming Experiment
 
 ## Purpose
 
 This benchmark evaluates whether small local LLMs (7B–8B) can use an arbitrary,
-compact inter-agent wire format — **Codec G**, with randomly renamed keys that
+compact inter-agent wire format — **H.A.N.D. Compact**, with randomly renamed keys that
 carry no semantic meaning — without explicit format instructions in system prompts.
 
 ## Hypothesis
 
-> If L2, L3 and L4 can communicate using Codec G keys (`e7`, `s9`, `x4`, `p3`, `t5`, `k2`...)
+> If L2, L3 and L4 can communicate using H.A.N.D. Compact keys (`e7`, `s9`, `x4`, `p3`, `t5`, `k2`...)
 > after seeing only checkpoint examples, then the pipeline demonstrates **implicit
 > protocol learning** — the models learn an emergent micro-language from pattern
 > exposure rather than keyword semantics.
 
 ## What is being tested
 
-- **L2 Analyst** receives a user message and generates a Codec G `M|` clinical memo.
-- **L3 Supervisor** reads the L2 memo and generates a Codec G `M|` supervisor memo.
+- **L2 Analyst** receives a user message and generates a H.A.N.D. Compact `M|` clinical memo.
+- **L3 Supervisor** reads the L2 memo and generates a H.A.N.D. Compact `M|` supervisor memo.
 - **L4 Therapist** reads both raw `M|` memo lines and the user message, then generates
   a therapeutic response — **without any legend, schema, or key explanation in its prompt.**
 - Final Polish output remains therapeutically coherent.
@@ -61,31 +61,31 @@ carry no semantic meaning — without explicit format instructions in system pro
 | **L4 system prompt** | Pure therapeutic instruction — no legend, no `` `M\|` `` mention, no key explanation |
 | **Strict mode** | `TokenSavingsTracker.StrictCodecG = true` — no verbose-key fallback |
 
-## Codec G key mapping
+## H.A.N.D. Compact key mapping
 
-Codec G replaces semantic key names with arbitrary two-character identifiers.
+H.A.N.D. Compact replaces semantic key names with arbitrary two-character identifiers.
 The model never sees the semantic names — only the checkpoints teach the pattern.
 
-| Semantic meaning | Codec G key |
-|------------------|-------------|
-| emotional state  | `e7`        |
-| severity         | `s9`        |
-| risk indicators  | `x4`        |
-| cognitive patterns | `y1`      |
-| evidence quote   | `q3`        |
-| approach         | `p3`        |
-| technique        | `t5`        |
-| key question     | `k2`        |
-| risk note        | `r8`        |
-| session goal     | `g6`        |
-| crisis flag      | `f0`        |
+| Semantic meaning | H.A.N.D. Compact key |
+|------------------|----------------------|
+| emotional state  | `e7`                 |
+| severity         | `s9`                 |
+| risk indicators  | `x4`                 |
+| cognitive patterns | `y1`               |
+| evidence quote   | `q3`                 |
+| approach         | `p3`                 |
+| technique        | `t5`                 |
+| key question     | `k2`                 |
+| risk note        | `r8`                 |
+| session goal     | `g6`                 |
+| crisis flag      | `f0`                 |
 
-Example L2 output (Codec G):
+Example L2 output (H.A.N.D. Compact):
 ```
 M|L=2|e7=fatigued|s9=low|x4=none|y1=exhausted|q3="so tired"
 ```
 
-Example L3 output (Codec G):
+Example L3 output (H.A.N.D. Compact):
 ```
 M|L=3|p3=behavioral_activation|t5=short_walk|k2=What_small_move_feels_possible_today?|r8=none
 ```
@@ -113,7 +113,7 @@ The model sees the `M|` format exclusively through checkpoint examples in conver
 ## Benchmark scenarios
 
 Each scenario is a WireMock cassette (`hand-*.json`) simulating a full 6-layer
-Socrates pipeline with recorded Ollama responses in Codec G format.
+Socrates pipeline with recorded Ollama responses in H.A.N.D. Compact format.
 
 | Scenario | User profile | Target detection |
 |----------|-------------|-----------------|
@@ -133,9 +133,9 @@ Socrates pipeline with recorded Ollama responses in Codec G format.
 
 A scenario passes when **all** of these hold:
 
-1. L2 emits a valid Codec G memo (`M|L=2|e7=...|s9=...|...`).
-2. L3 emits a valid Codec G memo (`M|L=3|p3=...|t5=...|k2=...|...`).
-3. L4 trace input contains the raw L2 and L3 Codec G memos (`M|L=2|...` and `M|L=3|...`).
+1. L2 emits a valid H.A.N.D. Compact memo (`M|L=2|e7=...|s9=...|...`).
+2. L3 emits a valid H.A.N.D. Compact memo (`M|L=3|p3=...|t5=...|k2=...|...`).
+3. L4 trace input contains the raw L2 and L3 H.A.N.D. Compact memos (`M|L=2|...` and `M|L=3|...`).
 4. L4 system prompt remains pure therapeutic instruction: no legend, no key names, no format instruction.
 5. No fallback is triggered (`metadata.fallback = false`).
 6. Every `expected_quality.required_topics` entry is present in `metadata.topics`.
@@ -149,12 +149,11 @@ metadata, but it does not make a failing scenario pass.
 ## Results
 
 Current results are generated by the benchmark runner and written to
-`artifacts/benchmarks/hand-codec-g-latest.json` and
-`artifacts/benchmarks/hand-codec-g-latest.md`.
+`artifacts/benchmarks/hand-compact-latest.json` and
+`artifacts/benchmarks/hand-compact-latest.md`.
 
 ```bash
-./scripts/run-hand-benchmark.sh --cassette --report
-./scripts/run-hand-benchmark.sh --live --report
+./scripts/run-hand-benchmark.sh --variant compact --report
 ```
 
 The documentation intentionally does not hardcode the current pass count or token
@@ -197,9 +196,9 @@ hardcoded savings values.
 
 The result **suggests** that the models are not relying on human-readable key names.
 The arbitrary `e7`/`s9`/`p3`/`k2` keys carry no inherent semantic meaning — yet all three
-models successfully generated and consumed Codec G memo lines.
+models successfully generated and consumed H.A.N.D. Compact memo lines.
 
-This **supports the hypothesis** that H.A.N.D. Codec can serve as a compact inter-agent
+This **supports the hypothesis** that H.A.N.D. Compact can serve as a compact inter-agent
 pidgin language, learned through implicit priming from checkpoint examples alone.
 
 Key observations:
@@ -223,8 +222,8 @@ can negotiate an arbitrary wire protocol through pattern exposure in conversatio
 3. **No human evaluation.** No therapist has reviewed the benchmark outputs for clinical
    appropriateness.
 
-4. **No comparison baseline.** Codec G has not yet been compared to plaintext memos, JSON memos,
-   YAML memos, or natural-language bullet memos. The experiment shows Codec G *works* but does
+4. **No comparison baseline.** H.A.N.D. Compact has not yet been compared to plaintext memos, JSON memos,
+   YAML memos, or natural-language bullet memos. The experiment shows H.A.N.D. Compact *works* but does
    not claim it *outperforms* alternatives.
 
 5. **Model-stack specific.** Results were obtained with MentaLLaMA 7B, PsyLLM 8B, and
@@ -243,11 +242,7 @@ can negotiate an arbitrary wire protocol through pattern exposure in conversatio
 
 ```bash
 # Cassette benchmark: no Docker, no Ollama, suitable for CI
-./scripts/run-hand-benchmark.sh --cassette --report
-
-# Live benchmark: requires Docker Compose + Ollama and real model requests
-docker compose up -d
-./scripts/run-hand-benchmark.sh --live --report
+./scripts/run-hand-benchmark.sh --variant compact --report
 
 # Or manually for cassette:
 dotnet build HybridTherapist.sln -c Release

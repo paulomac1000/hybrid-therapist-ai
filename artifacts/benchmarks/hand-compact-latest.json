@@ -1,0 +1,14 @@
+{
+  "variant": "compact",
+  "timestamp_utc": "2026-06-04T23:37:14Z",
+  "commit": "fc2a91f",
+  "checkpoints": 3,
+  "status": "passed",
+  "passed": 19,
+  "failed": 0,
+  "token_savings": {
+    "avg_percent": 34.1,
+    "min_percent": 30.4,
+    "max_percent": 42.4
+  }
+}

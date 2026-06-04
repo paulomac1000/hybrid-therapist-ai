@@ -42,6 +42,8 @@ namespace HybridTherapist.Application.Flows;
 /// </summary>
 public sealed class TherapistFlow : ITherapistFlow
 {
+    private const string FallbackUnknown = "unknown";
+
     private readonly CrisisGate _crisisGate;
     private readonly PrivacySanitizer _privacySanitizer;
     private readonly ITherapyConversationStateRepository _stateRepo;
@@ -53,6 +55,7 @@ public sealed class TherapistFlow : ITherapistFlow
     private readonly TokenSavingsTracker _tokenTracker = new();
     private readonly CompressionTier _compressionTier;
 
+#pragma warning disable S107 // DI constructor — parameter count is inherent
     public TherapistFlow(
         CrisisGate crisisGate,
         PrivacySanitizer privacySanitizer,
@@ -74,7 +77,9 @@ public sealed class TherapistFlow : ITherapistFlow
         _compressionTier = opts.Value.HandCompressionTier;
         _logger = logger ?? NullLogger<TherapistFlow>.Instance;
     }
+#pragma warning restore S107
 
+#pragma warning disable S3776 // 17-layer pipeline orchestration — intentional sequential design
     public async Task<FlowExecutionResult> ExecuteAsync(ChatCompletionRequest request, CancellationToken ct = default)
     {
         string userText = request.Messages.LastOrDefault(m => m.Role == "user")?.Content ?? string.Empty;
@@ -161,7 +166,7 @@ public sealed class TherapistFlow : ITherapistFlow
                 sessionId, string.Join(",", alignment.UnsupportedThemes));
             analystMemoWire = new MemoBuilder(_compressionTier)
                 .Layer(2)
-                .EmotionalState("unknown")
+                .EmotionalState(FallbackUnknown)
                 .Severity("low")
                 .Field("note", "memo_redacted_thematic_misalignment")
                 .Build();
@@ -189,7 +194,7 @@ public sealed class TherapistFlow : ITherapistFlow
         if (!l4.Ok)
         {
             _logger.LogError("L4 Therapist failed for {Session}: {Error}", sessionId, l4.Error);
-            return BuildFallback(request.Model, sessionId, "L4_therapist", l4.Error ?? "unknown");
+            return BuildFallback(request.Model, sessionId, "L4_therapist", l4.Error ?? FallbackUnknown);
         }
 
         // ── Layer 12: L6 Calibrator ───────────────────────────────────────────
@@ -270,7 +275,7 @@ public sealed class TherapistFlow : ITherapistFlow
                 ["rupture_detected"] = rupture.Detected,
                 ["rupture_reason"] = rupture.Reason ?? string.Empty,
                 ["thematic_alignment"] = alignment.Aligned,
-                ["analyst_severity"] = analyst.Report?.Severity.ToString().ToLowerInvariant() ?? "unknown",
+                ["analyst_severity"] = FallbackUnknown,
                 ["supervisor_approach"] = supervisor.Approach,
                 ["crisis_detected"] = l7.HasCrisisSignal,
                 ["fallback"] = fallback,
@@ -281,6 +286,7 @@ public sealed class TherapistFlow : ITherapistFlow
             },
         };
     }
+#pragma warning restore S3776
 
     private static FlowExecutionResult BuildFallback(string model, string sessionId, string failedLayer, string? errorReason) => new()
     {
@@ -293,7 +299,7 @@ public sealed class TherapistFlow : ITherapistFlow
             ["session_id"] = sessionId,
             ["trace_url"] = $"/v1/trace/{sessionId}",
             ["failed_layer"] = failedLayer,
-            ["error_reason"] = errorReason ?? "unknown",
+            ["error_reason"] = errorReason ?? FallbackUnknown,
         },
     };
 

@@ -50,3 +50,6 @@ docker-compose.override.yml
 
 # NuGet local cache (remote GitHub Packages is the source of truth)
 local-packages/
+
+# Antigravity CLI config
+.antigravitycli/

@@ -92,6 +92,7 @@ public sealed class TherapistLayerService
 
     // ── L4 — PsychoCounsel Therapist ─────────────────────────────────────────
 
+#pragma warning disable S107 // Layer orchestration — pipeline context requires multiple params
     public async Task<LayerResult> RunL4TherapistAsync(
         string sessionId, string userTextEn, string analystMemoWire, string supervisorMemoWire,
         string currentPhase, IReadOnlyList<ChatMessage> history,
@@ -220,8 +221,9 @@ public sealed class TherapistLayerService
             {
                 await TraceAsync(sessionId, "L7_en_pl", resp.ModelId ?? _opts.Translator,
                     englishText, text, sw.ElapsedMilliseconds, "ok", wireFormat: resp.Text);
-                return new LayerResult { Ok = true, Text = text, ModelId = resp.ModelId };
-            }
+        return new LayerResult { Ok = true, Text = text, ModelId = resp.ModelId };
+    }
+#pragma warning restore S107
 
             await TraceAsync(sessionId, "L7_en_pl", resp.ModelId ?? _opts.Translator,
                 englishText, text, sw.ElapsedMilliseconds, "still_english");

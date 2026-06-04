@@ -29,7 +29,7 @@ the JSON report uses `not_measured` and `null` values.
 
 ## Artifacts
 
-- Full report: [hand-codec-g.md](../../docs/benchmarks/hand-codec-g.md)
+- Full report: [hand-compact.md](../../docs/benchmarks/hand-compact.md)
 - Benchmark matrix: [benchmark-matrix.md](../../docs/benchmarks/benchmark-matrix.md)
 - Cassette TRX: `/home/pablo/Projects/hybrid-therapist/artifacts/benchmarks/hand-benchmark.trx`
 - Mutation TRX: `/home/pablo/Projects/hybrid-therapist/artifacts/benchmarks/hand-benchmark-negative.trx`

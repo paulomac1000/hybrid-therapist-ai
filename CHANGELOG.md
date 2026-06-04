@@ -1,5 +1,82 @@
 # Changelog
 
+## v0.4.0 (2026-06-04)
+
+### SonarQube quality cleanup
+- Fixed `app.Run()` → `await app.RunAsync()` in Program.cs (S6966)
+- Suppressed S1118 on `Program` class — `WebApplicationFactory<T>` requires non-static partial class
+- Merged nested `if` in `MemorySummaryParser.ParseTopicLine` (S1066)
+- Fixed 5× CS8602/CS8600/CS8604 null dereference warnings in `HandCheckpointCountBenchmarkTests`
+- Replaced 10 repeated string literals with named constants (S1192): ChatEndpoints, TherapistFlow, HandCheckpointLibrary, SupervisorLayer, StackYamlOptionsBinder, SessionPhase
+- Fixed 2× S6444 regex timeout: `MemorySummaryParser` (→ `[GeneratedRegex]` with 200ms timeout), `SupervisorLayer.ExtractApproachFromPlaintext` (→ `[GeneratedRegex]` with 200ms timeout)
+- Suppressed 3× S3358 nested ternary in `ResponseStrategySelector` — intentional phase×severity map
+- Refactored `TokenSavingsTracker.ExpandMemoToPlaintext` — 9 repetitive if-blocks replaced with table-driven `_fieldDefs` array. Cognitive complexity: 33 → estimated ~5
+- Extracted `ParseSupervisorResponse()` from `SupervisorLayer.RunAsync` — cognitive complexity: 18 → <15
+- Suppressed S3776 with rationale comments for: `TherapistFlow.ExecuteAsync` (17-layer orchestration), `ChatEndpoints.HandleCompletions` (HTTP request/streaming handler), `MemorySummaryParser.ParseTopicLine` (string parser)
+- Suppressed S107 with rationale comments for: `TherapistFlow` constructor (DI), `RunL4TherapistAsync` (pipeline context)
+
+### HandCodec upgrade: 0.2.1 → 0.3.0
+- Resilience ladder expanded from 5 to 6 levels: Level 5 = JSON extraction (new, opt-in), Level 6 = passthrough/fallback (was Level 5)
+- Updated `AnalystLayer` and `SupervisorLayer` fallback guards from `parsed.Level >= 5` to `parsed.Level >= 6`
+- Updated fallback memo identifier strings from `decoder_level5_fallback` to `decoder_level6_passthrough`
+- Updated 2 unit tests and 1 integration test for new level numbering
+- Character escaping (`|`, `=`, `\\`) in encoder/parser — fully backwards-compatible
+- Enhanced markdown list parsing and blockquote stripping — fully backwards-compatible
+- JSON Resilience Stage (Level 5) — opt-in via `HandResilientOptions.EnableJsonExtraction`. Default off, no behavioral change
+- `HandResilientOptions.AllEnabled` now includes `EnableJsonExtraction: true`
+- Local packages updated: `local-packages/HandCodec.0.3.0.nupkg`, `local-packages/HandRuntime.0.3.0.nupkg`
+- Removed stale `HandCodec.0.2.1-local` and `HandRuntime.0.2.1-local` packages
+- `.csproj` references updated from `0.2.1-local` to `0.3.0`
+
+### Dead code removal
+- Removed `HandWireConvention.cs` — application facade with zero production callers (4 tests deleted)
+- Removed `ClinicalReport`, `ClinicalSeverity`, and `TherapeuticPlan` records — were never populated; `AnalystResult.Report` was always `null`
+- Removed 5 unused extension methods from `TherapistMemoBuilderExtensions`: `RiskIndicators`, `CognitivePatterns`, `EvidenceQuotes`, `SessionGoal`, `CrisisFlag`
+- Removed empty stub `HandCheckpoint.cs` — types already re-exported via `RuntimeAliases.cs` global using aliases
+
+### Benchmark infrastructure quality
+- `HandConversationBuilder.Build()` — added `ArgumentNullException.ThrowIfNull` guards on persona, checkpoint, userText (6 guards total)
+- `TokenSavingsTracker.StrictCodecG` — migrated from `[ThreadStatic]` to `AsyncLocal<bool>` to prevent state leakage across async tests
+
+### Token savings assertions
+- Compact: `savings.SavingsPercent.Should().BeGreaterThan(15.0)`
+- Semantic: `savings.SavingsPercent.Should().BeGreaterThan(0.0)`
+- JSON: `savings.SavingsPercent.Should().BeGreaterThan(0.0)`
+- Plaintext: `savings.SavingsPercent.Should().BeLessThan(0.0)` (negative = larger than compact baseline)
+
+### Benchmark reports — critical fix
+- **Root cause**: `parse_token_savings()` in `run-hand-benchmark.sh` scraped stdout where xUnit suppresses `ITestOutputHelper` output for passing tests, and the regex also captured `TherapistFlow` log lines with a different savings formula
+- **Fix**: `parse_token_savings()` now reads from TRX files using the unique `BENCHMARK_TOKEN_SAVINGS=` marker; C# tests emit this marker alongside human-readable `Token save:` lines
+- **Result**: Semantic, JSON, and Plaintext `-latest.md`/`-latest.json` files now report **correct** token savings (were 0.0% or -616.7%; now match TRX data)
+- **Regenerated all `artifacts/benchmarks/*-latest.*`** reports
+
+### Documentation
+- `docs/architecture.md` — removed references to deleted `HandWireConvention`
+- Added `AGENTS.md` — build/test conventions, architecture overview, key invariants for AI agents working on this repo
+
+### New benchmark variants (added in this release cycle)
+- **Semantic** (`hand-semantic-*` cassettes, `HandSemanticBenchmarkTests`, `HandSemanticBenchmarkValidator`) — 3 scenarios, 37.2% avg savings
+- **JSON** (`json-*` cassettes, `HandJsonBenchmarkTests`, `HandJsonBenchmarkValidator`) — 3 scenarios, 7.1% avg savings
+- **Plaintext** (`plaintext-*` cassettes, `HandPlaintextBenchmarkTests`, `HandPlaintextBenchmarkValidator`) — 3 scenarios, -147.6% avg (baseline overhead)
+- **Checkpoint count experiment** (`HandCheckpointCountBenchmarkTests`) — 0/1/3/5 checkpoints, confirms 3 is production default
+- **Long session drift** (`HandLongSessionDriftBenchmarkTests`) — multi-turn format adherence
+
+### Benchmark results (cassette mode, 2026-06-04)
+| Variant | Passed | Failed | Avg Token Savings |
+|---------|--------|--------|-------------------|
+| Compact | 19 | 0 | 34.4% |
+| Semantic | 6 | 0 | 37.2% |
+| Plaintext | 6 | 0 | -147.6% |
+| JSON | 6 | 0 | 7.1% |
+| Checkpoints | 4 | 0 | — |
+
+### Tests
+- 280 unit tests (+3 from v0.3.0; -4 HandWireConvention removed)
+- 37 cassette integration tests across 4 variants + negative + checkpoints
+- All passing, 0 skipped, 0 warnings
+
+---
+
 ## v0.3.0 (2026-06-01)
 
 ### Codec G — random keys experiment

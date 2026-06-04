@@ -154,7 +154,6 @@ The `HybridTherapist.Application/Hand/` directory contains thin **facade classes
 | Facade file | Delegates to (HandRuntime) |
 |---|---|
 | `HandConversationBuilder.cs` | `HandRuntime.ConversationBuilder` |
-| `HandWireConvention.cs` | `HandRuntime.WireConvention` |
 | `HandResponseDecoder.cs` | `HandRuntime.ResponseDecoder` |
 | `HandCheckpointLibrary.cs` | `HandRuntime.CheckpointLibrary` |
 
@@ -193,7 +192,7 @@ L4 emits:  R|C=0.90
 
 Short values (translations, single words) use `V=` in the header line.
 Long prose (therapeutic responses, multi-sentence translations) goes to **Body**
-(the line after the wire header). The wire convention (`HandWireConvention.PrefillFor`)
+(the line after the wire header). The wire convention (via `HandRuntime.HandWireConvention.PrefillFor`)
 appends `R|C=` as an assistant-turn prefill for `AgentClass.Assisted` models.
 
 ### Resilience Ladder

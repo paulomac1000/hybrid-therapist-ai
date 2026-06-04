@@ -31,7 +31,7 @@ public sealed class HandCheckpointLibraryTests
                 parsed.Get("C").Should().NotBeNull("Result checkpoints must carry a numeric confidence");
 
             if (parsed.Performative == Performative.Memo)
-                parsed.Get("em").Should().NotBeNull("Memo checkpoints must carry emotional_state");
+                (parsed.Get("e7") ?? parsed.Get("em")).Should().NotBeNull("Memo checkpoints must carry emotional_state");
         }
     }
 
@@ -53,37 +53,9 @@ public sealed class HandCheckpointLibraryTests
         ParsedHandMessage? parsed = HandParser.ParseLenient(ex.AssistantWire);
         parsed.Should().NotBeNull();
         parsed!.Performative.Should().Be(Performative.Memo);
-        parsed.Get("em").Should().Be("none");
-        parsed.Get("sv").Should().Be("low");
+        parsed.Get("e7").Should().Be("none");
+        parsed.Get("s9").Should().Be("low");
         parsed.Get("note").Should().Be("ack");
-    }
-
-    [Fact]
-    public void Example_BuildsCanonicalWireLine()
-    {
-        HandWireConvention.Example(0.9, "hello").Should().Be("R|C=0.9|V=hello");
-        HandWireConvention.Example(0.88, "x").Should().Be("R|C=0.88|V=x");
-    }
-
-    [Theory]
-    [InlineData(AgentClass.Assisted, "R|C=")]
-    [InlineData(AgentClass.Reasoning, "R|C=")]
-    [InlineData(AgentClass.Native, "")]
-    [InlineData(AgentClass.External, "")]
-    public void PrefillFor_AgentClass_ReturnsExpected(AgentClass agentClass, string expected)
-    {
-        HandWireConvention.PrefillFor(agentClass).Should().Be(expected);
-    }
-
-    [Theory]
-    [InlineData(Performative.Result, AgentClass.Assisted, "R|C=")]
-    [InlineData(Performative.Memo, AgentClass.Assisted, "M|L=")]
-    [InlineData(Performative.Result, AgentClass.Native, "")]
-    [InlineData(Performative.Memo, AgentClass.Native, "")]
-    public void PrefillFor_PerformativeAndClass_ReturnsExpected(
-        Performative performative, AgentClass agentClass, string expected)
-    {
-        HandWireConvention.PrefillFor(performative, agentClass).Should().Be(expected);
     }
 
     [Fact]
@@ -112,15 +84,15 @@ public sealed class HandCheckpointLibraryTests
         ParsedHandMessage? parsed = HandParser.ParseLenient(ex.AssistantWire);
         parsed.Should().NotBeNull();
 
-        string em = (parsed!.Get("em") ?? "").ToLowerInvariant();
-        string sv = (parsed.Get("sv") ?? "").ToLowerInvariant();
+        string e7 = (parsed!.Get("e7") ?? parsed.Get("em") ?? "").ToLowerInvariant();
+        string s9 = (parsed.Get("s9") ?? parsed.Get("sv") ?? "").ToLowerInvariant();
         string note = (parsed.Get("note") ?? "").ToLowerInvariant();
 
-        em.Should().Be("none", "emotional_state must be non-therapeutic placeholder");
-        sv.Should().Be("low", "severity must be non-therapeutic placeholder");
+        e7.Should().Be("none", "emotional_state must be non-therapeutic placeholder");
+        s9.Should().Be("low", "severity must be non-therapeutic placeholder");
         note.Should().Be("ack", "note must be protocol acknowledgement");
 
-        string allValues = $"{em} {sv} {note}";
+        string allValues = $"{e7} {s9} {note}";
         allValues.Should().NotContain("anxiety");
         allValues.Should().NotContain("depression");
         allValues.Should().NotContain("sleep");

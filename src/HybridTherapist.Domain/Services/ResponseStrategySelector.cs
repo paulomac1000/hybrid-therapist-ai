@@ -17,6 +17,7 @@ public static class ResponseStrategySelector
         bool moderate = string.Equals(severity, "moderate", StringComparison.OrdinalIgnoreCase)
             || string.Equals(severity, "medium", StringComparison.OrdinalIgnoreCase);
 
+#pragma warning disable S3358 // Switch expression with ternary is intentional — domain logic map
         return phase.ToUpperInvariant() switch
         {
             "INIT" => high ? ResponseStrategy.Stabilizing : (moderate ? ResponseStrategy.Mapping : ResponseStrategy.Intake),
@@ -30,5 +31,6 @@ public static class ResponseStrategySelector
             "CLOSING" => ResponseStrategy.Closure,
             _ => ResponseStrategy.Intake,
         };
+#pragma warning restore S3358
     }
 }

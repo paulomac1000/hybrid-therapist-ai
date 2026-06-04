@@ -1,0 +1,14 @@
+{
+  "variant": "plaintext",
+  "timestamp_utc": "2026-06-04T23:37:14Z",
+  "commit": "fc2a91f",
+  "checkpoints": 3,
+  "status": "passed",
+  "passed": 6,
+  "failed": 0,
+  "token_savings": {
+    "avg_percent": -147.6,
+    "min_percent": -168.6,
+    "max_percent": -114.3
+  }
+}

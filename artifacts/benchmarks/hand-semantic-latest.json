@@ -1,0 +1,14 @@
+{
+  "variant": "semantic",
+  "timestamp_utc": "2026-06-04T23:37:14Z",
+  "commit": "fc2a91f",
+  "checkpoints": 3,
+  "status": "passed",
+  "passed": 6,
+  "failed": 0,
+  "token_savings": {
+    "avg_percent": 37.0,
+    "min_percent": 34.2,
+    "max_percent": 42.4
+  }
+}

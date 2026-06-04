@@ -24,6 +24,7 @@ public sealed class CassetteOllamaServer : IAsyncDisposable
     }
 
     public string BaseUrl => _server.Urls[0];
+    public WireMockServer Server => _server;
 
     public static async Task<CassetteOllamaServer> StartAsync(string cassettePath)
     {

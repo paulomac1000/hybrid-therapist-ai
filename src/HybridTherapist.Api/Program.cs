@@ -68,7 +68,8 @@ app.Use(async (ctx, next) =>
 app.MapChatEndpoints();
 app.MapTraceEndpoints();
 
-app.Run();
+await app.RunAsync();
 
-// Exposed for WebApplicationFactory in integration tests
+// Exposed for WebApplicationFactory<T> in integration tests — cannot be static
+#pragma warning disable S1118
 public partial class Program { }

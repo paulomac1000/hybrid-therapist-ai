@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 using HandCodec.Models;
 using HandCodec.Parser;
 using HybridTherapist.Application.Hand;
@@ -18,13 +19,10 @@ namespace HybridTherapist.Application.Layers;
 /// Uses Implicit Priming (MemoPing checkpoint). No longer parses plaintext
 /// via C# regex — the model emits M| directly.
 ///
-/// MemoToPlainText() has been removed: raw M| enters downstream prompts directly
-/// without a key legend in the L4 system prompt.
-///
-/// On total decode failure, returns a safe fallback memo.
-/// </summary>
-public sealed class SupervisorLayer
+public partial class SupervisorLayer
 {
+    private const string DefaultApproach = "behavioral_activation";
+    private const string UnknownFallback = "unknown";
     private readonly IOllamaAdapter _ollama;
     private readonly TherapistOptions _opts;
     private readonly ITraceSink _trace;
@@ -60,9 +58,22 @@ public sealed class SupervisorLayer
             $"[ANALYST MEMO]\n{analystMemoWire}\n\n" +
             $"User message: {englishUserMessage}";
 
+        HandCheckpoint baseCheckpoint = _opts.HandWireVariant switch
+        {
+            HandWireVariant.Semantic => HandCheckpointLibrary.TherapySupervisorSemanticPing,
+            HandWireVariant.Plaintext => HandCheckpointLibrary.TherapySupervisorPlaintextPing,
+            HandWireVariant.Json => HandCheckpointLibrary.TherapySupervisorJsonPing,
+            _ => HandCheckpointLibrary.TherapySupervisorPing,
+        };
+
+        HandCheckpoint limitedCheckpoint = new HandCheckpoint(
+            baseCheckpoint.Exchanges
+                .Take(_opts.ImplicitPrimingCheckpointCount)
+                .ToArray());
+
         IReadOnlyList<HandTurn> messages = HandConversationBuilder.Build(
             systemPrompt,
-            HandCheckpointLibrary.TherapySupervisorPing,
+            limitedCheckpoint,
             prompt,
             Performative.Memo,
             _opts.AgentClass);
@@ -76,36 +87,12 @@ public sealed class SupervisorLayer
             await _trace.RecordAsync(new TraceEvent(
                 DateTimeOffset.UtcNow, sessionId, "L3_supervisor", _opts.Supervisor,
                 prompt, string.Empty, sw.ElapsedMilliseconds, "error", resp.Error), ct);
-            return new SupervisorResult(false, "behavioral_activation",
+            return new SupervisorResult(false, DefaultApproach,
                 BuildFallbackMemo("llm_error"), resp.Error);
         }
 
         string sanitized = SanitizeMemoOutput(resp.Text, 3);
-        ResilienceResult parsed = HandResiliencePipeline.Parse(sanitized, HandResilientOptions.AllEnabled);
-        _logger.LogInformation("[Drabina] L3 resilience level {Level}, confidence {Conf}",
-            parsed.Level, parsed.Message.GetDoubleOr("C", 0.5));
-
-        string memo;
-        string approach;
-        if (parsed.Level >= 5)
-        {
-            memo = BuildFallbackMemo("decoder_level5_fallback");
-            approach = "behavioral_activation";
-        }
-        else if (parsed.Message.Performative == Performative.Memo)
-        {
-            approach = parsed.Message.Get("p3") ?? "behavioral_activation";
-            memo = parsed.Message.Get("p3") is null
-                ? BuildFallbackMemo("missing_ap")
-                : parsed.Message.RawMessage;
-        }
-        else
-        {
-            memo = string.IsNullOrWhiteSpace(parsed.Message.Body)
-                ? BuildFallbackMemo("parse_no_body")
-                : BuildFallbackMemo("parsed_from_body");
-            approach = "behavioral_activation";
-        }
+        var (memo, approach) = ParseSupervisorResponse(sanitized);
 
         await _trace.RecordAsync(new TraceEvent(
             DateTimeOffset.UtcNow, sessionId, "L3_supervisor", resp.ModelId ?? _opts.Supervisor,
@@ -114,18 +101,52 @@ public sealed class SupervisorLayer
         return new SupervisorResult(true, approach, memo, null);
     }
 
+    private (string memo, string approach) ParseSupervisorResponse(string sanitized)
+    {
+        if (_opts.HandWireVariant == HandWireVariant.Plaintext)
+            return (sanitized, ExtractApproachFromPlaintext(sanitized));
+
+        if (_opts.HandWireVariant == HandWireVariant.Json)
+        {
+            var (jsonMemo, _, jsonApproach) = ParseJsonMemo(sanitized);
+            return (jsonMemo, jsonApproach);
+        }
+
+        ResilienceResult parsed = HandResiliencePipeline.Parse(sanitized, HandResilientOptions.AllEnabled);
+        _logger.LogInformation("[Drabina] L3 resilience level {Level}, confidence {Conf}",
+            parsed.Level, parsed.Message.GetDoubleOr("C", 0.5));
+
+        string approachKey = _opts.HandWireVariant == HandWireVariant.Semantic ? "ap" : "p3";
+
+        if (parsed.Level >= 6)
+            return (BuildFallbackMemo("decoder_level6_passthrough"), DefaultApproach);
+
+        if (parsed.Message.Performative == Performative.Memo)
+        {
+            string ap = parsed.Message.Get(approachKey) ?? DefaultApproach;
+            string m = parsed.Message.Get(approachKey) is null
+                ? BuildFallbackMemo("missing_ap")
+                : parsed.Message.RawMessage;
+            return (m, ap);
+        }
+
+        return (string.IsNullOrWhiteSpace(parsed.Message.Body)
+            ? BuildFallbackMemo("parse_no_body")
+            : BuildFallbackMemo("parsed_from_body"), DefaultApproach);
+    }
+
     private static string SanitizeMemoOutput(string raw, int expectedLayer)
     {
         string text = raw.Trim();
 
-        int thinkEnd = text.IndexOf(" response", StringComparison.Ordinal);
+        int thinkEnd = text.IndexOf("<｜end▁of▁thinking｜>", StringComparison.Ordinal);
         if (thinkEnd >= 0) text = text[..thinkEnd].Trim();
 
         text = text
             .Replace("</think>", "", StringComparison.Ordinal)
             .Replace("<content>", "", StringComparison.OrdinalIgnoreCase)
             .Replace("</content>", "", StringComparison.OrdinalIgnoreCase)
-            .Replace(" response", "", StringComparison.Ordinal)
+            .Replace("<｜end▁of▁thinking｜>", "", StringComparison.Ordinal)
             .Trim();
 
         if (text.StartsWith($"{expectedLayer}|", StringComparison.Ordinal))
@@ -134,11 +155,42 @@ public sealed class SupervisorLayer
         return text;
     }
 
+    private (string memo, bool ok, string approach) ParseJsonMemo(string text)
+    {
+        try
+        {
+            using System.Text.Json.JsonDocument doc = System.Text.Json.JsonDocument.Parse(text.Trim());
+            string approach = DefaultApproach;
+            if (doc.RootElement.TryGetProperty("approach", out var prop))
+            {
+                approach = prop.GetString() ?? DefaultApproach;
+            }
+            return (text.Trim(), true, approach);
+        }
+        catch (System.Text.Json.JsonException)
+        {
+            return (BuildFallbackMemo("json_parse_error"), false, DefaultApproach);
+        }
+    }
+
     private string BuildFallbackMemo(string note)
     {
+        if (_opts.HandWireVariant == HandWireVariant.Plaintext)
+        {
+            return $"Approach: behavioral_activation. Technique: schedule_one_small_activity. Key question: What is one tiny thing you could do today that used to bring you joy? Risk note: none. Fallback note: {note}.";
+        }
+        if (_opts.HandWireVariant == HandWireVariant.Json)
+        {
+            return $"{{\"layer\":3,\"approach\":\"behavioral_activation\",\"technique\":\"schedule_one_small_activity\",\"key_question\":\"What is one tiny thing you could do today that used to bring you joy?\",\"risk_note\":\"none\",\"note\":\"{note}\"}}";
+        }
+        if (_opts.HandWireVariant == HandWireVariant.Semantic)
+        {
+            return $"M|L=3|ap=behavioral_activation|tk=schedule_one_small_activity|kq=What is one tiny thing you could do today that used to bring you joy?|rn=none|note={note}";
+        }
+
         return new MemoBuilder(_opts.HandCompressionTier)
             .Layer(3)
-            .Approach("behavioral_activation")
+            .Approach(DefaultApproach)
             .Technique("schedule_one_small_activity")
             .KeyQuestion("What is one tiny thing you could do today that used to bring you joy?")
             .RiskNote("none")
@@ -146,11 +198,54 @@ public sealed class SupervisorLayer
             .Build();
     }
 
+    [GeneratedRegex(@"(?i)\bapproach\s*:\s*([^.,;\r\n]+)", RegexOptions.None, 200)]
+    private static partial Regex ApproachPlaintextRegex();
+
+    private static string ExtractApproachFromPlaintext(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return UnknownFallback;
+
+        var match = ApproachPlaintextRegex().Match(text);
+        if (match.Success)
+        {
+            string val = match.Groups[1].Value.Trim();
+            int techIdx = val.IndexOf("Technique", StringComparison.OrdinalIgnoreCase);
+            if (techIdx >= 0)
+            {
+                val = val[..techIdx].Trim();
+            }
+            return string.IsNullOrWhiteSpace(val) ? UnknownFallback : val;
+        }
+
+        return UnknownFallback;
+    }
+
     public static string ExtractApproach(string memoWire)
     {
-        if (string.IsNullOrWhiteSpace(memoWire)) return "unknown";
-        ParsedHandMessage? parsed = HandParser.Parse(memoWire);
-        return parsed?.Get("p3") ?? "unknown";
+        if (string.IsNullOrWhiteSpace(memoWire)) return UnknownFallback;
+        string text = memoWire.Trim();
+        if (text.StartsWith('{') && text.EndsWith('}'))
+        {
+            try
+            {
+                using System.Text.Json.JsonDocument doc = System.Text.Json.JsonDocument.Parse(text);
+                return doc.RootElement.GetProperty("approach").GetString() ?? UnknownFallback;
+            }
+            catch
+            {
+                return UnknownFallback;
+            }
+        }
+        if (text.Contains("Approach:", StringComparison.OrdinalIgnoreCase))
+        {
+            return ExtractApproachFromPlaintext(text);
+        }
+        ParsedHandMessage? parsed = HandParser.Parse(text);
+        if (parsed != null)
+        {
+            return parsed.Get("p3") ?? parsed.Get("ap") ?? UnknownFallback;
+        }
+        return UnknownFallback;
     }
 }
 

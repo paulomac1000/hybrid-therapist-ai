@@ -7,6 +7,8 @@ namespace HybridTherapist.Api.Endpoints;
 
 public static class ChatEndpoints
 {
+    private const string ModelKey = "model";
+
     public static void MapChatEndpoints(this WebApplication app)
     {
         app.MapPost("/v1/chat/completions", HandleCompletions)
@@ -16,6 +18,7 @@ public static class ChatEndpoints
             .WithName("ListModels");
     }
 
+#pragma warning disable S3776 // HTTP endpoint handler — request parsing, streaming, error paths
     private static async Task HandleCompletions(
         HttpContext ctx,
         TherapistFlow flow,
@@ -31,7 +34,7 @@ public static class ChatEndpoints
             JsonElement root = doc.RootElement;
             request = new ChatCompletionRequest
             {
-                Model = root.TryGetProperty("model", out JsonElement m) ? m.GetString() ?? "" : "",
+                Model = root.TryGetProperty(ModelKey, out JsonElement m) ? m.GetString() ?? "" : "",
                 Stream = root.TryGetProperty("stream", out JsonElement s) && s.ValueKind == JsonValueKind.True,
                 User = root.TryGetProperty("user", out JsonElement u) && u.ValueKind == JsonValueKind.String ? u.GetString() : null,
             };
@@ -117,6 +120,7 @@ public static class ChatEndpoints
         ctx.Response.ContentType = "application/json";
         await ctx.Response.WriteAsJsonAsync(response, ct);
     }
+#pragma warning restore S3776
 
     /// <summary>
     /// Emits OpenAI-compatible SSE chunks. LibreChat (and most OpenAI clients) sends

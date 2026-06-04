@@ -98,9 +98,9 @@ public sealed class LiveOllamaE2ETests
         _output.WriteLine($"Live trace:    {traceUrl}");
 
         // ── 5. Response headers ──
-        response.Headers.GetValues("X-Cortexa-Fallback")
+        response.Headers.GetValues("X-HT-Fallback")
             .First().Should().Be("false");
-        response.Headers.GetValues("X-Cortexa-Flow")
+        response.Headers.GetValues("X-HT-Flow")
             .First().Should().Be("hybrid-therapist");
     }
 }

@@ -1,0 +1,14 @@
+{
+  "variant": "json",
+  "timestamp_utc": "2026-06-04T23:37:14Z",
+  "commit": "fc2a91f",
+  "checkpoints": 3,
+  "status": "passed",
+  "passed": 6,
+  "failed": 0,
+  "token_savings": {
+    "avg_percent": 6.5,
+    "min_percent": 5.4,
+    "max_percent": 7.7
+  }
+}
