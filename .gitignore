@@ -53,3 +53,6 @@ local-packages/
 
 # Antigravity CLI config
 .antigravitycli/
+
+# SonarQube scanner working directory (generated at scan time)
+.sonarqube/

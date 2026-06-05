@@ -1,1 +1,0 @@
-uRh/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Application/HybridTherapist.Application.csprojòCSharp12

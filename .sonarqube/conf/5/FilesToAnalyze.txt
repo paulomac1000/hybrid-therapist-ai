@@ -1,7 +1,0 @@
-﻿/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Api/Endpoints/ChatEndpoints.cs
-/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Api/Endpoints/TraceEndpoints.cs
-/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Api/Program.cs
-/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Api/obj/Release/net8.0/HybridTherapist.Api.GlobalUsings.g.cs
-/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Api/obj/Release/net8.0/.NETCoreApp,Version=v8.0.AssemblyAttributes.cs
-/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Api/obj/Release/net8.0/HybridTherapist.Api.AssemblyInfo.cs
-/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Api/appsettings.json

@@ -1,6 +1,0 @@
-projectKey=hybrid-therapist
-serverUrl=http://192.168.0.101:9080
-serverVersion=26.4.0.121862
-dashboardUrl=http://192.168.0.101:9080/dashboard?id=hybrid-therapist
-ceTaskId=572ff454-cc26-433d-97c4-9f526956c688
-ceTaskUrl=http://192.168.0.101:9080/api/ce/task?id=572ff454-cc26-433d-97c4-9f526956c688

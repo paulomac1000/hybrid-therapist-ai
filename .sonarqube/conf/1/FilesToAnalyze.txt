@@ -1,2 +1,0 @@
-﻿/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Security/Gates/CrisisGate.cs
-/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Security/Privacy/PrivacySanitizer.cs

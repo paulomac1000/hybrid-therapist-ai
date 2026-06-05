@@ -1,1 +1,0 @@
-wRj/home/pablo/Projects/hybrid-therapist/tests/HybridTherapist.Integration/HybridTherapist.Integration.csprojòCSharp12

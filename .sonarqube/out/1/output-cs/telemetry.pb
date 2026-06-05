@@ -1,1 +1,0 @@
-oRb/home/pablo/Projects/hybrid-therapist/src/HybridTherapist.Security/HybridTherapist.Security.csprojòCSharp12
