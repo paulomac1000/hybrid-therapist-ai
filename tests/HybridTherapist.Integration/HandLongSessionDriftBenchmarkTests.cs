@@ -87,10 +87,10 @@ public sealed class HandLongSessionDriftBenchmarkTests
         HttpResponseMessage traceResp = await client.GetAsync($"/v1/trace/{sessionId}");
         traceResp.EnsureSuccessStatusCode();
         using JsonDocument traceDoc = JsonDocument.Parse(await traceResp.Content.ReadAsStringAsync());
-        
+
         JsonElement events = traceDoc.RootElement.GetProperty("events");
         events.ValueKind.Should().Be(JsonValueKind.Array);
-        
+
         int l2Count = 0;
         int l3Count = 0;
 

@@ -34,7 +34,7 @@ public sealed class HandSemanticBenchmarkTests
     {
         (BenchmarkRun run, BenchmarkExpectations expectations) =
             await HandSemanticBenchmarkValidator.RunCassetteAsync(CassettePath(cassetteFile));
-        
+
         HandSemanticBenchmarkValidator.ValidateSemanticStrict(run, expectations);
         TokenSavingsMetrics savings = HandSemanticBenchmarkValidator.CalculateTokenSavings(run);
         savings.SavingsPercent.Should().BeGreaterThan(0.0,
@@ -71,7 +71,7 @@ public sealed class HandSemanticBenchmarkTests
         _output.WriteLine($"  Cassettes found: {cassettes.Length}");
         _output.WriteLine($"  Directory:       {dir}");
         _output.WriteLine($"");
-        
+
         foreach (string file in cassettes)
         {
             _output.WriteLine($"    - {Path.GetFileNameWithoutExtension(file)}");

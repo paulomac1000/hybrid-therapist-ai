@@ -11,7 +11,7 @@ namespace HybridTherapist.Integration;
 internal static class HandSemanticBenchmarkValidator
 {
     private static readonly string[] CompactKeys = { "e7=", "s9=", "x4=", "y1=", "q3=", "p3=", "t5=", "k2=", "r8=", "g6=", "f0=" };
-    
+
     private static readonly string[] VerboseKeys =
     {
         "emotional_state", "severity", "risk_indicators", "cognitive_patterns",

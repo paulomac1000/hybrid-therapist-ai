@@ -221,8 +221,8 @@ public sealed class TherapistLayerService
             {
                 await TraceAsync(sessionId, "L7_en_pl", resp.ModelId ?? _opts.Translator,
                     englishText, text, sw.ElapsedMilliseconds, "ok", wireFormat: resp.Text);
-        return new LayerResult { Ok = true, Text = text, ModelId = resp.ModelId };
-    }
+                return new LayerResult { Ok = true, Text = text, ModelId = resp.ModelId };
+            }
 #pragma warning restore S107
 
             await TraceAsync(sessionId, "L7_en_pl", resp.ModelId ?? _opts.Translator,
