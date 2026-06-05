@@ -1,3 +1,13 @@
+---
+description: Build/test instructions and key invariants for AI agents working on hybrid-therapist
+doc_id: ref.agents
+type: ref
+status: active
+stability: stable
+ai_scope: editable
+tags: ["agents", "meta"]
+---
+
 # AGENTS.md — instructions for AI agents working on this repo
 
 ## Build & test
@@ -67,7 +77,7 @@ Thin wrappers that delegate to HandRuntime types:
 - Use `FluentAssertions` for test assertions
 - Use `ArgumentNullException.ThrowIfNull()` in facade methods (not in decoder — it handles null/empty gracefully)
 - Benchmark test output uses `BENCHMARK_TOKEN_SAVINGS=X.X` for machine-readable token savings (parsed by `run-hand-benchmark.sh` from TRX files)
-- Dead code rule: any class with zero references in `src/` should be deleted (not just commented out or left as stubs)
+- Dead code rule: any class with zero references in `src/` should be deleted (not commented out or left as stubs)
 
 ## Documentation
 

@@ -31,8 +31,13 @@ jobs:
           key: nuget-${{ hashFiles('**/*.csproj', 'Directory.Build.props') }}
           restore-keys: nuget-
 
+      - name: Configure NuGet source
+        run: dotnet nuget add source --username paulomac1000 --password "${{ secrets.GITHUB_TOKEN }}" --store-password-in-clear-text --name github "https://nuget.pkg.github.com/paulomac1000/index.json" 2>/dev/null || true
+
       - name: Restore
-        run: dotnet restore HybridTherapist.sln
+        run: dotnet restore HybridTherapist.sln --ignore-failed-sources
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Format check
         run: dotnet format HybridTherapist.sln --verify-no-changes --no-restore
@@ -56,8 +61,13 @@ jobs:
           key: nuget-${{ hashFiles('**/*.csproj', 'Directory.Build.props') }}
           restore-keys: nuget-
 
+      - name: Configure NuGet source
+        run: dotnet nuget add source --username paulomac1000 --password "${{ secrets.GITHUB_TOKEN }}" --store-password-in-clear-text --name github "https://nuget.pkg.github.com/paulomac1000/index.json" 2>/dev/null || true
+
       - name: Restore
-        run: dotnet restore HybridTherapist.sln
+        run: dotnet restore HybridTherapist.sln --ignore-failed-sources
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run unit tests with coverage
         run: |
