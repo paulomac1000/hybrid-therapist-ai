@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "active_work_id": "e2e-checkpoint-comprehensive-b821ac73",
+  "active_work_id": "e2e-debug-comprehensive-fix-b4152906",
   "works": {
     "docs-audit-fix-57778d7d": {
       "work_id": "docs-audit-fix-57778d7d",
@@ -342,9 +342,27 @@
       "work_id": "e2e-checkpoint-comprehensive-b821ac73",
       "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/e2e-checkpoint-comprehensive.md",
       "plan_name": "e2e-checkpoint-comprehensive",
-      "status": "active",
+      "status": "completed",
       "started_at": "2026-06-06T22:57:31.177Z",
-      "updated_at": "2026-06-06T22:57:31.177Z",
+      "updated_at": "2026-06-06T23:06:21.636Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {},
+      "ended_at": "2026-06-06T23:06:21.636Z",
+      "elapsed_ms": 530459
+    },
+    "e2e-debug-comprehensive-fix-b4152906": {
+      "work_id": "e2e-debug-comprehensive-fix-b4152906",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/e2e-debug-comprehensive-fix.md",
+      "plan_name": "e2e-debug-comprehensive-fix",
+      "status": "active",
+      "started_at": "2026-06-06T23:19:52.210Z",
+      "updated_at": "2026-06-06T23:19:52.210Z",
       "session_ids": [
         "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
       ],
@@ -355,17 +373,17 @@
       "task_sessions": {}
     }
   },
-  "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/e2e-checkpoint-comprehensive.md",
-  "started_at": "2026-06-06T22:57:31.177Z",
+  "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/e2e-debug-comprehensive-fix.md",
+  "started_at": "2026-06-06T23:19:52.210Z",
   "status": "active",
-  "updated_at": "2026-06-06T22:57:31.177Z",
+  "updated_at": "2026-06-06T23:19:52.210Z",
   "session_ids": [
     "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
   ],
   "session_origins": {
     "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
   },
-  "plan_name": "e2e-checkpoint-comprehensive",
+  "plan_name": "e2e-debug-comprehensive-fix",
   "task_sessions": {},
   "agent": "atlas"
 }
