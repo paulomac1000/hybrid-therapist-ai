@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "active_work_id": "control-token-fix-0ccca979",
+  "active_work_id": "final-hardening-7d3ef341",
   "works": {
     "docs-audit-fix-57778d7d": {
       "work_id": "docs-audit-fix-57778d7d",
@@ -254,9 +254,27 @@
       "work_id": "control-token-fix-0ccca979",
       "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/control-token-fix.md",
       "plan_name": "control-token-fix",
-      "status": "active",
+      "status": "completed",
       "started_at": "2026-06-06T21:04:43.650Z",
-      "updated_at": "2026-06-06T21:04:43.650Z",
+      "updated_at": "2026-06-06T21:11:35.417Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {},
+      "ended_at": "2026-06-06T21:11:35.417Z",
+      "elapsed_ms": 411767
+    },
+    "final-hardening-7d3ef341": {
+      "work_id": "final-hardening-7d3ef341",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/final-hardening.md",
+      "plan_name": "final-hardening",
+      "status": "active",
+      "started_at": "2026-06-06T21:22:18.221Z",
+      "updated_at": "2026-06-06T21:22:18.221Z",
       "session_ids": [
         "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
       ],
@@ -267,17 +285,17 @@
       "task_sessions": {}
     }
   },
-  "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/control-token-fix.md",
-  "started_at": "2026-06-06T21:04:43.650Z",
+  "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/final-hardening.md",
+  "started_at": "2026-06-06T21:22:18.221Z",
   "status": "active",
-  "updated_at": "2026-06-06T21:04:43.650Z",
+  "updated_at": "2026-06-06T21:22:18.221Z",
   "session_ids": [
     "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
   ],
   "session_origins": {
     "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
   },
-  "plan_name": "control-token-fix",
+  "plan_name": "final-hardening",
   "task_sessions": {},
   "agent": "atlas"
 }

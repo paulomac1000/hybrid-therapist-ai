@@ -74,6 +74,19 @@ public sealed class LiveOllamaE2ETests
         JsonElement meta = doc.RootElement.GetProperty("metadata");
         meta.GetProperty("fallback").GetBoolean().Should().BeFalse(
             "live pipeline should not fall back");
+
+        // ── 5. No model thinking/control tokens leaked ──
+        content.Should().NotContain("<|control",
+            "model thinking tokens (PsychoCounsel <|control_N|>) must be stripped before output");
+
+        // ── 6. Response must be Polish (has diacritics) ──
+        content.Should().ContainAny(new[] { "ą", "ć", "ę", "ł", "ń", "ó", "ś", "ź", "ż" },
+            "therapeutic response must be in Polish with proper diacritics");
+
+        // ── 7. Analyst severity extracted from memo (not hardcoded "unknown") ──
+        meta.GetProperty("analyst_severity").GetString().Should().NotBe("unknown",
+            "analyst severity must be extracted from the L2 memo, not hardcoded");
+
         meta.GetProperty("phase").GetString().Should().Be("INIT");
         string sessionId = meta.GetProperty("session_id").GetString()!;
         sessionId.Should().NotBeNullOrWhiteSpace();
@@ -102,5 +115,52 @@ public sealed class LiveOllamaE2ETests
             .First().Should().Be("false");
         response.Headers.GetValues("X-HT-Flow")
             .First().Should().Be("hybrid-therapist");
+    }
+
+    [Fact]
+    public async Task LiveOllama_CrisisInput_ReturnsHelpline_NoLlmCall()
+    {
+        await using var app = new WebApplicationFactory<Program>()
+            .WithWebHostBuilder(b => b.ConfigureAppConfiguration((_, config) =>
+                config.AddInMemoryCollection(new Dictionary<string, string?>
+                {
+                    ["Ollama:BaseUrl"] = OllamaBaseUrl,
+                })));
+
+        using HttpClient client = app.CreateClient();
+
+        using HttpResponseMessage response = await client.PostAsJsonAsync(
+            "/v1/chat/completions", new
+            {
+                model = "hybrid-therapist",
+                messages = new[] { new { role = "user", content = "chcę skończyć z sobą" } },
+            });
+
+        response.EnsureSuccessStatusCode();
+
+        using JsonDocument doc = JsonDocument.Parse(
+            await response.Content.ReadAsStringAsync());
+
+        string content = doc.RootElement
+            .GetProperty("choices")[0]
+            .GetProperty("message")
+            .GetProperty("content")
+            .GetString()!;
+
+        // CrisisGate must return Polish helpline number
+        content.Should().Contain("116 123",
+            "crisis input must trigger hard-stop with helpline number");
+        content.Should().Contain("Telefon Zaufania",
+            "crisis response must be in Polish and mention the helpline");
+
+        JsonElement meta = doc.RootElement.GetProperty("metadata");
+        meta.GetProperty("crisis_detected").GetBoolean().Should().BeTrue(
+            "crisis input must set crisis_detected flag");
+
+        // CrisisGate stops at layer -1 — no LLM calls, so no fallback path
+        meta.GetProperty("fallback").GetBoolean().Should().BeFalse();
+        meta.GetProperty("crisis_severity").GetString().Should().Be("critical");
+
+        _output.WriteLine($"Crisis hard-stop response: {content}");
     }
 }

@@ -187,7 +187,7 @@ public sealed class TherapistLayerService
             return new LayerResult { Ok = true, Text = therapistDraft, ModelId = _opts.Calibrator };
         }
 
-        string text = resp.Text.Trim();
+        string text = DecodeHand(resp.Text);
         await TraceAsync(sessionId, "L6_calibrator", resp.ModelId ?? _opts.Calibrator, prompt, text, sw.ElapsedMilliseconds, "ok");
         return new LayerResult { Ok = true, Text = text, ModelId = resp.ModelId };
     }

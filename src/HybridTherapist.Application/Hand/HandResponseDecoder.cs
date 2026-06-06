@@ -38,7 +38,8 @@ public static partial class HandResponseDecoder
 
     public static HandDecodedResponse Decode(string rawResponse, AgentClass agentClass)
     {
-        string cleaned = ControlTokenPattern().Replace(rawResponse, "");
+        string cleaned = rawResponse is null ? rawResponse
+            : ControlTokenPattern().Replace(rawResponse, "");
         RuntimeDecodedResponse result = RuntimeDecoder.Decode(cleaned, agentClass, DefaultTherapyOptions);
         return HandDecodedResponse.From(result);
     }
