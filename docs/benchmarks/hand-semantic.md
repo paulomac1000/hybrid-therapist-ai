@@ -55,7 +55,7 @@ Last run: 2026-06-06 | Cassette mode
 
 ## Interpretation
 
-The model stack successfully adheres to the H.A.N.D. Semantic keys structure through implicit priming, indicating that semantic information in key names does not disrupt protocol learning. However, the token economy is significantly degraded due to the overhead of longer key names.
+The model stack successfully adheres to the H.A.N.D. Semantic keys structure through implicit priming, indicating that semantic information in key names does not disrupt protocol learning. The token savings (~37%) are comparable to the H.A.N.D. Compact variant (~34%), showing that longer human-readable key names have minimal impact on the token economy in practice.
 
 ## Reproduction
 
