@@ -10,13 +10,13 @@ upstream:
   - sys.socrates-pipeline
   - ref.glossary
 tags: ["cassettes", "integration", "testing", "ollama"]
-last_verified: 2026-05-23
+last_verified: 2026-06-06
 owners: ["hybrid-therapist"]
 ---
 
-# Kasety Ollama — nagrane interakcje pipeline'u
+# Ollama Cassettes — Recorded Pipeline Interactions
 
-Każda kaseta to plik JSON opisujący sekwencję par request/response Ollama `/api/chat` dla jednego scenariusza terapeutycznego. Kasety pozwalają uruchomić pełny 6-warstwowy pipeline Socrates **offline** w CI — bez żywej Ollamy, bez GPU, bez pobierania modeli.
+Each cassette is a JSON file describing a sequence of Ollama `/api/chat` request/response pairs for one therapeutic scenario. Cassettes allow running the full 6-layer Socrates pipeline **offline** in CI — without a live Ollama, without a GPU, without downloading models.
 
 ## Format
 
