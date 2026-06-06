@@ -42,7 +42,7 @@ L6 Calibrator (Llama4-Dolphin 8B) po zahartowanym prompcie wprowadza formułkowe
 
 ## TODOs
 
-- [ ] 1. Soft-fail therapeutic quality check — try L4 draft before hard-block
+- [x] 1. Soft-fail therapeutic quality check — try L4 draft before hard-block
 
   **File**: `src/HybridTherapist.Application/Flows/TherapistFlow.cs`
 
@@ -50,7 +50,7 @@ L6 Calibrator (Llama4-Dolphin 8B) po zahartowanym prompcie wprowadza formułkowe
 
   **Agent**: `quick`
 
-- [ ] 2. Rebuild container + test
+- [x] 2. Rebuild container + test
 
   **Test**: Curl "witaj" / "nie mogę zasnąć" → Fallback: False, response ≠ "Przepraszam..."
 

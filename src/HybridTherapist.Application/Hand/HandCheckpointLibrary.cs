@@ -29,12 +29,15 @@ public static class HandCheckpointLibrary
     /// </summary>
     public static HandCheckpoint TherapyAnalystPing { get; } = new(new[]
     {
+        // Conservative — user gave minimal input, do NOT fabricate details
         new HandExchange(ProtocolPing,
-            "M|L=2|e7=exhaustion|s9=moderate|x4=insomnia_worry|y1=catastrophizing|q3=\"haven't slept in weeks\""),
+            "M|L=2|e7=fatigue|s9=moderate|x4=none|y1=unspecified|q3=\"can't sleep at night\""),
+        // Detailed — user provided rich context, detailed analysis is justified
         new HandExchange(ProtocolPing,
             "M|L=2|e7=anxiety|s9=high|x4=panic_fear|y1=racing_thoughts|q3=\"constantly worried about everything\""),
+        // Moderate — some context available, balanced analysis
         new HandExchange(ProtocolPing,
-            "M|L=2|e7=sadness|s9=moderate|x4=hopelessness|y1=rumination|q3=\"nothing matters anymore\""),
+            "M|L=2|e7=sadness|s9=moderate|x4=social_isolation|y1=rumination|q3=\"nothing matters anymore\""),
     });
 
     /// <summary>

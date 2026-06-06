@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "active_work_id": "therapeutic-qa-softfail-85c07d87",
+  "active_work_id": "e2e-checkpoint-comprehensive-b821ac73",
   "works": {
     "docs-audit-fix-57778d7d": {
       "work_id": "docs-audit-fix-57778d7d",
@@ -308,9 +308,43 @@
       "work_id": "therapeutic-qa-softfail-85c07d87",
       "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/therapeutic-qa-softfail.md",
       "plan_name": "therapeutic-qa-softfail",
-      "status": "active",
+      "status": "completed",
       "started_at": "2026-06-06T22:11:42.424Z",
-      "updated_at": "2026-06-06T22:11:42.424Z",
+      "updated_at": "2026-06-06T22:23:14.911Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {},
+      "ended_at": "2026-06-06T22:23:14.911Z",
+      "elapsed_ms": 692487
+    },
+    "e2e-checkpoint-comprehensive-9f78b3d4": {
+      "work_id": "e2e-checkpoint-comprehensive-9f78b3d4",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/e2e-checkpoint-comprehensive.md",
+      "plan_name": "e2e-checkpoint-comprehensive",
+      "status": "active",
+      "started_at": "2026-06-06T22:57:31.154Z",
+      "updated_at": "2026-06-06T22:57:31.154Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {}
+    },
+    "e2e-checkpoint-comprehensive-b821ac73": {
+      "work_id": "e2e-checkpoint-comprehensive-b821ac73",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/e2e-checkpoint-comprehensive.md",
+      "plan_name": "e2e-checkpoint-comprehensive",
+      "status": "active",
+      "started_at": "2026-06-06T22:57:31.177Z",
+      "updated_at": "2026-06-06T22:57:31.177Z",
       "session_ids": [
         "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
       ],
@@ -321,17 +355,17 @@
       "task_sessions": {}
     }
   },
-  "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/therapeutic-qa-softfail.md",
-  "started_at": "2026-06-06T22:11:42.424Z",
+  "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/e2e-checkpoint-comprehensive.md",
+  "started_at": "2026-06-06T22:57:31.177Z",
   "status": "active",
-  "updated_at": "2026-06-06T22:11:42.424Z",
+  "updated_at": "2026-06-06T22:57:31.177Z",
   "session_ids": [
     "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
   ],
   "session_origins": {
     "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
   },
-  "plan_name": "therapeutic-qa-softfail",
+  "plan_name": "e2e-checkpoint-comprehensive",
   "task_sessions": {},
   "agent": "atlas"
 }

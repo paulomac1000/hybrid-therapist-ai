@@ -163,4 +163,127 @@ public sealed class LiveOllamaE2ETests
 
         _output.WriteLine($"Crisis hard-stop response: {content}");
     }
+
+    [Fact]
+    public async Task LiveOllama_GreetingQuery_ReturnsPolishResponse()
+    {
+        (string content, JsonElement meta, JsonDocument doc) = await ExecuteTherapyQuery("witaj");
+
+        content.Should().NotContain("Przepraszam");
+        content.Should().NotContain("<|control");
+        content.Should().ContainAny("ą", "ć", "ę", "ł", "ń", "ó", "ś", "ź", "ż");
+        meta.GetProperty("fallback").GetBoolean().Should().BeFalse();
+        meta.GetProperty("analyst_severity").GetString().Should().NotBe("unknown");
+        meta.GetProperty("phase").GetString().Should().Be("INIT");
+    }
+
+    [Fact]
+    public async Task LiveOllama_DepressionQuery_NoFabricatedThemes()
+    {
+        (string content, JsonElement meta, JsonDocument doc) = await ExecuteTherapyQuery("czuję się smutny od tygodnia");
+
+        content.Should().NotContain("Przepraszam");
+        content.Should().NotContain("<|control");
+        content.Should().ContainAny("ą", "ć", "ę", "ł", "ń", "ó", "ś", "ź", "ż");
+        meta.GetProperty("fallback").GetBoolean().Should().BeFalse();
+
+        // Check the trace — analyst should NOT fabricate themes for this input
+        string traceUrl = meta.GetProperty("trace_url").GetString()!;
+        await AssertNoFabricatedThemes(doc, traceUrl, new[] { "racing_thoughts", "panic" });
+    }
+
+    [Fact]
+    public async Task LiveOllama_AnxietyQuery_NoFabricatedThemes()
+    {
+        (string content, JsonElement meta, JsonDocument doc) = await ExecuteTherapyQuery("ciągle się martwię o pracę");
+
+        content.Should().NotContain("Przepraszam");
+        content.Should().NotContain("<|control");
+        content.Should().ContainAny("ą", "ć", "ę", "ł", "ń", "ó", "ś", "ź", "ż");
+        meta.GetProperty("fallback").GetBoolean().Should().BeFalse();
+        meta.GetProperty("analyst_severity").GetString().Should().NotBe("unknown");
+
+        string traceUrl = meta.GetProperty("trace_url").GetString()!;
+        await AssertNoFabricatedThemes(doc, traceUrl, new[] { "panic", "hopelessness" });
+    }
+
+    [Fact]
+    public async Task LiveOllama_PositiveFeedback_ReturnsResponse()
+    {
+        (string content, JsonElement meta, JsonDocument doc) = await ExecuteTherapyQuery("dziękuję, pomogło mi to");
+
+        content.Should().NotContain("Przepraszam");
+        content.Should().NotContain("<|control");
+        content.Should().ContainAny("ą", "ć", "ę", "ł", "ń", "ó", "ś", "ź", "ż");
+        meta.GetProperty("fallback").GetBoolean().Should().BeFalse();
+        meta.GetProperty("phase").GetString().Should().Be("INIT");
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
+    /// <summary>Common setup: create app, send query, return response parts.</summary>
+    private async Task<(string content, JsonElement metadata, JsonDocument doc)> ExecuteTherapyQuery(string userInput)
+    {
+        await using var app = new WebApplicationFactory<Program>()
+            .WithWebHostBuilder(b => b.ConfigureAppConfiguration((_, config) =>
+                config.AddInMemoryCollection(new Dictionary<string, string?>
+                {
+                    ["Ollama:BaseUrl"] = OllamaBaseUrl,
+                })));
+
+        using HttpClient client = app.CreateClient();
+        client.Timeout = TimeSpan.FromMinutes(4);
+
+        using HttpResponseMessage response = await client.PostAsJsonAsync(
+            "/v1/chat/completions", new
+            {
+                model = "hybrid-therapist",
+                messages = new[] { new { role = "user", content = userInput } },
+            });
+
+        response.EnsureSuccessStatusCode();
+
+        JsonDocument doc = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        string content = doc.RootElement.GetProperty("choices")[0]
+            .GetProperty("message").GetProperty("content").GetString()!;
+        JsonElement meta = doc.RootElement.GetProperty("metadata");
+
+        _output.WriteLine($"Input: {userInput}");
+        _output.WriteLine($"Severity: {meta.GetProperty("analyst_severity").GetString()}");
+
+        return (content, meta, doc);
+    }
+
+    /// <summary>Fetches the L2 trace and asserts no fabricated themes are present.</summary>
+    private async Task AssertNoFabricatedThemes(JsonDocument responseDoc, string traceUrl, string[] forbiddenL2Terms)
+    {
+        // Fetch the trace from the in-process server (URL is relative)
+        await using var traceApp = new WebApplicationFactory<Program>()
+            .WithWebHostBuilder(b => b.ConfigureAppConfiguration((_, config) =>
+                config.AddInMemoryCollection(new Dictionary<string, string?>
+                {
+                    ["Ollama:BaseUrl"] = OllamaBaseUrl,
+                })));
+
+        using HttpClient client = traceApp.CreateClient();
+        using HttpResponseMessage traceResponse = await client.GetAsync(traceUrl);
+        traceResponse.EnsureSuccessStatusCode();
+
+        using JsonDocument traceDoc = JsonDocument.Parse(await traceResponse.Content.ReadAsStringAsync());
+        foreach (JsonElement evt in traceDoc.RootElement.GetProperty("events").EnumerateArray())
+        {
+            string layer = evt.GetProperty("layer").GetString()!;
+            if (layer != "L2_analyst") continue;
+
+            string output = (evt.GetProperty("output").GetString() ?? "").ToLowerInvariant();
+            string wireFormat = (evt.GetProperty("wire_format").GetString() ?? output).ToLowerInvariant();
+
+            foreach (string term in forbiddenL2Terms)
+            {
+                wireFormat.Should().NotContain(term.ToLowerInvariant(),
+                    $"L2 analyst must not fabricate '{term}' — user did not mention it");
+            }
+            _output.WriteLine($"L2 trace OK — no fabricated terms found");
+        }
+    }
 }
