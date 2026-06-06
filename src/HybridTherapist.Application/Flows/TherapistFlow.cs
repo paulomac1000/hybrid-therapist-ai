@@ -217,8 +217,16 @@ public sealed class TherapistFlow : ITherapistFlow
             enResponse, state.CurrentPhase, state.MessageCount);
         if (!tq.Ok)
         {
-            _logger.LogWarning("Therapeutic quality check failed for {Session}: {Reason} — blocking response", sessionId, tq.Reason);
-            return BuildFallback(request.Model, sessionId, "L6_therapeutic_quality", tq.Reason);
+            _logger.LogWarning("Therapeutic quality check failed for {Session}: {Reason} — trying L4 draft", sessionId, tq.Reason);
+            enResponse = l4.Text;
+
+            QualityValidator.Verdict tq2 = QualityValidator.ValidateTherapeuticQuality(
+                enResponse, state.CurrentPhase, state.MessageCount);
+            if (!tq2.Ok)
+            {
+                _logger.LogError("L4 draft also failed therapeutic quality for {Session}: {Reason} — blocking response", sessionId, tq2.Reason);
+                return BuildFallback(request.Model, sessionId, "L6_therapeutic_quality", tq2.Reason);
+            }
         }
 
         // ── Layer 14: L7 EN → PL ──────────────────────────────────────────────

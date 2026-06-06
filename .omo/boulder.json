@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "active_work_id": "analyst-calibrator-fix-bd8d2c15",
+  "active_work_id": "therapeutic-qa-softfail-85c07d87",
   "works": {
     "docs-audit-fix-57778d7d": {
       "work_id": "docs-audit-fix-57778d7d",
@@ -290,9 +290,27 @@
       "work_id": "analyst-calibrator-fix-bd8d2c15",
       "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/analyst-calibrator-fix.md",
       "plan_name": "analyst-calibrator-fix",
-      "status": "active",
+      "status": "completed",
       "started_at": "2026-06-06T21:45:27.267Z",
-      "updated_at": "2026-06-06T21:45:27.267Z",
+      "updated_at": "2026-06-06T21:56:24.252Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {},
+      "ended_at": "2026-06-06T21:56:24.252Z",
+      "elapsed_ms": 656985
+    },
+    "therapeutic-qa-softfail-85c07d87": {
+      "work_id": "therapeutic-qa-softfail-85c07d87",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/therapeutic-qa-softfail.md",
+      "plan_name": "therapeutic-qa-softfail",
+      "status": "active",
+      "started_at": "2026-06-06T22:11:42.424Z",
+      "updated_at": "2026-06-06T22:11:42.424Z",
       "session_ids": [
         "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
       ],
@@ -303,17 +321,17 @@
       "task_sessions": {}
     }
   },
-  "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/analyst-calibrator-fix.md",
-  "started_at": "2026-06-06T21:45:27.267Z",
+  "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/therapeutic-qa-softfail.md",
+  "started_at": "2026-06-06T22:11:42.424Z",
   "status": "active",
-  "updated_at": "2026-06-06T21:45:27.267Z",
+  "updated_at": "2026-06-06T22:11:42.424Z",
   "session_ids": [
     "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
   ],
   "session_origins": {
     "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
   },
-  "plan_name": "analyst-calibrator-fix",
+  "plan_name": "therapeutic-qa-softfail",
   "task_sessions": {},
   "agent": "atlas"
 }

@@ -251,9 +251,9 @@ public sealed class TherapistFlowTests
         FlowExecutionResult result = await flow.ExecuteAsync(
             MakeRequest("czuję się fatalnie"));
 
-        // QA should have detected formulaic opening and returned fallback
-        result.Fallback.Should().BeTrue("formulaic 'I understand' must trigger QA fallback");
-        result.Metadata.Should().ContainKey("failed_layer");
+        // L6 Calibrator output fails formulaic check, but L4 draft (non-formulaic) should pass
+        result.Fallback.Should().BeFalse("formulaic L6 must fall back to L4 draft, not hard-block");
+        result.Metadata.Should().NotContainKey("failed_layer");
     }
 
     // ── Session resolution ──────────────────────────────────────────────────
