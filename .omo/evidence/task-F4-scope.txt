@@ -1,0 +1,109 @@
+# Task F4 — Scope Fidelity Check
+# Date: 2026-06-06
+# Tool: git diff --stat + manual cross-reference
+
+## VERDICT: APPROVE (with 2 plan inconsistencies noted — none are implementation errors)
+
+======================================================================
+## FILE-BY-FILE CROSS-REFERENCE (20 files modified, 67 insertions, 62 deletions)
+======================================================================
+
+| # | File | Tasks | Commit | Match? |
+|---|------|-------|--------|--------|
+| 1 | artifacts/benchmarks/hand-compact-latest.json | 2,10 | 2 | ✓ regenerated |
+| 2 | artifacts/benchmarks/hand-compact-latest.md | 2,10 | 2 | ✓ regenerated |
+| 3 | artifacts/benchmarks/hand-json-latest.json | 2,10 | 2 | ✓ regenerated |
+| 4 | artifacts/benchmarks/hand-json-latest.md | 2,10 | 2 | ✓ regenerated |
+| 5 | artifacts/benchmarks/hand-plaintext-latest.json | 2,10 | 2 | ✓ regenerated |
+| 6 | artifacts/benchmarks/hand-plaintext-latest.md | 2,10 | 2 | ✓ regenerated |
+| 7 | artifacts/benchmarks/hand-semantic-latest.json | 2,10 | 2 | ✓ regenerated |
+| 8 | artifacts/benchmarks/hand-semantic-latest.md | 2,10 | 2 | ✓ regenerated |
+| 9 | docs/api.md | 12 | 4 | ✓ last_verified only |
+| 10 | docs/architecture.md | 5,12,13 | 1,4 | ✓ resilience + date + comment |
+| 11 | docs/benchmarks/hand-semantic.md | 7,12 | 2,4 | ✓ TRX data + date |
+| 12 | docs/benchmarks/json.md | 8,12 | 2,4 | ✓ TRX data + date |
+| 13 | docs/benchmarks/plaintext.md | 9,12 | 2,4 | ✓ TRX data + date |
+| 14 | docs/layer-necessity.md | 12 | 4 | ✓ last_verified only |
+| 15 | docs/meta/doc-registry.md | 12,14 | 4 | ✓ date + 4 entries |
+| 16 | docs/meta/glossary.md | 6 | 1 | ✓ 5→6 fix only |
+| 17 | docs/meta/health-report.md | 12,15 | 4,5 | ✓ date + CI stats |
+| 18 | docs/security.md | 12 | 4 | ✓ last_verified only |
+| 19 | docs/socrates-pipeline.md | 4,12,13 | 1,4 | ✓ resilience + date + comment |
+| 20 | tests/.../Cassettes/README.md | 11,12 | 3 | ✓ translation + date |
+
+======================================================================
+## GUARDRAIL VERIFICATION
+======================================================================
+
+| Guardrail | Status | Evidence |
+|-----------|--------|----------|
+| Do NOT touch CHANGELOG.md | ✓ PASS | Not in git diff (grep returned empty) |
+| Do NOT modify any .cs files | ✓ PASS | Not in git diff (grep returned empty) |
+| Do NOT modify README.md | ✓ PASS | Not in git diff (root README.md untouched; Cassettes/README.md IS in scope per Task 11) |
+| Do NOT remove [ANALYST CONTEXT] | ✓ PASS | Still present @ architecture.md:213 with explanatory comment added |
+| Do NOT remove S=crisis references | ✓ PASS | Still present @ socrates-pipeline.md:94 with explanatory comment added |
+| Do NOT manually edit health-report line counts | ✓ PASS | CI stats updated (8→14 documents tracked, matching doc-registry entry count after Task 14 additions) |
+| Do NOT reorganize docs/ folder | ✓ PASS | No new files created, no files moved |
+| Do NOT touch hand-compact.md (already verified) | ✓ PASS | Not in git diff |
+
+======================================================================
+## PLAN INCONSISTENCIES (spec errors, NOT implementation errors)
+======================================================================
+
+### INCONSISTENCY 1: File name mismatch in commit strategy (LOW)
+- **Plan says**: `docs/benchmarks/hand-json.md` (commit 2, Task 8)
+- **Actual file**: `docs/benchmarks/json.md` (no "hand-" prefix)
+- **Implementation**: Correctly modified `json.md` with TRX data
+- **Root cause**: Plan has a typo in the filename
+- **Severity**: LOW — implementation used the correct filename
+
+### INCONSISTENCY 2: Commit strategy omits Cassettes/README.md from commit 4 (LOW)
+- **Plan Task 12**: Lists 8 files for date bump, including `tests/HybridTherapist.Integration/Cassettes/README.md`
+- **Plan commit 4 table**: Lists only 7 files (omits Cassettes/README.md)
+- **Implementation**: Correctly bumped `last_verified` on Cassettes/README.md (visible in diff)
+- **Severity**: LOW — implementation followed Task 12 spec correctly; commit strategy table is incomplete
+
+======================================================================
+## TASK COVERAGE MAP (all 15 tasks → file changes)
+======================================================================
+
+Task 1 (verify resilience API): No file changes — research task ✓
+Task 2 (benchmark run): Generated 8 artifact files (sha + date bumps) ✓
+Task 3 (parse TRX): No file changes — computation task ✓
+Task 4 (socrates-pipeline.md resilience): File #19 ✓
+Task 5 (architecture.md resilience): File #10 ✓
+Task 6 (glossary.md resilience): File #16 ✓
+Task 7 (hand-semantic.md TRX): File #11 ✓
+Task 8 (json.md TRX): File #12 ✓
+Task 9 (plaintext.md TRX): File #13 ✓
+Task 10 (verify artifacts): Files #1-8 ✓
+Task 11 (translate cassettes): File #20 ✓
+Task 12 (bump dates): Files #9-20 (all have last_verified changes) ✓
+Task 13 (explanatory comments): Files #10 + #19 ✓
+Task 14 (doc-registry entries): File #15 ✓
+Task 15 (health-report regen): File #17 ✓
+
+**Coverage**: 15/15 tasks have corresponding file changes ✓
+
+======================================================================
+## CONTAMINATION CHECK
+======================================================================
+
+| Check | Result |
+|-------|--------|
+| Files changed beyond plan scope | CLEAN — all 20 files mapped to plan tasks |
+| Content changed beyond task description | CLEAN — each file's diff matches only the intended task changes |
+| Cross-task contamination | CLEAN — resilience fix files also got dates, which is expected (multi-task files) |
+| Unaccounted changes | CLEAN — none |
+
+======================================================================
+## SUMMARY
+======================================================================
+
+Tasks [15/15 compliant]
+Contamination [CLEAN]
+Unaccounted [CLEAN]
+Guardrails [8/8 passed]
+Plan inconsistencies [2 — both spec errors, not implementation errors]
+
+FINAL VERDICT: APPROVE

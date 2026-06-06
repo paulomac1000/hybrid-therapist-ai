@@ -1,0 +1,149 @@
+{
+  "schema_version": 2,
+  "active_work_id": "dotnet-upgrade-8-to-10-7b659a52",
+  "works": {
+    "docs-audit-fix-57778d7d": {
+      "work_id": "docs-audit-fix-57778d7d",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/docs-audit-fix.md",
+      "plan_name": "docs-audit-fix",
+      "status": "completed",
+      "started_at": "2026-06-06T16:35:44.062Z",
+      "updated_at": "2026-06-06T16:51:22.800Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS",
+        "opencode:ses_1622d3fb6ffeO24rrTBEAU0dix",
+        "opencode:ses_1622d2f79ffeHoOAsBw4b1YCCe",
+        "opencode:ses_1622d1a47ffeVrvDQ1VStQ37ZD",
+        "opencode:ses_1622cff81ffeYz5hkWR3dXsI48"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct",
+        "opencode:ses_1622d3fb6ffeO24rrTBEAU0dix": "appended",
+        "opencode:ses_1622d2f79ffeHoOAsBw4b1YCCe": "appended",
+        "opencode:ses_1622d1a47ffeVrvDQ1VStQ37ZD": "appended",
+        "opencode:ses_1622cff81ffeYz5hkWR3dXsI48": "appended"
+      },
+      "agent": "atlas",
+      "task_sessions": {
+        "todo:1": {
+          "task_key": "todo:1",
+          "task_label": "1",
+          "task_title": "Verify HandCodec v0.3.0 resilience ladder API against CHANGELOG description",
+          "session_id": "opencode:ses_16234cfabffeOSc9uHcKgxJydH",
+          "agent": "Sisyphus-Junior",
+          "category": "quick",
+          "updated_at": "2026-06-06T16:40:14.568Z",
+          "started_at": "2026-06-06T16:38:53.607Z",
+          "status": "completed",
+          "ended_at": "2026-06-06T16:40:14.568Z",
+          "elapsed_ms": 80961
+        },
+        "todo:7": {
+          "task_key": "todo:7",
+          "task_label": "7",
+          "task_title": "Regenerate docs/benchmarks/hand-semantic.md with TRX data",
+          "session_id": "opencode:ses_16230a3ceffeBYcxfztfI6Nne0",
+          "agent": "Sisyphus-Junior",
+          "category": "quick",
+          "updated_at": "2026-06-06T16:43:36.880Z",
+          "started_at": "2026-06-06T16:42:29.060Z",
+          "status": "completed",
+          "ended_at": "2026-06-06T16:43:36.880Z",
+          "elapsed_ms": 67820
+        },
+        "final-wave:f1": {
+          "task_key": "final-wave:f1",
+          "task_label": "F1",
+          "task_title": "**Plan Compliance Audit** — `oracle` *(running bg)*",
+          "session_id": "opencode:ses_1622cff81ffeYz5hkWR3dXsI48",
+          "agent": "Sisyphus-Junior",
+          "category": "deep",
+          "started_at": "2026-06-06T16:49:02.079Z",
+          "status": "completed",
+          "updated_at": "2026-06-06T16:49:17.987Z",
+          "ended_at": "2026-06-06T16:49:17.987Z",
+          "elapsed_ms": 15908
+        }
+      },
+      "ended_at": "2026-06-06T16:51:22.800Z",
+      "elapsed_ms": 938738
+    },
+    "dockerfile-codec-fix-309aab75": {
+      "work_id": "dockerfile-codec-fix-309aab75",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/dockerfile-codec-fix.md",
+      "plan_name": "dockerfile-codec-fix",
+      "status": "completed",
+      "started_at": "2026-06-06T17:19:41.697Z",
+      "updated_at": "2026-06-06T17:20:52.311Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {
+        "todo:1": {
+          "task_key": "todo:1",
+          "task_label": "1",
+          "task_title": "Fix Dockerfile wget URLs — v0.2.0 → v0.3.0",
+          "session_id": "opencode:ses_1620d1dd9ffeA70OBs05bSylBx",
+          "agent": "Sisyphus-Junior",
+          "category": "quick",
+          "updated_at": "2026-06-06T17:20:43.340Z",
+          "started_at": "2026-06-06T17:20:29.793Z",
+          "status": "completed",
+          "ended_at": "2026-06-06T17:20:43.340Z",
+          "elapsed_ms": 13547
+        }
+      },
+      "ended_at": "2026-06-06T17:20:52.311Z",
+      "elapsed_ms": 70614
+    },
+    "dotnet-upgrade-8-to-10-23bf6b39": {
+      "work_id": "dotnet-upgrade-8-to-10-23bf6b39",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/dotnet-upgrade-8-to-10.md",
+      "plan_name": "dotnet-upgrade-8-to-10",
+      "status": "active",
+      "started_at": "2026-06-06T17:27:37.212Z",
+      "updated_at": "2026-06-06T17:27:37.212Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {}
+    },
+    "dotnet-upgrade-8-to-10-7b659a52": {
+      "work_id": "dotnet-upgrade-8-to-10-7b659a52",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/dotnet-upgrade-8-to-10.md",
+      "plan_name": "dotnet-upgrade-8-to-10",
+      "status": "active",
+      "started_at": "2026-06-06T17:27:37.241Z",
+      "updated_at": "2026-06-06T17:27:37.241Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {}
+    }
+  },
+  "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/dotnet-upgrade-8-to-10.md",
+  "started_at": "2026-06-06T17:27:37.241Z",
+  "status": "active",
+  "updated_at": "2026-06-06T17:27:37.241Z",
+  "session_ids": [
+    "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+  ],
+  "session_origins": {
+    "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+  },
+  "plan_name": "dotnet-upgrade-8-to-10",
+  "task_sessions": {},
+  "agent": "atlas"
+}

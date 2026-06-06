@@ -1,0 +1,2 @@
+7:    wget -q https://github.com/paulomac1000/hand-codec/releases/download/v0.3.0/HandCodec.0.3.0.nupkg -O local-packages/HandCodec.0.3.0.nupkg && \
+8:    wget -q https://github.com/paulomac1000/hand-codec/releases/download/v0.3.0/HandRuntime.0.3.0.nupkg -O local-packages/HandRuntime.0.3.0.nupkg
