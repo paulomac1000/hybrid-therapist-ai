@@ -12,7 +12,7 @@ upstream:
   - sys.socrates-pipeline
   - ref.glossary
 tags: ["hand-codec", "benchmark", "json"]
-last_verified: 2026-06-04
+last_verified: 2026-06-06
 owners: ["hybrid-therapist"]
 ---
 
@@ -31,15 +31,15 @@ This benchmark evaluates using standard JSON objects as the serialization format
 
 ## Results
 
-Last run: 2026-06-04 | Cassette mode
+Last run: 2026-06-06 | Cassette mode
 
 | Scenario | Pass | L2 Outcome | L3 Outcome | JSON Tokens | Plain Tokens | Savings % |
 |----------|------|------------|------------|-------------|--------------|-----------|
-| anxiety  | ✓    | ok         | ok         | 48          | 52           | 7.7%      |
-| depression | ✓  | ok         | ok         | 50          | 54           | 7.4%      |
-| insomnia | ✓    | ok         | ok         | 53          | 56           | 5.4%      |
+| anxiety  | ✓    | ok         | ok         | 84          | 91           | 7.7%      |
+| depression | ✓  | ok         | ok         | 103         | 110          | 6.4%      |
+| insomnia | ✓    | ok         | ok         | 106         | 112          | 5.4%      |
 
-**Summary: 3/3 passed. Average token savings: ~6.8%**
+**Summary: 3/3 passed. Average token savings: ~6.5%**
 
 > [!NOTE]
 > JSON provides some token savings compared to natural-language plaintext, but is significantly less efficient than H.A.N.D. Compact.

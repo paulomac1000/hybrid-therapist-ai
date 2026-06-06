@@ -12,7 +12,7 @@ upstream:
   - sys.socrates-pipeline
   - ref.glossary
 tags: ["hand-codec", "benchmark", "hand-semantic", "implicit-priming"]
-last_verified: 2026-06-04
+last_verified: 2026-06-06
 owners: ["hybrid-therapist"]
 ---
 
@@ -40,18 +40,18 @@ The semantic keys translate directly to compact keys as follows:
 
 ## Results
 
-Last run: 2026-06-04 | Cassette mode
+Last run: 2026-06-06 | Cassette mode
 
-| Scenario | Pass | L2 Outcome | L3 Outcome | Wire Tokens | Plain Tokens | Savings % |
-|----------|------|------------|------------|-------------|--------------|-----------|
-| anxiety  | ✓    | ok         | ok         | 48          | 52           | 7.7%      |
-| depression | ✓  | ok         | ok         | 52          | 54           | 3.7%      |
-| insomnia | ✓    | ok         | ok         | 55          | 56           | 1.8%      |
+| Scenario   | Pass | L2 Outcome | L3 Outcome | Wire Tokens | Plain Tokens | Savings % |
+|------------|------|------------|------------|-------------|--------------|-----------|
+| insomnia   | ✓    | ok         | ok         | ~75         | ~114         | 34.2%     |
+| anxiety    | ✓    | ok         | ok         | ~53         | ~92          | 42.4%     |
+| depression | ✓    | ok         | ok         | ~72         | ~110         | 34.5%     |
 
-**Summary: 3/3 passed. Average token savings: ~4.4%**
+**Summary: 3/3 passed. Average token savings: ~37.0%**
 
 > [!NOTE]
-> Since the keys are human-readable, they consume more characters. Consequently, token savings are lower than the H.A.N.D. Compact variant (which averages ~24% savings).
+> Although the keys are human-readable and consume more characters, the Semantic variant achieves token savings (~37%) comparable to the H.A.N.D. Compact variant (~34%). The overhead of longer key names is offset by the smaller absolute token counts from the shorter memo lengths in these scenarios.
 
 ## Interpretation
 

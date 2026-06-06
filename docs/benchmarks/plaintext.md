@@ -12,7 +12,7 @@ upstream:
   - sys.socrates-pipeline
   - ref.glossary
 tags: ["hand-codec", "benchmark", "plaintext"]
-last_verified: 2026-06-04
+last_verified: 2026-06-06
 owners: ["hybrid-therapist"]
 ---
 
@@ -24,18 +24,18 @@ This benchmark variant measures the baseline token consumption when agents commu
 
 ## Results
 
-Last run: 2026-06-04 | Cassette mode
+Last run: 2026-06-06 | Cassette mode
 
 | Scenario | Pass | L2 Outcome | L3 Outcome | Plain Tokens | Compact Equivalent | Savings % |
 |----------|------|------------|------------|--------------|-------------------|-----------|
-| anxiety  | ✓    | ok         | ok         | 46           | 35                | -31.4%    |
-| depression | ✓  | ok         | ok         | 50           | 35                | -42.8%    |
-| insomnia | ✓    | ok         | ok         | 53           | 35                | -51.4%    |
+| anxiety  | ✓    | ok         | ok         | 75           | 35                | -114.3%   |
+| depression | ✓  | ok         | ok         | 91           | 35                | -160.0%   |
+| insomnia | ✓    | ok         | ok         | 94           | 35                | -168.6%   |
 
-**Summary: 3/3 passed. Average token savings: ~-41.9%**
+**Summary: 3/3 passed. Average token savings: ~-147.6%**
 
 > [!IMPORTANT]
-> The negative token savings indicate that plaintext communication carries significant token overhead compared to the H.A.N.D. Compact format (consuming ~42% more tokens on average for the inter-agent memo).
+> The negative token savings indicate that plaintext communication carries significant token overhead compared to the H.A.N.D. Compact format (consuming ~148% more tokens on average for the inter-agent memo).
 
 ## Interpretation
 

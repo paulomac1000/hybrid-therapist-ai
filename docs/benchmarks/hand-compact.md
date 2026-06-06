@@ -222,9 +222,9 @@ can negotiate an arbitrary wire protocol through pattern exposure in conversatio
 3. **No human evaluation.** No therapist has reviewed the benchmark outputs for clinical
    appropriateness.
 
-4. **No comparison baseline.** H.A.N.D. Compact has not yet been compared to plaintext memos, JSON memos,
-   YAML memos, or natural-language bullet memos. The experiment shows H.A.N.D. Compact *works* but does
-   not claim it *outperforms* alternatives.
+4. **Limited comparison baseline.** H.A.N.D. Compact has been compared to semantic, JSON, and plaintext
+   variants (see [benchmark-matrix.md](benchmark-matrix.md) and per-variant reports). However, the comparison
+   is limited to this specific model stack — broader generalization is untested.
 
 5. **Model-stack specific.** Results were obtained with MentaLLaMA 7B, PsyLLM 8B, and
    PsychoCounsel 8B. Different models may show different implicit priming behaviour.
