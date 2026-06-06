@@ -25,6 +25,9 @@ dotnet test tests/HybridTherapist.Tests -c Release --no-build --nologo
 
 # Integration tests — live mode (requires Docker Compose + Ollama)
 ./scripts/run-hand-benchmark.sh --live
+
+# Rebuild Docker image (after every .cs change that you want to test live)
+./scripts/rebuild-therapist.sh
 ```
 
 ## Architecture

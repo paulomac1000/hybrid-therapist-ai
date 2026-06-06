@@ -50,6 +50,7 @@ services:
 
   # ── Hybrid Therapist — Socrates pipeline + OpenAI-compatible API ────────────
   therapist:
+    build: .
     image: hybrid-therapist:local
     container_name: hybrid-therapist
     ports:
