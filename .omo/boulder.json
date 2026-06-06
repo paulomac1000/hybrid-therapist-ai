@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "active_work_id": "sonarqube-info-cleanup-a6a4e38d",
+  "active_work_id": "handcodec-v0-4-upgrade-5ef22534",
   "works": {
     "docs-audit-fix-57778d7d": {
       "work_id": "docs-audit-fix-57778d7d",
@@ -138,9 +138,9 @@
       "work_id": "sonarqube-info-cleanup-a6a4e38d",
       "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/sonarqube-info-cleanup.md",
       "plan_name": "sonarqube-info-cleanup",
-      "status": "active",
+      "status": "completed",
       "started_at": "2026-06-06T18:04:28.190Z",
-      "updated_at": "2026-06-06T18:08:41.587Z",
+      "updated_at": "2026-06-06T18:09:45.008Z",
       "session_ids": [
         "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
       ],
@@ -162,34 +162,54 @@
           "ended_at": "2026-06-06T18:08:41.587Z",
           "elapsed_ms": 159233
         }
-      }
+      },
+      "ended_at": "2026-06-06T18:09:45.008Z",
+      "elapsed_ms": 316818
+    },
+    "handcodec-v0-4-upgrade-5c1e5765": {
+      "work_id": "handcodec-v0-4-upgrade-5c1e5765",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/handcodec-v0.4-upgrade.md",
+      "plan_name": "handcodec-v0.4-upgrade",
+      "status": "active",
+      "started_at": "2026-06-06T18:30:52.794Z",
+      "updated_at": "2026-06-06T18:30:52.794Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {}
+    },
+    "handcodec-v0-4-upgrade-5ef22534": {
+      "work_id": "handcodec-v0-4-upgrade-5ef22534",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/handcodec-v0.4-upgrade.md",
+      "plan_name": "handcodec-v0.4-upgrade",
+      "status": "active",
+      "started_at": "2026-06-06T18:30:52.813Z",
+      "updated_at": "2026-06-06T18:30:52.813Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {}
     }
   },
-  "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/sonarqube-info-cleanup.md",
-  "started_at": "2026-06-06T18:04:28.190Z",
+  "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/handcodec-v0.4-upgrade.md",
+  "started_at": "2026-06-06T18:30:52.813Z",
   "status": "active",
-  "updated_at": "2026-06-06T18:08:41.587Z",
+  "updated_at": "2026-06-06T18:30:52.813Z",
   "session_ids": [
     "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
   ],
   "session_origins": {
     "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
   },
-  "plan_name": "sonarqube-info-cleanup",
-  "task_sessions": {
-    "todo:1": {
-      "task_key": "todo:1",
-      "task_label": "1",
-      "task_title": "Fix xUnit1042 in `HandBenchmarkTests.cs` (line 53)",
-      "session_id": "opencode:ses_161e3ddaaffexU7Pj0t33GKbJI",
-      "agent": "Sisyphus-Junior",
-      "category": "quick",
-      "updated_at": "2026-06-06T18:08:41.587Z",
-      "started_at": "2026-06-06T18:06:02.354Z",
-      "status": "completed",
-      "ended_at": "2026-06-06T18:08:41.587Z",
-      "elapsed_ms": 159233
-    }
-  },
+  "plan_name": "handcodec-v0.4-upgrade",
+  "task_sessions": {},
   "agent": "atlas"
 }

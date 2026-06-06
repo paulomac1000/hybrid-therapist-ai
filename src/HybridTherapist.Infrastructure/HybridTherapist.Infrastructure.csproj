@@ -12,6 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="../HybridTherapist.Domain/HybridTherapist.Domain.csproj" />
-    <PackageReference Include="HandRuntime" Version="0.3.0" />
+    <PackageReference Include="HandRuntime" Version="0.4.0" />
   </ItemGroup>
 </Project>

@@ -114,7 +114,7 @@ public sealed class TherapistFlow : ITherapistFlow
         }
 
         // ── Layer 0: PrivacySanitizer ─────────────────────────────────────────
-        string sanitized = _privacySanitizer.Sanitize(userText, "therapeutic");
+        string sanitized = PrivacySanitizer.Sanitize(userText, "therapeutic");
 
         // ── Layer 1: StateLoader ──────────────────────────────────────────────
         TherapyConversationState state = await _stateRepo.GetAsync(sessionId, ct);

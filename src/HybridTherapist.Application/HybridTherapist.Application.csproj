@@ -18,7 +18,7 @@
     <ProjectReference Include="../HybridTherapist.Domain/HybridTherapist.Domain.csproj" />
     <ProjectReference Include="../HybridTherapist.Security/HybridTherapist.Security.csproj" />
     <ProjectReference Include="../HybridTherapist.Infrastructure/HybridTherapist.Infrastructure.csproj" />
-    <PackageReference Include="HandCodec" Version="0.3.0" />
-    <PackageReference Include="HandRuntime" Version="0.3.0" />
+    <PackageReference Include="HandCodec" Version="0.4.0" />
+    <PackageReference Include="HandRuntime" Version="0.4.0" />
   </ItemGroup>
 </Project>

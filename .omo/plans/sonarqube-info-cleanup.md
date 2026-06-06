@@ -39,11 +39,11 @@
 Doprowadzić SonarQube do **0 issue** we wszystkich kategoriach.
 
 ### Definition of Done
-- [ ] `sonarqube_search_sonar_issues_in_projects` → 0 results
-- [ ] `sonarqube_get_component_measures` → code_smells = 0
-- [ ] Build: 0 warnings, 0 errors
-- [ ] Unit tests: 280/280 passed
-- [ ] Benchmark tests: wszystkie przechodzą (cassette mode)
+- [~] `sonarqube_search_sonar_issues_in_projects` → 0 results
+- [~] `sonarqube_get_component_measures` → code_smells = 0
+- [~] Build: 0 warnings, 0 errors
+- [~] Unit tests: 280/280 passed
+- [~] Benchmark tests: wszystkie przechodzą (cassette mode)
 
 ---
 
@@ -90,13 +90,13 @@ Doprowadzić SonarQube do **0 issue** we wszystkich kategoriach.
 
 - [x] 6. Fix CA1861 w `HandBenchmarkValidator.cs` (line 140)
 
-- [ ] 7. Fix CA1861 w `HandJsonBenchmarkTests.cs` (lines 93, 101, 102, 120, 128, 129) — 6 issues
+- [x] 7. Fix CA1861 w `HandJsonBenchmarkTests.cs` (lines 93, 101, 102, 120, 128, 129) — 6 issues
 
-- [ ] 8. Fix CA1861 w `HandPlaintextBenchmarkTests.cs` (lines 93, 101, 102, 120, 128, 129) — 6 issues
+- [x] 8. Fix CA1861 w `HandPlaintextBenchmarkTests.cs` (lines 93, 101, 102, 120, 128, 129) — 6 issues
 
-- [ ] 9. Fix CA1861 w `HandSemanticBenchmarkTests.cs` (lines 96, 104, 105, 123, 131, 132) — 6 issues
+- [x] 9. Fix CA1861 w `HandSemanticBenchmarkTests.cs` (lines 96, 104, 105, 123, 131, 132) — 6 issues
 
-- [ ] 10. Fix CA1861 w `TopicRegistryTests.cs` (lines 51, 52) — 2 issues
+- [x] 10. Fix CA1861 w `TopicRegistryTests.cs` (lines 51, 52) — 2 issues
 
 **Acceptance Criteria (per task)**:
 - [ ] `CA1861` nie pojawia się w SonarQube dla tych plików
