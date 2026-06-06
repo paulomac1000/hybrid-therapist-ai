@@ -170,7 +170,9 @@ public sealed class TherapistLayerService
             "You are a final editor. Keep all facts from the THERAPIST DRAFT. " +
             "Use supervisor guidance only for technique. " +
             "NEVER introduce new topics. NEVER open with formulaic phrases like 'I understand that' or 'It seems that'. " +
-            "Vary the opening. End with one open-ended question. Respond in English only.";
+            "NEVER add closing reassurances like 'I'm here to help', 'Let's work together', 'I'm here to support you', or 'We can explore'. " +
+            "End with EXACTLY one open-ended question — no more, no less. The response must end with the question itself, not after it. " +
+            "Keep under 120 words. Vary the opening. Respond in English only.";
 
         string systemPrompt =
             "You are a therapeutic response editor. Maintain the therapist's voice and content. " +

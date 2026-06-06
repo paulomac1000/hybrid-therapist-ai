@@ -30,11 +30,11 @@ public static class HandCheckpointLibrary
     public static HandCheckpoint TherapyAnalystPing { get; } = new(new[]
     {
         new HandExchange(ProtocolPing,
-            "M|L=2|e7=neutral|s9=low|x4=none|y1=reflective|q3=\"acknowledged\""),
+            "M|L=2|e7=exhaustion|s9=moderate|x4=insomnia_worry|y1=catastrophizing|q3=\"haven't slept in weeks\""),
         new HandExchange(ProtocolPing,
-            "M|L=2|e7=content|s9=low|x4=none|y1=grateful|q3=\"thank you\""),
+            "M|L=2|e7=anxiety|s9=high|x4=panic_fear|y1=racing_thoughts|q3=\"constantly worried about everything\""),
         new HandExchange(ProtocolPing,
-            "M|L=2|e7=worried|s9=low|x4=none|y1=anticipatory|q3=\"what if\""),
+            "M|L=2|e7=sadness|s9=moderate|x4=hopelessness|y1=rumination|q3=\"nothing matters anymore\""),
     });
 
     /// <summary>

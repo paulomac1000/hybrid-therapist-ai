@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "active_work_id": "final-hardening-7d3ef341",
+  "active_work_id": "analyst-calibrator-fix-bd8d2c15",
   "works": {
     "docs-audit-fix-57778d7d": {
       "work_id": "docs-audit-fix-57778d7d",
@@ -272,9 +272,27 @@
       "work_id": "final-hardening-7d3ef341",
       "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/final-hardening.md",
       "plan_name": "final-hardening",
-      "status": "active",
+      "status": "completed",
       "started_at": "2026-06-06T21:22:18.221Z",
-      "updated_at": "2026-06-06T21:22:18.221Z",
+      "updated_at": "2026-06-06T21:26:56.281Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {},
+      "ended_at": "2026-06-06T21:26:56.281Z",
+      "elapsed_ms": 278060
+    },
+    "analyst-calibrator-fix-bd8d2c15": {
+      "work_id": "analyst-calibrator-fix-bd8d2c15",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/analyst-calibrator-fix.md",
+      "plan_name": "analyst-calibrator-fix",
+      "status": "active",
+      "started_at": "2026-06-06T21:45:27.267Z",
+      "updated_at": "2026-06-06T21:45:27.267Z",
       "session_ids": [
         "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
       ],
@@ -285,17 +303,17 @@
       "task_sessions": {}
     }
   },
-  "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/final-hardening.md",
-  "started_at": "2026-06-06T21:22:18.221Z",
+  "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/analyst-calibrator-fix.md",
+  "started_at": "2026-06-06T21:45:27.267Z",
   "status": "active",
-  "updated_at": "2026-06-06T21:22:18.221Z",
+  "updated_at": "2026-06-06T21:45:27.267Z",
   "session_ids": [
     "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
   ],
   "session_origins": {
     "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
   },
-  "plan_name": "final-hardening",
+  "plan_name": "analyst-calibrator-fix",
   "task_sessions": {},
   "agent": "atlas"
 }

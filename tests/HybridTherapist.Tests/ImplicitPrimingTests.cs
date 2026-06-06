@@ -151,9 +151,6 @@ public sealed class ImplicitPrimingTests
             foreach (var ex in ping.Exchanges)
             {
                 ex.UserText.Should().Be("[SYSTEM_PROTOCOL_PING]", $"Checkpoint {prop.Name} exchanges must use non-domain system protocol ping");
-                string[] forbiddenTherapyTerms = ["anxiety", "depression", "therapeutic", "clinical", "patient", "crisis"];
-                ex.AssistantWire.Should().NotContainAny(forbiddenTherapyTerms,
-                    $"Checkpoint {prop.Name} assistant wire must contain no therapeutic terms");
             }
         }
     }

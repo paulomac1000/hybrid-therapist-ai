@@ -64,7 +64,7 @@ public sealed class HandCheckpointCountBenchmarkTests
             foreach (JsonElement msg in msgs.EnumerateArray())
             {
                 string content = msg.TryGetProperty("content", out JsonElement c) ? c.GetString() ?? "" : "";
-                if (content.Contains("[SYSTEM_PROTOCOL_PING]") || content.Contains("e7=neutral") || content.Contains("e7=content") || content.Contains("e7=worried"))
+                if (content.Contains("[SYSTEM_PROTOCOL_PING]") || content.Contains("M|L=2|e7="))
                 {
                     pingCount++;
                 }
