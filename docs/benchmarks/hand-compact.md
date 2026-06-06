@@ -81,12 +81,12 @@ The model never sees the semantic names — only the checkpoints teach the patte
 | crisis flag      | `f0`                 |
 
 Example L2 output (H.A.N.D. Compact):
-```
+```text
 M|L=2|e7=fatigued|s9=low|x4=none|y1=exhausted|q3="so tired"
 ```
 
 Example L3 output (H.A.N.D. Compact):
-```
+```text
 M|L=3|p3=behavioral_activation|t5=short_walk|k2=What_small_move_feels_possible_today?|r8=none
 ```
 
