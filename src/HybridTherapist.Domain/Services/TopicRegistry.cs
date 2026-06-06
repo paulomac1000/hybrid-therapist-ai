@@ -49,6 +49,7 @@ public static class TopicRegistry
         return TopicMap
             .Where(t => t.Keywords.Any(kw => lower.Contains(kw, StringComparison.Ordinal)))
             .Select(t => t.Topic)
+            .Distinct(StringComparer.Ordinal)
             .ToList();
     }
 

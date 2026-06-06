@@ -275,7 +275,7 @@ public sealed class TherapistFlow : ITherapistFlow
                 ["rupture_detected"] = rupture.Detected,
                 ["rupture_reason"] = rupture.Reason ?? string.Empty,
                 ["thematic_alignment"] = alignment.Aligned,
-                ["analyst_severity"] = FallbackUnknown,
+                ["analyst_severity"] = HandParser.Parse(analystMemoWire)?.Get("s9") ?? FallbackUnknown,
                 ["supervisor_approach"] = supervisor.Approach,
                 ["crisis_detected"] = l7.HasCrisisSignal,
                 ["fallback"] = fallback,

@@ -115,7 +115,7 @@ internal static class HandJsonBenchmarkValidator
             p3.GetString().Should().NotBeNullOrWhiteSpace();
         }
 
-        l4.Input.Should().NotContain("M|", "L4 must receive JSON memo, no wire format");
+        ValidateL4Input(l4.Input);
 
         ValidateExpectedQuality(run, expected);
     }
@@ -242,6 +242,12 @@ internal static class HandJsonBenchmarkValidator
         string wire = string.IsNullOrWhiteSpace(evt.WireFormat) ? evt.Output : evt.WireFormat!;
         wire.Should().NotBeNullOrWhiteSpace($"{label} event must expose wire_format or output");
         return wire;
+    }
+
+    private static void ValidateL4Input(string input)
+    {
+        foreach (string marker in L4ForbiddenInstructionMarkers)
+            input.Should().NotContain(marker, $"L4 prompt must not contain format instruction marker '{marker}'");
     }
 
     private static void ValidateExpectedQuality(BenchmarkRun run, BenchmarkExpectations expected)

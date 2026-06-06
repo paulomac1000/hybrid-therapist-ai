@@ -15,7 +15,7 @@
 - Suppressed S3776 with rationale comments for: `TherapistFlow.ExecuteAsync` (17-layer orchestration), `ChatEndpoints.HandleCompletions` (HTTP request/streaming handler), `MemorySummaryParser.ParseTopicLine` (string parser)
 - Suppressed S107 with rationale comments for: `TherapistFlow` constructor (DI), `RunL4TherapistAsync` (pipeline context)
 
-### HandCodec upgrade: 0.2.1 → 0.3.0
+### HandCodec upgrade: 0.2.1 → 0.4.0
 - Resilience ladder expanded from 5 to 6 levels: Level 5 = JSON extraction (new, opt-in), Level 6 = passthrough/fallback (was Level 5)
 - Updated `AnalystLayer` and `SupervisorLayer` fallback guards from `parsed.Level >= 5` to `parsed.Level >= 6`
 - Updated fallback memo identifier strings from `decoder_level5_fallback` to `decoder_level6_passthrough`
@@ -24,9 +24,9 @@
 - Enhanced markdown list parsing and blockquote stripping — fully backwards-compatible
 - JSON Resilience Stage (Level 5) — opt-in via `HandResilientOptions.EnableJsonExtraction`. Default off, no behavioral change
 - `HandResilientOptions.AllEnabled` now includes `EnableJsonExtraction: true`
-- Local packages updated: `local-packages/HandCodec.0.3.0.nupkg`, `local-packages/HandRuntime.0.3.0.nupkg`
+- Local packages updated: `local-packages/HandCodec.0.4.0.nupkg`, `local-packages/HandRuntime.0.4.0.nupkg`
 - Removed stale `HandCodec.0.2.1-local` and `HandRuntime.0.2.1-local` packages
-- `.csproj` references updated from `0.2.1-local` to `0.3.0`
+- `.csproj` references updated from `0.2.1-local` to `0.4.0`
 
 ### Dead code removal
 - Removed `HandWireConvention.cs` — application facade with zero production callers (4 tests deleted)

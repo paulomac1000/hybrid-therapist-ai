@@ -6,7 +6,7 @@ status: active
 stability: stable
 ai_scope: editable
 tags: ["agents", "meta"]
-last_verified: 2026-06-05
+last_verified: 2026-06-06
 ---
 
 # AGENTS.md — instructions for AI agents working on this repo

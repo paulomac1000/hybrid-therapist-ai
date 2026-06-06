@@ -126,5 +126,6 @@ public sealed class HandLongSessionDriftBenchmarkTests
         l3Count.Should().Be(5, "Should have exactly 5 L3 Supervisor trace entries");
 
         _output.WriteLine("Long-session drift benchmark successfully completed with 0 drift detected!");
+        _output.WriteLine("BENCHMARK_TOKEN_SAVINGS=0");
     }
 }

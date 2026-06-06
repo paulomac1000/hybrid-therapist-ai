@@ -105,7 +105,14 @@ public sealed class AnalystLayer
         }
         else if (_opts.HandWireVariant == HandWireVariant.Json)
         {
-            var (jsonMemo, _) = ParseJsonMemo(sanitized);
+            var (jsonMemo, parseOk) = ParseJsonMemo(sanitized);
+            if (!parseOk)
+            {
+                await _trace.RecordAsync(new TraceEvent(
+                    DateTimeOffset.UtcNow, sessionId, "L2_analyst", resp.ModelId ?? _opts.Analyst,
+                    englishUserMessage, resp.Text, sw.ElapsedMilliseconds, "json_parse_error", null, jsonMemo), ct);
+                return new AnalystResult(false, jsonMemo, "JSON parse error");
+            }
             memo = jsonMemo;
         }
         else
@@ -127,7 +134,7 @@ public sealed class AnalystLayer
                 string body = parsed.Message.Body;
                 memo = string.IsNullOrWhiteSpace(body)
                     ? BuildFallbackMemo("parse_no_body")
-                    : BuildFallbackMemo($"parsed_from_body_{TruncateForMemo(body, 80)}");
+                    : BuildFallbackMemo("parsed_from_body");
             }
         }
 

@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "active_work_id": "handcodec-v0-4-upgrade-5ef22534",
+  "active_work_id": "coderabbit-findings-fix-0d7e01fa",
   "works": {
     "docs-audit-fix-57778d7d": {
       "work_id": "docs-audit-fix-57778d7d",
@@ -186,9 +186,9 @@
       "work_id": "handcodec-v0-4-upgrade-5ef22534",
       "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/handcodec-v0.4-upgrade.md",
       "plan_name": "handcodec-v0.4-upgrade",
-      "status": "active",
+      "status": "completed",
       "started_at": "2026-06-06T18:30:52.813Z",
-      "updated_at": "2026-06-06T18:30:52.813Z",
+      "updated_at": "2026-06-06T18:33:10.411Z",
       "session_ids": [
         "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
       ],
@@ -196,20 +196,66 @@
         "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
       },
       "agent": "atlas",
-      "task_sessions": {}
+      "task_sessions": {},
+      "ended_at": "2026-06-06T18:33:10.411Z",
+      "elapsed_ms": 137598
+    },
+    "coderabbit-findings-fix-0d7e01fa": {
+      "work_id": "coderabbit-findings-fix-0d7e01fa",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/coderabbit-findings-fix.md",
+      "plan_name": "coderabbit-findings-fix",
+      "status": "active",
+      "started_at": "2026-06-06T19:41:50.881Z",
+      "updated_at": "2026-06-06T19:44:10.252Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {
+        "todo:1": {
+          "task_key": "todo:1",
+          "task_label": "1",
+          "task_title": "CHANGELOG.md: update HandCodec/HandRuntime 0.3.0 → 0.4.0",
+          "session_id": "opencode:ses_1618ae54dffeUhlTuxEcNhtnnz",
+          "agent": "Sisyphus-Junior",
+          "category": "quick",
+          "updated_at": "2026-06-06T19:44:10.252Z",
+          "started_at": "2026-06-06T19:42:49.900Z",
+          "status": "completed",
+          "ended_at": "2026-06-06T19:44:10.252Z",
+          "elapsed_ms": 80352
+        }
+      }
     }
   },
-  "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/handcodec-v0.4-upgrade.md",
-  "started_at": "2026-06-06T18:30:52.813Z",
+  "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/coderabbit-findings-fix.md",
+  "started_at": "2026-06-06T19:41:50.881Z",
   "status": "active",
-  "updated_at": "2026-06-06T18:30:52.813Z",
+  "updated_at": "2026-06-06T19:44:10.252Z",
   "session_ids": [
     "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
   ],
   "session_origins": {
     "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
   },
-  "plan_name": "handcodec-v0.4-upgrade",
-  "task_sessions": {},
+  "plan_name": "coderabbit-findings-fix",
+  "task_sessions": {
+    "todo:1": {
+      "task_key": "todo:1",
+      "task_label": "1",
+      "task_title": "CHANGELOG.md: update HandCodec/HandRuntime 0.3.0 → 0.4.0",
+      "session_id": "opencode:ses_1618ae54dffeUhlTuxEcNhtnnz",
+      "agent": "Sisyphus-Junior",
+      "category": "quick",
+      "updated_at": "2026-06-06T19:44:10.252Z",
+      "started_at": "2026-06-06T19:42:49.900Z",
+      "status": "completed",
+      "ended_at": "2026-06-06T19:44:10.252Z",
+      "elapsed_ms": 80352
+    }
+  },
   "agent": "atlas"
 }

@@ -99,7 +99,8 @@ internal static class HandPlaintextBenchmarkValidator
         l3Wire.Should().Contain("Technique:", "plaintext L3 must label technique");
         l3Wire.Should().Contain("Key question:", "plaintext L3 must label key question");
 
-        l4.Input.Should().NotContain("M|", "L4 must receive plaintext memo, no wire format");
+        foreach (string marker in L4ForbiddenInstructionMarkers)
+            l4.Input.Should().NotContain(marker, $"L4 prompt must not contain format instruction marker '{marker}'");
 
         ValidateExpectedQuality(run, expected);
     }
