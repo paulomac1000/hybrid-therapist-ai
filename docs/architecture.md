@@ -11,7 +11,7 @@ source_of_truth: true
 upstream:
   - ref.glossary
 tags: ["architecture", "socrates", "handcodec", "pipeline"]
-last_verified: 2026-05-23
+last_verified: 2026-06-06
 owners: ["hybrid-therapist"]
 ---
 
@@ -70,7 +70,7 @@ External dependencies:
 
 The Socrates pipeline runs **entirely on local Ollama**. No OpenRouter. No external APIs. All LLM calls go to `http://ollama:11434/api/chat`. Translator quality is safeguarded by a quality gate: Bielik 7B, single pass → static Polish fallback if output still looks like English.
 
-## 17-warstwowy pipeline Socrates
+## 17-layer Socrates pipeline
 
 ```
 Layer  Name                  Implementation                                       Feeds downstream
@@ -197,9 +197,9 @@ appends `R|C=` as an assistant-turn prefill for `AgentClass.Assisted` models.
 
 ### Resilience Ladder
 
-Every LLM layer decodes model output via `HandResiliencePipeline.Parse()` (levels 1-5).
+Every LLM layer decodes model output via `HandResiliencePipeline.Parse()` (levels 1-6).
 The resilience level is logged as `[Drabina] L{N} resilience level {Level}` for monitoring.
-Level 5 (unstructured passthrough) triggers a safe fallback memo for L2/L3 so downstream
+Level 6 (passthrough) triggers a safe fallback memo for L2/L3 so downstream
 layers never see a broken input.
 
 ## Anti-hallucination guard
@@ -210,7 +210,7 @@ layers never see a broken input.
 
 Two QA stages run after the language-generating layers:
 
-1. **English-side QA** (after L6 Calibrator) — catches echo of user input, too-short responses, and prompt template leakage (`confidence_decimal`, `[ANALYST CONTEXT]`, and other template artifacts).
+1. **English-side QA** (after L6 Calibrator) — catches echo of user input, too-short responses, and prompt template leakage (`confidence_decimal`, `[ANALYST CONTEXT]` (this is an intentional QA leakage pattern — `QualityValidator.cs:138` explicitly checks for it), and other template artifacts).
 2. **Polish-side QA** (after L7 Translator) — verifies the output is actually Polish (diacritic ratio), wasn't an echo, doesn't contain wire-format remnants.
 
 Failure of either gate triggers a fallback: EN-side falls back to L4 draft, PL-side falls back to a static apology message.
@@ -232,12 +232,12 @@ The session_id is returned in `metadata.session_id` of every chat-completion res
 ### L2 Analyst — observation only
 
 Generates a native `M|` Memo wire via Implicit Priming (MemoPing checkpoint).
-The system prompt teaches the field dictionary; the model emits a single line:
+The checkpoint examples teach the wire format pattern; the model emits a single line:
 ```text
 M|L=2|e7=exhaustion_with_anxiety|s9=moderate|x4=chronic_insomnia|y1=catastrophizing
 ```
-Output decoded by `HandResiliencePipeline` (levels 1-5). Level 5 triggers a safe
-fallback memo (`M|L=2|e7=unknown|s9=low|note=decoder_level5_fallback`).
+Output decoded by `HandResiliencePipeline` (levels 1-6). Level 6 triggers a safe
+fallback memo (`M|L=2|e7=unknown|s9=low|note=decoder_level6_passthrough`).
 
 ### L3 Supervisor — strategy only
 

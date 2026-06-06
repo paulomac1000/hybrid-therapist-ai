@@ -22,7 +22,7 @@ owners: ["hybrid-therapist"]
 - **M| Memo** — Wire-format performative (`MemoBuilder` output) for inter-layer clinical communication between L2 Analyst and L3 Supervisor. Format: `M|L=N|key=value|...`.
 - **R| Result** — Wire-format performative for LLM output carrying confidence and answer text. Format: `R|C=0.95|V=answer`.
 - **Implicit Priming** — Teaching a model the wire format through conversation-history examples (checkpoints) rather than explicit system-prompt instructions.
-- **Resilience Ladder** — 5-level degradation pipeline (strict → lenient → markdown_strip → semantic → unstructured) for parsing model outputs.
+- **Resilience Ladder** — 6-level degradation pipeline (strict → lenient → markdown_strip → semantic → json_extraction → unstructured) for parsing model outputs.
 - **AgentClass** — Behavioural classification of an LLM: Native (frontier), Assisted (small local), Reasoning (CoT), External (MCP/REST).
 - **CompressionTier** — Verbosity level for wire-format keys: Debug (full names), Balanced (short aliases), Compact (single letters).
 - **MemoBuilder** — Fluent builder for constructing `M|` wire messages with tier-adaptive key names. Core: `HandCodec.Parser.MemoBuilder`.
