@@ -23,6 +23,12 @@ public partial class SupervisorLayer
 {
     private const string DefaultApproach = "behavioral_activation";
     private const string UnknownFallback = "unknown";
+
+    private static readonly Regex ControlTokenRegex = new(
+        @"<\|control_\d+\|>.*?<\|control_\d+\|>\s*",
+        RegexOptions.Compiled | RegexOptions.Singleline,
+        TimeSpan.FromMilliseconds(200));
+
     private readonly IOllamaAdapter _ollama;
     private readonly TherapistOptions _opts;
     private readonly ITraceSink _trace;
@@ -146,8 +152,11 @@ public partial class SupervisorLayer
             .Replace("</think>", "", StringComparison.Ordinal)
             .Replace("<content>", "", StringComparison.OrdinalIgnoreCase)
             .Replace("</content>", "", StringComparison.OrdinalIgnoreCase)
-            .Replace("<｜end▁of▁thinking｜>", "", StringComparison.Ordinal)
+            .Replace(" response", "", StringComparison.Ordinal)
             .Trim();
+
+        // Strip Llama-style thinking/control blocks (PsychoCounsel, PsyLLM emit <|control_8|>...<|control_9|>)
+        text = ControlTokenRegex.Replace(text, "");
 
         if (text.StartsWith($"{expectedLayer}|", StringComparison.Ordinal))
             text = $"M|L={text}";

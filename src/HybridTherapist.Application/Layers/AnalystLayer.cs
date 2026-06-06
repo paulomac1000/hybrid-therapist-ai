@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 using HandCodec.Models;
 using HandCodec.Parser;
 using HybridTherapist.Application.Hand;
@@ -145,6 +146,11 @@ public sealed class AnalystLayer
         return new AnalystResult(true, memo, null);
     }
 
+    private static readonly Regex ControlTokenRegex = new(
+        @"<\|control_\d+\|>.*?<\|control_\d+\|>\s*",
+        RegexOptions.Compiled | RegexOptions.Singleline,
+        TimeSpan.FromMilliseconds(200));
+
     private static string SanitizeMemoOutput(string raw, int expectedLayer)
     {
         string text = raw.Trim();
@@ -156,8 +162,14 @@ public sealed class AnalystLayer
             .Replace("</think>", "", StringComparison.Ordinal)
             .Replace("<content>", "", StringComparison.OrdinalIgnoreCase)
             .Replace("</content>", "", StringComparison.OrdinalIgnoreCase)
-            .Replace("<｜end▁of▁thinking｜>", "", StringComparison.Ordinal)
+            .Replace(" response", "", StringComparison.Ordinal)
             .Trim();
+
+        if (text.StartsWith("M|", StringComparison.Ordinal))
+            return text;
+
+        // Strip Llama-style thinking/control blocks (PsychoCounsel, MentaLLaMA emit <|control_8|>...<|control_9|>)
+        text = ControlTokenRegex.Replace(text, "");
 
         if (text.StartsWith($"{expectedLayer}|", StringComparison.Ordinal))
             text = $"M|L={text}";

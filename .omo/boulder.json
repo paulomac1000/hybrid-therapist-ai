@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "active_work_id": "docker-build-fix-19aa853a",
+  "active_work_id": "control-token-fix-0ccca979",
   "works": {
     "docs-audit-fix-57778d7d": {
       "work_id": "docs-audit-fix-57778d7d",
@@ -236,9 +236,27 @@
       "work_id": "docker-build-fix-19aa853a",
       "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/docker-build-fix.md",
       "plan_name": "docker-build-fix",
-      "status": "active",
+      "status": "completed",
       "started_at": "2026-06-06T20:30:08.520Z",
-      "updated_at": "2026-06-06T20:30:08.520Z",
+      "updated_at": "2026-06-06T20:30:57.202Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {},
+      "ended_at": "2026-06-06T20:30:57.202Z",
+      "elapsed_ms": 48682
+    },
+    "control-token-fix-0ccca979": {
+      "work_id": "control-token-fix-0ccca979",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/control-token-fix.md",
+      "plan_name": "control-token-fix",
+      "status": "active",
+      "started_at": "2026-06-06T21:04:43.650Z",
+      "updated_at": "2026-06-06T21:04:43.650Z",
       "session_ids": [
         "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
       ],
@@ -249,17 +267,17 @@
       "task_sessions": {}
     }
   },
-  "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/docker-build-fix.md",
-  "started_at": "2026-06-06T20:30:08.520Z",
+  "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/control-token-fix.md",
+  "started_at": "2026-06-06T21:04:43.650Z",
   "status": "active",
-  "updated_at": "2026-06-06T20:30:08.520Z",
+  "updated_at": "2026-06-06T21:04:43.650Z",
   "session_ids": [
     "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
   ],
   "session_origins": {
     "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
   },
-  "plan_name": "docker-build-fix",
+  "plan_name": "control-token-fix",
   "task_sessions": {},
   "agent": "atlas"
 }
