@@ -11,7 +11,7 @@ upstream:
   - sys.socrates-pipeline
   - ref.glossary
 tags: ["security", "crisis", "privacy", "pii", "safety"]
-last_verified: 2026-05-23
+last_verified: 2026-06-06
 owners: ["hybrid-therapist"]
 ---
 

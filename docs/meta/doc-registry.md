@@ -11,7 +11,7 @@ source_of_truth: true
 upstream:
   - ref.glossary
 tags: ["registry", "index", "meta"]
-last_verified: 2026-05-23
+last_verified: 2026-06-06
 owners: ["hybrid-therapist"]
 ---
 
@@ -35,6 +35,10 @@ owners: ["hybrid-therapist"]
 | `bench.json` | `docs/benchmarks/json.md` | benchmark | active | JSON memo structured serialization — benchmark report |
 | `bench.checkpoints` | `docs/benchmarks/checkpoints.md` | benchmark | active | Checkpoint count strength experiment — benchmark report |
 | `bench.benchmark-matrix` | `docs/benchmarks/benchmark-matrix.md` | benchmark | active | Planned comparison matrix for H.A.N.D. benchmark variants |
+| `ref.agents` | `AGENTS.md` | ref | active | Build/test instructions and key invariants for AI agents |
+| `ref.changelog` | `CHANGELOG.md` | ref | active | Release history and breaking changes |
+| `ref.readme` | `README.md` | ref | active | Project overview, quick start, and architecture summary |
+| `ref.cassettes` | `tests/HybridTherapist.Integration/Cassettes/README.md` | ref | active | VCR-style cassettes for offline pipeline testing |
 
 
 ## EDGE_CASES

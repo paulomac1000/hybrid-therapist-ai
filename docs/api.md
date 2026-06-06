@@ -11,7 +11,7 @@ upstream:
   - sys.socrates-pipeline
   - ref.glossary
 tags: ["api", "openai", "rest", "chat", "completions"]
-last_verified: 2026-05-23
+last_verified: 2026-06-06
 owners: ["hybrid-therapist"]
 ---
 

@@ -11,7 +11,7 @@ upstream:
   - sys.socrates-pipeline
   - ref.glossary
 tags: ["testing", "necessity", "layers", "contracts"]
-last_verified: 2026-05-23
+last_verified: 2026-06-06
 owners: ["hybrid-therapist"]
 ---
 
@@ -29,7 +29,7 @@ Every layer in the Socrates pipeline has a measurable contribution to the final 
 | **RuptureDetector** | `NECESSITY_Rupture_ForcesRepairStrategy_OverridingPhaseSelection` | Without rupture handling, "źle mnie rozumiesz" gets routed to `Deepening` instead of `Repair` |
 | **ThematicAlignment (pos)** | `NECESSITY_ThematicAlignment_RejectsAnalystFabricatingBetrayal_FromSleepInput` | Without this guard, the analyst can hallucinate "betrayal" from sleep input and the chain runs on the fabrication |
 | **ThematicAlignment (neg)** | `NECESSITY_ThematicAlignment_AllowsSupportedThemes` | Without negative test, the guard may over-block legitimate references |
-| **M\| Memo (L2→L3→L4)** | `NECESSITY_AnalystMemo_IsParseableByDownstreamLayer` | Without parseable wire format, downstrpam layers lose clinical signal — HandParser round-trip integrity must hold for raw M\| wire |
+| **M\| Memo (L2→L3→L4)** | `NECESSITY_AnalystMemo_IsParseableByDownstreamLayer` | Without parseable wire format, downstream layers lose clinical signal — HandParser round-trip integrity must hold for raw M\| wire |
 | **SessionPhase guidance** | `NECESSITY_SessionPhase_ProducesDistinctGuidancePerPhase` | If GetPhaseSystemPrompt collapsed to one string for all phases, the phase machine would have no behavioural effect |
 | **L5 MemoryService** | `NECESSITY_MemoryService_CompactsHistoryWhenTriggered` | Without compaction, L4 prompt grows linearly with session and exceeds context window |
 | **QualityValidator (EN)** | `NECESSITY_QualityValidator_CatchesPromptLeakage_BeforeUserSeesIt` | Without EN-side QA, "confidence_decimal is high" leaks to the user |
