@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "active_work_id": "dotnet-upgrade-8-to-10-7b659a52",
+  "active_work_id": "sonarqube-info-cleanup-a6a4e38d",
   "works": {
     "docs-audit-fix-57778d7d": {
       "work_id": "docs-audit-fix-57778d7d",
@@ -120,9 +120,9 @@
       "work_id": "dotnet-upgrade-8-to-10-7b659a52",
       "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/dotnet-upgrade-8-to-10.md",
       "plan_name": "dotnet-upgrade-8-to-10",
-      "status": "active",
+      "status": "completed",
       "started_at": "2026-06-06T17:27:37.241Z",
-      "updated_at": "2026-06-06T17:27:37.241Z",
+      "updated_at": "2026-06-06T17:33:29.725Z",
       "session_ids": [
         "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
       ],
@@ -130,20 +130,66 @@
         "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
       },
       "agent": "atlas",
-      "task_sessions": {}
+      "task_sessions": {},
+      "ended_at": "2026-06-06T17:33:29.725Z",
+      "elapsed_ms": 352484
+    },
+    "sonarqube-info-cleanup-a6a4e38d": {
+      "work_id": "sonarqube-info-cleanup-a6a4e38d",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/sonarqube-info-cleanup.md",
+      "plan_name": "sonarqube-info-cleanup",
+      "status": "active",
+      "started_at": "2026-06-06T18:04:28.190Z",
+      "updated_at": "2026-06-06T18:08:41.587Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {
+        "todo:1": {
+          "task_key": "todo:1",
+          "task_label": "1",
+          "task_title": "Fix xUnit1042 in `HandBenchmarkTests.cs` (line 53)",
+          "session_id": "opencode:ses_161e3ddaaffexU7Pj0t33GKbJI",
+          "agent": "Sisyphus-Junior",
+          "category": "quick",
+          "updated_at": "2026-06-06T18:08:41.587Z",
+          "started_at": "2026-06-06T18:06:02.354Z",
+          "status": "completed",
+          "ended_at": "2026-06-06T18:08:41.587Z",
+          "elapsed_ms": 159233
+        }
+      }
     }
   },
-  "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/dotnet-upgrade-8-to-10.md",
-  "started_at": "2026-06-06T17:27:37.241Z",
+  "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/sonarqube-info-cleanup.md",
+  "started_at": "2026-06-06T18:04:28.190Z",
   "status": "active",
-  "updated_at": "2026-06-06T17:27:37.241Z",
+  "updated_at": "2026-06-06T18:08:41.587Z",
   "session_ids": [
     "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
   ],
   "session_origins": {
     "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
   },
-  "plan_name": "dotnet-upgrade-8-to-10",
-  "task_sessions": {},
+  "plan_name": "sonarqube-info-cleanup",
+  "task_sessions": {
+    "todo:1": {
+      "task_key": "todo:1",
+      "task_label": "1",
+      "task_title": "Fix xUnit1042 in `HandBenchmarkTests.cs` (line 53)",
+      "session_id": "opencode:ses_161e3ddaaffexU7Pj0t33GKbJI",
+      "agent": "Sisyphus-Junior",
+      "category": "quick",
+      "updated_at": "2026-06-06T18:08:41.587Z",
+      "started_at": "2026-06-06T18:06:02.354Z",
+      "status": "completed",
+      "ended_at": "2026-06-06T18:08:41.587Z",
+      "elapsed_ms": 159233
+    }
+  },
   "agent": "atlas"
 }

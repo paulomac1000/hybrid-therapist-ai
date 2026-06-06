@@ -9,11 +9,12 @@ namespace HybridTherapist.Tests;
 /// <summary>Contract for the System Ping priming checkpoints and the app wire convention.</summary>
 public sealed class HandCheckpointLibraryTests
 {
-    public static IEnumerable<object[]> AllCheckpoints =>
-    [
-        [HandCheckpointLibrary.SystemPing],
-        [HandCheckpointLibrary.MemoPing],
-    ];
+    public static TheoryData<HandCheckpoint> AllCheckpoints =>
+        new()
+        {
+            HandCheckpointLibrary.SystemPing,
+            HandCheckpointLibrary.MemoPing,
+        };
 
     [Theory]
     [MemberData(nameof(AllCheckpoints))]

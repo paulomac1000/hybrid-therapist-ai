@@ -31,6 +31,7 @@ internal static class HandBenchmarkValidator
         "what ", "when ", "i hear", "i understand", "anxiety", "panic attack",
         "depression", "worry", "therapist", "you are", "tell me",
     };
+    private static readonly char[] Separators = { ' ', '\n', '\t', '.', ',', ';', ':', '!', '?', '(', ')', '"', '\'' };
     private static readonly HashSet<string> PolishStopwords = new(StringComparer.OrdinalIgnoreCase)
     {
         "że", "nie", "się", "jest", "to", "jak", "co", "kiedy", "który", "która",
@@ -137,7 +138,7 @@ internal static class HandBenchmarkValidator
         bool hasDiacritics = letters > 0 && diacritics * 100.0 / letters >= 0.5;
 
         string[] words = lower.Split(
-            new[] { ' ', '\n', '\t', '.', ',', ';', ':', '!', '?', '(', ')', '"', '\'' },
+            Separators,
             StringSplitOptions.RemoveEmptyEntries);
         bool hasPolishStopword = words.Any(w => PolishStopwords.Contains(w));
 

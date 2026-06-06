@@ -16,16 +16,22 @@ public sealed class HandSemanticBenchmarkTests
     private static string CassettePath(string filename) =>
         Path.Combine(AppContext.BaseDirectory, "Cassettes", filename);
 
-    public static IEnumerable<object[]> DiscoverSemanticCassettes()
+    private static readonly string[] TopicsAnxietyWorry = ["anxiety", "worry"];
+    private static readonly string[] RequiredTopicAnxiety = ["anxiety"];
+    private static readonly string[] RequiredPhraseLek = ["lęk"];
+
+    public static TheoryData<string> DiscoverSemanticCassettes()
     {
+        var data = new TheoryData<string>();
         string dir = Path.Combine(AppContext.BaseDirectory, "Cassettes");
         if (!Directory.Exists(dir))
-            yield break;
+            return data;
 
         foreach (string file in Directory.GetFiles(dir, "hand-semantic-*.json"))
         {
-            yield return new object[] { Path.GetFileName(file) };
+            data.Add(Path.GetFileName(file));
         }
+        return data;
     }
 
     [Theory]
@@ -93,7 +99,7 @@ public sealed class HandSemanticBenchmarkTests
 
         var mutatedRun = new BenchmarkRun(
             Content: "Kiedy lęk przejmuje kontrolę, jak się czujesz?",
-            Metadata: new BenchmarkMetadata("sess-1", false, false, "INIT", "grounding", new[] { "anxiety", "worry" }),
+            Metadata: new BenchmarkMetadata("sess-1", false, false, "INIT", "grounding", TopicsAnxietyWorry),
             Events: new[] { mutatedEventL2, originalEventL3, originalEventL4 }
         );
 
@@ -101,8 +107,8 @@ public sealed class HandSemanticBenchmarkTests
             UserInputPl: "test",
             ExpectedPass: true,
             MinQualityScore: 3,
-            RequiredTopics: new[] { "anxiety" },
-            RequiredPhrasesPl: new[] { "lęk" },
+            RequiredTopics: RequiredTopicAnxiety,
+            RequiredPhrasesPl: RequiredPhraseLek,
             ForbiddenPhrases: Array.Empty<string>()
         );
 
@@ -120,7 +126,7 @@ public sealed class HandSemanticBenchmarkTests
 
         var mutatedRun = new BenchmarkRun(
             Content: "Kiedy lęk przejmuje kontrolę, jak się czujesz?",
-            Metadata: new BenchmarkMetadata("sess-1", false, false, "INIT", "grounding", new[] { "anxiety", "worry" }),
+            Metadata: new BenchmarkMetadata("sess-1", false, false, "INIT", "grounding", TopicsAnxietyWorry),
             Events: new[] { originalEventL2, mutatedEventL3, originalEventL4 }
         );
 
@@ -128,8 +134,8 @@ public sealed class HandSemanticBenchmarkTests
             UserInputPl: "test",
             ExpectedPass: true,
             MinQualityScore: 3,
-            RequiredTopics: new[] { "anxiety" },
-            RequiredPhrasesPl: new[] { "lęk" },
+            RequiredTopics: RequiredTopicAnxiety,
+            RequiredPhrasesPl: RequiredPhraseLek,
             ForbiddenPhrases: Array.Empty<string>()
         );
 

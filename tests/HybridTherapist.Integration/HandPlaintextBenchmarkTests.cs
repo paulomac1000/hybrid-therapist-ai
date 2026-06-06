@@ -13,19 +13,26 @@ public sealed class HandPlaintextBenchmarkTests
         _output = output;
     }
 
+    private static readonly string[] AnxietyWorryTopics = ["anxiety", "worry"];
+    private static readonly string[] AnxietyTopic = ["anxiety"];
+    private static readonly string[] LekPhrase = ["lęk"];
+
     private static string CassettePath(string filename) =>
         Path.Combine(AppContext.BaseDirectory, "Cassettes", filename);
 
-    public static IEnumerable<object[]> DiscoverPlaintextCassettes()
+    public static TheoryData<string> DiscoverPlaintextCassettes()
     {
         string dir = Path.Combine(AppContext.BaseDirectory, "Cassettes");
+        var data = new TheoryData<string>();
         if (!Directory.Exists(dir))
-            yield break;
+            return data;
 
         foreach (string file in Directory.GetFiles(dir, "plaintext-*.json"))
         {
-            yield return new object[] { Path.GetFileName(file) };
+            data.Add(Path.GetFileName(file));
         }
+
+        return data;
     }
 
     [Theory]
@@ -90,7 +97,7 @@ public sealed class HandPlaintextBenchmarkTests
 
         var mutatedRun = new BenchmarkRun(
             Content: "Kiedy lęk przejmuje kontrolę, jak się czujesz?",
-            Metadata: new BenchmarkMetadata("sess-1", false, false, "INIT", "grounding", new[] { "anxiety", "worry" }),
+            Metadata: new BenchmarkMetadata("sess-1", false, false, "INIT", "grounding", AnxietyWorryTopics),
             Events: new[] { mutatedEventL2, originalEventL3, originalEventL4 }
         );
 
@@ -98,8 +105,8 @@ public sealed class HandPlaintextBenchmarkTests
             UserInputPl: "test",
             ExpectedPass: true,
             MinQualityScore: 3,
-            RequiredTopics: new[] { "anxiety" },
-            RequiredPhrasesPl: new[] { "lęk" },
+            RequiredTopics: AnxietyTopic,
+            RequiredPhrasesPl: LekPhrase,
             ForbiddenPhrases: Array.Empty<string>()
         );
 
@@ -117,7 +124,7 @@ public sealed class HandPlaintextBenchmarkTests
 
         var mutatedRun = new BenchmarkRun(
             Content: "Kiedy lęk przejmuje kontrolę, jak się czujesz?",
-            Metadata: new BenchmarkMetadata("sess-1", false, false, "INIT", "grounding", new[] { "anxiety", "worry" }),
+            Metadata: new BenchmarkMetadata("sess-1", false, false, "INIT", "grounding", AnxietyWorryTopics),
             Events: new[] { mutatedEventL2, originalEventL3, originalEventL4 }
         );
 
@@ -125,8 +132,8 @@ public sealed class HandPlaintextBenchmarkTests
             UserInputPl: "test",
             ExpectedPass: true,
             MinQualityScore: 3,
-            RequiredTopics: new[] { "anxiety" },
-            RequiredPhrasesPl: new[] { "lęk" },
+            RequiredTopics: AnxietyTopic,
+            RequiredPhrasesPl: LekPhrase,
             ForbiddenPhrases: Array.Empty<string>()
         );
 

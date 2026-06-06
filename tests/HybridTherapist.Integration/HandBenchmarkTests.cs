@@ -31,19 +31,22 @@ public sealed class HandBenchmarkTests
     private static string CassettePath(string filename) =>
         Path.Combine(AppContext.BaseDirectory, "Cassettes", filename);
 
-    public static IEnumerable<object[]> DiscoverHandCassettes()
+    public static TheoryData<string> DiscoverHandCassettes()
     {
         string dir = Path.Combine(AppContext.BaseDirectory, "Cassettes");
+        var data = new TheoryData<string>();
         if (!Directory.Exists(dir))
-            yield break;
+            return data;
 
         foreach (string file in Directory.GetFiles(dir, "hand-*.json"))
         {
             string fileName = Path.GetFileName(file);
             if (fileName.StartsWith("hand-semantic-") || fileName == "hand-long-session.json")
                 continue;
-            yield return new object[] { fileName };
+            data.Add(fileName);
         }
+
+        return data;
     }
 
     /// <summary>

@@ -6,6 +6,10 @@ namespace HybridTherapist.Integration;
 
 public sealed class HandJsonBenchmarkTests
 {
+    private static readonly string[] AnxietyWorry = ["anxiety", "worry"];
+    private static readonly string[] Anxiety = ["anxiety"];
+    private static readonly string[] Lek = ["lęk"];
+
     private readonly ITestOutputHelper _output;
 
     public HandJsonBenchmarkTests(ITestOutputHelper output)
@@ -16,16 +20,19 @@ public sealed class HandJsonBenchmarkTests
     private static string CassettePath(string filename) =>
         Path.Combine(AppContext.BaseDirectory, "Cassettes", filename);
 
-    public static IEnumerable<object[]> DiscoverJsonCassettes()
+    public static TheoryData<string> DiscoverJsonCassettes()
     {
+        var data = new TheoryData<string>();
         string dir = Path.Combine(AppContext.BaseDirectory, "Cassettes");
         if (!Directory.Exists(dir))
-            yield break;
+            return data;
 
         foreach (string file in Directory.GetFiles(dir, "json-*.json"))
         {
-            yield return new object[] { Path.GetFileName(file) };
+            data.Add(Path.GetFileName(file));
         }
+
+        return data;
     }
 
     [Theory]
@@ -90,7 +97,7 @@ public sealed class HandJsonBenchmarkTests
 
         var mutatedRun = new BenchmarkRun(
             Content: "Kiedy lęk przejmuje kontrolę, jak się czujesz?",
-            Metadata: new BenchmarkMetadata("sess-1", false, false, "INIT", "grounding", new[] { "anxiety", "worry" }),
+            Metadata: new BenchmarkMetadata("sess-1", false, false, "INIT", "grounding", AnxietyWorry),
             Events: new[] { mutatedEventL2, originalEventL3, originalEventL4 }
         );
 
@@ -98,8 +105,8 @@ public sealed class HandJsonBenchmarkTests
             UserInputPl: "test",
             ExpectedPass: true,
             MinQualityScore: 3,
-            RequiredTopics: new[] { "anxiety" },
-            RequiredPhrasesPl: new[] { "lęk" },
+            RequiredTopics: Anxiety,
+            RequiredPhrasesPl: Lek,
             ForbiddenPhrases: Array.Empty<string>()
         );
 
@@ -117,7 +124,7 @@ public sealed class HandJsonBenchmarkTests
 
         var mutatedRun = new BenchmarkRun(
             Content: "Kiedy lęk przejmuje kontrolę, jak się czujesz?",
-            Metadata: new BenchmarkMetadata("sess-1", false, false, "INIT", "grounding", new[] { "anxiety", "worry" }),
+            Metadata: new BenchmarkMetadata("sess-1", false, false, "INIT", "grounding", AnxietyWorry),
             Events: new[] { mutatedEventL2, originalEventL3, originalEventL4 }
         );
 
@@ -125,8 +132,8 @@ public sealed class HandJsonBenchmarkTests
             UserInputPl: "test",
             ExpectedPass: true,
             MinQualityScore: 3,
-            RequiredTopics: new[] { "anxiety" },
-            RequiredPhrasesPl: new[] { "lęk" },
+            RequiredTopics: Anxiety,
+            RequiredPhrasesPl: Lek,
             ForbiddenPhrases: Array.Empty<string>()
         );
 

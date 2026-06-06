@@ -6,6 +6,9 @@ namespace HybridTherapist.Tests;
 
 public sealed class TopicRegistryTests
 {
+    private static readonly string[] ExistingTopics = ["sleep", "anxiety"];
+    private static readonly string[] NewTopics = ["anxiety", "loneliness", "sleep"];
+
     [Theory]
     [InlineData("nie mogę zasnąć od trzech tygodni", "sleep")]
     [InlineData("mam bezsenność i ciągle się budzę", "sleep")]
@@ -48,8 +51,8 @@ public sealed class TopicRegistryTests
     public void Merge_PreservesOrderAndDeduplicates()
     {
         IReadOnlyList<string> result = TopicRegistry.Merge(
-            new[] { "sleep", "anxiety" },
-            new[] { "anxiety", "loneliness", "sleep" });
+            ExistingTopics,
+            NewTopics);
         result.Should().Equal("sleep", "anxiety", "loneliness");
     }
 }
