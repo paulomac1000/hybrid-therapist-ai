@@ -1,3 +1,15 @@
+---
+description: Upgrade all 7 projects from net8.0 to net10.0 + update ASP.NET testing package
+doc_id: plan.dotnet-upgrade
+type: plan
+status: complete
+rigor_tier: L3
+ttl_days: 30
+stability: stable
+ai_scope: editable
+source_of_truth: false
+---
+
 # .NET 8 → 10 Upgrade
 
 ## TL;DR

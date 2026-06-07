@@ -1,3 +1,15 @@
+---
+description: Fix Dockerfile HandCodec wget URLs from v0.2.0 to v0.3.0 for CI restore
+doc_id: plan.dockerfile-codec-fix
+type: plan
+status: complete
+rigor_tier: L3
+ttl_days: 30
+stability: stable
+ai_scope: editable
+source_of_truth: false
+---
+
 # Dockerfile HandCodec v0.3.0 URL Fix
 
 ## TL;DR

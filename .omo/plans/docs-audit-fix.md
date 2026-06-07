@@ -1,3 +1,15 @@
+---
+description: Fix 7 documentation issues from post-HandCodec v0.3.0 audit — resilience ladder, benchmarks, cassettes, dates
+doc_id: plan.docs-audit-fix
+type: plan
+status: complete
+rigor_tier: L3
+ttl_days: 30
+stability: stable
+ai_scope: editable
+source_of_truth: false
+---
+
 # Documentation Audit Fix — v0.4.0 Post-Upgrade Cleanup
 
 ## TL;DR
