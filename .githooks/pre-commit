@@ -53,6 +53,33 @@ else
     fi
 fi
 
+# ── Pre-check: Secret/private key detection (L2, non-blocking) ──────────────
+step "Secret/private key detection"
+if [ "$SELF_TEST" = true ]; then
+    pass "[SELF-TEST] would check for secrets in staged files"
+else
+    SECRETS=$(git diff --cached --name-only --diff-filter=ACM | xargs grep -l 'BEGIN.*PRIVATE KEY\|-----BEGIN RSA\|-----BEGIN OPENSSH\|-----BEGIN EC\|api_key\s*=\s*['\''"]\w\{20,\}\|secret\s*=\s*['\''"]\w\{20,\}' 2>/dev/null || true)
+    if [ -z "$SECRETS" ]; then
+        pass "no secrets detected"
+    else
+        echo "  \xe2\x9a\xa0 Possible secrets found in staged files:"
+        echo "$SECRETS" | while read -r line; do echo "    $line"; done
+        echo "  Verify these files don't contain real secrets before committing."
+    fi
+fi
+
+# ── Pre-check: Trailing whitespace (L3, non-blocking) ────────────────────────
+step "Trailing whitespace"
+if [ "$SELF_TEST" = true ]; then
+    pass "[SELF-TEST] would check for trailing whitespace"
+else
+    if git diff --cached --check 2>/dev/null; then
+        pass "no trailing whitespace"
+    else
+        echo "  \xe2\x9a\xa0 Trailing whitespace detected (see above)"
+    fi
+fi
+
 # ── Staged files (for format + semgrep skip logic) ──────────────────────────
 STAGED_CS=$(git diff --cached --name-only --diff-filter=ACM -- '*.cs')
 STAGED_ALL=$(git diff --cached --name-only --diff-filter=ACM)
