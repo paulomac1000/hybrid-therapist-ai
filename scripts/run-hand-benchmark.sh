@@ -227,9 +227,6 @@ run_single_variant() {
         token_min_json=$(json_number_or_null "$TOKEN_SAVINGS_MIN")
         local token_max_json
         token_max_json=$(json_number_or_null "$TOKEN_SAVINGS_MAX")
-        local token_count_json
-        token_count_json=$(json_number_or_null "$TOKEN_SAVINGS_COUNT")
-
         cat > "$ARTIFACTS_DIR/${r_name}-latest.json" <<JSONEOF
 {
   "variant": "$var",
@@ -309,7 +306,6 @@ if [ "$RUN_LIVE" = true ]; then
     LIVE_PASSED=$(extract_passed "$LIVE_RESULT")
     LIVE_FAILED=$(extract_failed "$LIVE_RESULT")
     if [ "$LIVE_EXIT" -ne 0 ] && [ "$LIVE_FAILED" -eq 0 ]; then LIVE_FAILED=1; fi
-    LIVE_STATUS=$([ "$LIVE_EXIT" -eq 0 ] && echo "passed" || echo "failed")
     echo "   Passed: $LIVE_PASSED  Failed: $LIVE_FAILED"
     GLOBAL_EXIT=$((GLOBAL_EXIT + LIVE_EXIT))
 fi

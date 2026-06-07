@@ -32,7 +32,7 @@ fi
 
 while IFS= read -r f; do
     [ -z "$f" ] && continue
-    [ "$f" = "$SCRIPT_NAME" ] || [ "$f" = "$OUTPUT_NAME" ] && continue
+    { [ "$f" = "$SCRIPT_NAME" ] || [ "$f" = "$OUTPUT_NAME" ]; } && continue
     full="$ABS_PATH/$f"
     [ -f "$full" ] || continue
     echo "## $f" >> "$OUTPUT_FILE"

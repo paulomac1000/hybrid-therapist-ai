@@ -68,8 +68,8 @@ public static class ChatEndpoints
 
             var logger = ctx.RequestServices.GetRequiredService<ILoggerFactory>()
                 .CreateLogger(nameof(ChatEndpoints));
-            logger.LogWarning(ex, "JSON parse FAILED — body({Len}): {Body}",
-                rawBody.Length, rawBody.Length > 300 ? rawBody[..300] + "..." : rawBody);
+            logger.LogWarning(ex, "JSON parse FAILED — body({Len}): [REDACTED]",
+                rawBody.Length);
             await WriteJsonAsync(ctx, 400, new { error = "Invalid JSON body." }, ct);
             return;
         }
