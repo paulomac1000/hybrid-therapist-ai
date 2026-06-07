@@ -75,6 +75,14 @@
 - 37 cassette integration tests across 4 variants + negative + checkpoints
 - All passing, 0 skipped, 0 warnings
 
+### Therapeutic quality fix
+- Fixed `QualityValidator` `only_questions_after_4_messages` false-positive: renamed `containsAdvice` → `containsTherapeuticSubstance`, added English reflection/validation markers (`that must be`, `it makes sense`, `it/that sounds`, `thank you for`, `I appreciate`, `I can imagine`, `I can see why`) so the calibrator's reflection+question output is not falsely rejected after prompt hardening.
+
+### Code quality
+- Refactored 4 HandBenchmarkValidators into `HandBenchmarkValidatorBase` — eliminated ~264 lines of duplicated code
+- Resolved 25× CA1861 array allocation code smells across QualityValidator and benchmark test files
+- Added API endpoint integration tests (`ChatEndpoints` + `TraceEndpoints`) with `WebApplicationFactory`
+
 ---
 
 ## v0.3.0 (2026-06-01)

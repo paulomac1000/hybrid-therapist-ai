@@ -259,6 +259,8 @@ in the prompt: no echo, ask one open question, under 200 words.
 
 Same content, better prose. Removes formulaic openings ("I understand that...", "It seems that..."). Cannot introduce new topics or change facts. On failure, the flow falls back to the L4 draft.
 
+**L6 Calibrator prompt hardening**: The calibrator is instructed to avoid advice language. The downstream `QualityValidator` uses `containsTherapeuticSubstance` markers (reflections, validations, acknowledgments) rather than only advice words to avoid false-positive quality blocks on valid therapeutic responses.
+
 ## Session phase machine
 
 ```
