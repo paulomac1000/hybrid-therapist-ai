@@ -403,7 +403,6 @@ public sealed class LiveOllamaE2ETests
             JsonElement topics = meta.GetProperty("topics");
             topics.GetArrayLength().Should().BeGreaterThan(0);
         }
-        topics.GetArrayLength().Should().BeGreaterThan(0, "topics should be tracked across messages");
 
         // Check trace for L2 memo containing accumulated themes
         string traceUrl = meta.GetProperty("trace_url").GetString()!;

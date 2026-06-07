@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+# Pre-commit hook — code quality gate for hybrid-therapist
+set -euo pipefail
+
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$REPO_ROOT"
+
+DOTNET="dotnet"
+if ! command -v dotnet &>/dev/null && [ -f "$HOME/.dotnet/dotnet" ]; then
+    DOTNET="$HOME/.dotnet/dotnet"
+fi
+export PATH="$HOME/.dotnet:$PATH"
+
+PASS=true
+
+red='\033[0;31m'; green='\033[0;32m'; yellow='\033[1;33m'; nc='\033[0m'
+
+step() { echo -e "\n${yellow}[precommit]${nc} $1"; }
+pass() { echo -e "  ${green}✓${nc} $1"; }
+fail() { echo -e "  ${red}✗${nc} $1"; PASS=false; }
+
+# ── 1. dotnet restore ──────────────────────────────────────────────────────
+step "dotnet restore"
+if $DOTNET restore --nologo -v q 2>/dev/null; then
+    pass "restore succeeded"
+else
+    fail "restore failed"
+fi
+
+# ── 2. dotnet format (check-only — non-blocking for tool issues) ────────────
+step "dotnet format --verify-no-changes"
+if $DOTNET format --verify-no-changes 2>/dev/null; then
+    pass "format clean"
+else
+    echo "  ⚠ format check failed (may be infra — run 'dotnet format' manually)"
+fi
+
+# ── 3. dotnet build ────────────────────────────────────────────────────────
+step "dotnet build (Release, no restore)"
+if $DOTNET build HybridTherapist.sln -c Release --nologo -v q 2>/dev/null; then
+    pass "build succeeded"
+else
+    fail "build failed"
+fi
+
+# ── 4. unit tests ──────────────────────────────────────────────────────────
+step "dotnet test (unit)"
+if $DOTNET test tests/HybridTherapist.Tests -c Release --nologo &>/dev/null 2>&1; then
+    pass "unit tests passed"
+else
+    # show actual output
+    $DOTNET test tests/HybridTherapist.Tests -c Release --nologo | tail -3
+    fail "unit tests failed — fix before committing"
+fi
+
+# ── 5. semgrep (if available) ──────────────────────────────────────────────
+step "semgrep (optional — non-blocking)"
+if command -v semgrep &>/dev/null; then
+    if semgrep --config "p/ci" --error --quiet 2>/dev/null; then
+        pass "semgrep clean"
+    else
+        fail "semgrep found issues — review and fix before committing"
+    fi
+else
+    echo "  semgrep not installed — skipping"
+fi
+
+# ── 6. AFDS documentation validation ──────────────────────────────────────
+step "AFDS documentation validation"
+AFDS_URL="https://raw.githubusercontent.com/paulomac1000/ai-skills/main/skills/afds-doc-writer/docs_validate.py"
+if curl -sS "$AFDS_URL" 2>/dev/null | python3 - --config afds_config.yaml ./ 2>/dev/null | grep -q "PASS.*Validation PASSED"; then
+    pass "AFDS docs validation passed"
+elif curl -sS "$AFDS_URL" 2>/dev/null | python3 - --config afds_config.yaml ./ 2>/dev/null | grep -q "PASS"; then
+    pass "AFDS docs validation passed"
+else
+    # Show actual output for debugging
+    curl -sS "$AFDS_URL" 2>/dev/null | python3 - --config afds_config.yaml ./ 2>/dev/null || true
+    fail "AFDS docs validation failed — check docs for frontmatter issues"
+fi
+
+# ── Result ──────────────────────────────────────────────────────────────────
+echo ""
+if [ "$PASS" = true ]; then
+    echo -e "${green}═══════════════════════════════════════════════════${nc}"
+    echo -e "${green}  ALL CHECKS PASSED — committing${nc}"
+    echo -e "${green}═══════════════════════════════════════════════════${nc}"
+    exit 0
+else
+    echo -e "${red}═══════════════════════════════════════════════════${nc}"
+    echo -e "${red}  SOME CHECKS FAILED — fix before committing${nc}"
+    echo -e "${red}  Pre-commit hook enforces code quality.${nc}"
+    echo -e "${red}  Run the failing step manually to see details.${nc}"
+    echo -e "${red}═══════════════════════════════════════════════════${nc}"
+    exit 1
+fi

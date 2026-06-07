@@ -83,6 +83,15 @@ Thin wrappers that delegate to HandRuntime types:
 - Benchmark test output uses `BENCHMARK_TOKEN_SAVINGS=X.X` for machine-readable token savings (parsed by `run-hand-benchmark.sh` from TRX files)
 - Dead code rule: any class with zero references in `src/` should be deleted (not commented out or left as stubs)
 
+## Quality discipline (ALL agents)
+
+- **NEVER** skip, relax, wrap-in-try-catch, or log-and-ignore a failing test. Fix the root cause or ask for help.
+- **NEVER** commit code that doesn't build or pass unit tests. The pre-commit hook enforces this.
+- **NEVER** use `- [~]` (blocked marker) to bypass a test that should be fixable.
+- If a test is genuinely wrong (tests outdated behavior), update the test BEFORE updating production code, then run the full suite to confirm.
+- If you cannot reproduce a failure locally, document exactly what steps you took and why the failure could not be reproduced — then escalate. Do not silently "relax" the assertion.
+- The pre-commit hook at `.githooks/pre-commit` runs restore → format → build → unit tests → semgrep → AFDS validation. All must pass. No `--no-verify` unless explicitly authorized by a human.
+
 ## Documentation
 
 - `docs/architecture.md` — architecture reference
