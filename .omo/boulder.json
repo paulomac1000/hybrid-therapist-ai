@@ -360,9 +360,9 @@
       "work_id": "e2e-debug-comprehensive-fix-b4152906",
       "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/e2e-debug-comprehensive-fix.md",
       "plan_name": "e2e-debug-comprehensive-fix",
-      "status": "active",
+      "status": "completed",
       "started_at": "2026-06-06T23:19:52.210Z",
-      "updated_at": "2026-06-06T23:19:52.210Z",
+      "updated_at": "2026-06-06T23:37:35.186Z",
       "session_ids": [
         "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
       ],
@@ -370,13 +370,15 @@
         "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
       },
       "agent": "atlas",
-      "task_sessions": {}
+      "task_sessions": {},
+      "ended_at": "2026-06-06T23:37:35.186Z",
+      "elapsed_ms": 1062976
     }
   },
   "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/e2e-debug-comprehensive-fix.md",
   "started_at": "2026-06-06T23:19:52.210Z",
-  "status": "active",
-  "updated_at": "2026-06-06T23:19:52.210Z",
+  "status": "completed",
+  "updated_at": "2026-06-06T23:37:35.186Z",
   "session_ids": [
     "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
   ],
@@ -385,5 +387,7 @@
   },
   "plan_name": "e2e-debug-comprehensive-fix",
   "task_sessions": {},
-  "agent": "atlas"
+  "agent": "atlas",
+  "ended_at": "2026-06-06T23:37:35.186Z",
+  "elapsed_ms": 1062976
 }
