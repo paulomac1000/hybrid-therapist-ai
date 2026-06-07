@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Pre-push hook — branch naming validation (L3)
+set -euo pipefail
+
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$REPO_ROOT"
+
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+PATTERN='^(feature|fix|docs|chore|refactor|cleanup)/[a-z0-9][a-z0-9-]+$'
+
+if [[ "$BRANCH" =~ $PATTERN ]] || [ "$BRANCH" = "main" ]; then
+    exit 0
+else
+    echo "⚠ Branch name '$BRANCH' doesn't match naming convention"
+    echo "  Expected: feature/fix/docs/chore/refactor/cleanup/<description>"
+    echo "  To bypass: git push --no-verify"
+    exit 1
+fi

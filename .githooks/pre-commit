@@ -5,6 +5,13 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
 
+# ── Self-test flag ──────────────────────────────────────────────────────────
+SELF_TEST=false
+if [ "${1:-}" = "--self-test" ]; then
+    SELF_TEST=true
+    echo "⚠️ PRE-COMMIT SELF-TEST MODE — no actual checks will run"
+fi
+
 DOTNET="dotnet"
 if ! command -v dotnet &>/dev/null && [ -f "$HOME/.dotnet/dotnet" ]; then
     DOTNET="$HOME/.dotnet/dotnet"
@@ -19,17 +26,54 @@ step() { echo -e "\n${yellow}[precommit]${nc} $1"; }
 pass() { echo -e "  ${green}✓${nc} $1"; }
 fail() { echo -e "  ${red}✗${nc} $1"; PASS=false; }
 
-# ── 1. dotnet restore ──────────────────────────────────────────────────────
-step "dotnet restore"
-if $DOTNET restore --nologo -v q 2>/dev/null; then
-    pass "restore succeeded"
+# ── Pre-check: Merge conflict markers (L1, blocking) ────────────────────────
+step "Merge conflict markers"
+if [ "$SELF_TEST" = true ]; then
+    pass "[SELF-TEST] would check for merge conflict markers"
 else
-    fail "restore failed"
+    CONFLICTS=$(git diff --cached --name-only --diff-filter=ACM | xargs grep -l '<<<<<<<\|=======\|>>>>>>>' 2>/dev/null || true)
+    if [ -z "$CONFLICTS" ]; then
+        pass "no merge conflicts"
+    else
+        fail "Merge conflict markers found in: $CONFLICTS"
+    fi
 fi
 
-# ── 2. dotnet format (check-only — L2, blocking on CI) ─────────────────────
+# ── Pre-check: Large file detection (L2, non-blocking) ─────────────────────
+step "Large file detection (>1MB)"
+if [ "$SELF_TEST" = true ]; then
+    pass "[SELF-TEST] would check for large files"
+else
+    LARGE=$(git diff --cached --name-only --diff-filter=ACM | xargs -I{} ls -l {} 2>/dev/null | awk '$5 > 1048576 {print $NF, int($5/1048576) "MB"}')
+    if [ -z "$LARGE" ]; then
+        pass "no large files"
+    else
+        echo "  ⚠ Large files staged:"
+        echo "$LARGE" | while read -r line; do echo "    $line"; done
+    fi
+fi
+
+# ── Staged files (for format + semgrep skip logic) ──────────────────────────
+STAGED_CS=$(git diff --cached --name-only --diff-filter=ACM -- '*.cs')
+STAGED_ALL=$(git diff --cached --name-only --diff-filter=ACM)
+
+# ── 1. dotnet restore (L1, blocking, timeout 60s) ──────────────────────────
+step "dotnet restore"
+if [ "$SELF_TEST" = true ]; then
+    pass "[SELF-TEST] would run: $DOTNET restore --nologo -v q"
+elif timeout 60 $DOTNET restore --nologo -v q; then
+    pass "restore succeeded"
+else
+    fail "restore failed (timeout or error)"
+fi
+
+# ── 2. dotnet format (L2, non-blocking locally, staged-only) ────────────────
 step "dotnet format --verify-no-changes"
-if $DOTNET format HybridTherapist.sln --verify-no-changes --no-restore 2>/dev/null; then
+if [ "$SELF_TEST" = true ]; then
+    pass "[SELF-TEST] would run: $DOTNET format --verify-no-changes --no-restore"
+elif [ -z "$STAGED_CS" ]; then
+    echo "  No staged .cs files — skipping format"
+elif timeout 30 $DOTNET format HybridTherapist.sln --verify-no-changes --no-restore 2>/dev/null; then
     pass "format clean"
 elif [ -n "${CI:-}" ]; then
     fail "WHITESPACE formatting errors — run 'dotnet format' locally"
@@ -37,46 +81,54 @@ else
     echo "  ⚠ format check failed (may be build-host infra — run 'dotnet format' manually if CI fails)"
 fi
 
-# ── 3. dotnet build ────────────────────────────────────────────────────────
+# ── 3. dotnet build (L1, blocking, timeout 120s) ────────────────────────────
 step "dotnet build (Release, no restore)"
-if $DOTNET build HybridTherapist.sln -c Release --nologo -v q 2>/dev/null; then
+if [ "$SELF_TEST" = true ]; then
+    pass "[SELF-TEST] would run: $DOTNET build -c Release --nologo -v q"
+elif timeout 120 $DOTNET build HybridTherapist.sln -c Release --nologo -v q; then
     pass "build succeeded"
 else
-    fail "build failed"
+    fail "build failed (timeout or error)"
 fi
 
-# ── 4. unit tests ──────────────────────────────────────────────────────────
+# ── 4. unit tests (L1, blocking, timeout 300s) ──────────────────────────────
 step "dotnet test (unit)"
-if $DOTNET test tests/HybridTherapist.Tests -c Release --nologo &>/dev/null 2>&1; then
+if [ "$SELF_TEST" = true ]; then
+    pass "[SELF-TEST] would run: $DOTNET test --nologo"
+elif timeout 300 $DOTNET test tests/HybridTherapist.Tests -c Release --nologo; then
     pass "unit tests passed"
 else
-    # show actual output
+    # show actual output on failure
     $DOTNET test tests/HybridTherapist.Tests -c Release --nologo | tail -3
     fail "unit tests failed — fix before committing"
 fi
 
-# ── 5. semgrep (if available) ──────────────────────────────────────────────
+# ── 5. semgrep (L2, non-blocking, staged-only) ──────────────────────────────
 step "semgrep (optional — non-blocking)"
-if command -v semgrep &>/dev/null; then
-    if semgrep --config "p/ci" --error --quiet 2>/dev/null; then
-        pass "semgrep clean"
-    else
-        fail "semgrep found issues — review and fix before committing"
-    fi
-else
+if [ "$SELF_TEST" = true ]; then
+    pass "[SELF-TEST] would run: semgrep --config p/ci"
+elif ! command -v semgrep &>/dev/null; then
     echo "  semgrep not installed — skipping"
+elif [ -z "$STAGED_ALL" ]; then
+    echo "  No staged files — skipping semgrep"
+elif timeout 60 semgrep --config "p/ci" --error --quiet 2>/dev/null; then
+    pass "semgrep clean"
+else
+    fail "semgrep found issues — review and fix before committing"
 fi
 
-# ── 6. AFDS documentation validation ──────────────────────────────────────
+# ── 6. AFDS documentation validation (L3, non-blocking, timeout 30s) ───────
 step "AFDS documentation validation"
 AFDS_URL="https://raw.githubusercontent.com/paulomac1000/ai-skills/main/skills/afds-doc-writer/docs_validate.py"
-if curl -sS "$AFDS_URL" 2>/dev/null | python3 - --config afds_config.yaml ./ 2>/dev/null | grep -q "PASS.*Validation PASSED"; then
+if [ "$SELF_TEST" = true ]; then
+    pass "[SELF-TEST] would run: AFDS validation"
+elif timeout 30 curl -sS "$AFDS_URL" 2>/dev/null | python3 - --config afds_config.yaml ./ 2>/dev/null | grep -q "PASS.*Validation PASSED"; then
     pass "AFDS docs validation passed"
-elif curl -sS "$AFDS_URL" 2>/dev/null | python3 - --config afds_config.yaml ./ 2>/dev/null | grep -q "PASS"; then
+elif timeout 30 curl -sS "$AFDS_URL" 2>/dev/null | python3 - --config afds_config.yaml ./ 2>/dev/null | grep -q "PASS"; then
     pass "AFDS docs validation passed"
 else
     # Show actual output for debugging
-    curl -sS "$AFDS_URL" 2>/dev/null | python3 - --config afds_config.yaml ./ 2>/dev/null || true
+    timeout 30 curl -sS "$AFDS_URL" 2>/dev/null | python3 - --config afds_config.yaml ./ 2>/dev/null || true
     fail "AFDS docs validation failed — check docs for frontmatter issues"
 fi
 
@@ -92,6 +144,7 @@ else
     echo -e "${red}  SOME CHECKS FAILED — fix before committing${nc}"
     echo -e "${red}  Pre-commit hook enforces code quality.${nc}"
     echo -e "${red}  Run the failing step manually to see details.${nc}"
+    echo -e "${red}  Bypass: git commit --no-verify${nc}"
     echo -e "${red}═══════════════════════════════════════════════════${nc}"
     exit 1
 fi
