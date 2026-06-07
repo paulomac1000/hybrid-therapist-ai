@@ -20,6 +20,8 @@ public sealed class HandSemanticBenchmarkTests
     private static readonly string[] RequiredTopicAnxiety = ["anxiety"];
     private static readonly string[] RequiredPhraseLek = ["lęk"];
 
+    private static readonly BenchmarkTraceEvent OriginalEventL2 = new("L2_analyst", "input", "M|L=2|em=anxiety|sv=moderate", "M|L=2|em=anxiety|sv=moderate", "ok");
+
     public static TheoryData<string> DiscoverSemanticCassettes()
     {
         var data = new TheoryData<string>();
@@ -90,7 +92,6 @@ public sealed class HandSemanticBenchmarkTests
     public void CompactKeysInSemanticCassette_FailsSemanticValidation()
     {
         // Setup a mutated run
-        var originalEventL2 = new BenchmarkTraceEvent("L2_analyst", "input", "M|L=2|em=anxiety|sv=moderate", "M|L=2|em=anxiety|sv=moderate", "ok");
         var originalEventL3 = new BenchmarkTraceEvent("L3_supervisor", "input", "M|L=3|ap=grounding|tk=test|kq=test|rn=none", "M|L=3|ap=grounding|tk=test|kq=test|rn=none", "ok");
         var originalEventL4 = new BenchmarkTraceEvent("L4_therapist", "M|L=2|em=anxiety|sv=moderate\nM|L=3|ap=grounding|tk=test|kq=test|rn=none", "therapist response?", null, "ok");
 
@@ -119,7 +120,6 @@ public sealed class HandSemanticBenchmarkTests
     [Fact]
     public void MissingApproachKey_FailsSemanticValidation()
     {
-        var originalEventL2 = new BenchmarkTraceEvent("L2_analyst", "input", "M|L=2|em=anxiety|sv=moderate", "M|L=2|em=anxiety|sv=moderate", "ok");
         // Mutated L3 without ap= key
         var mutatedEventL3 = new BenchmarkTraceEvent("L3_supervisor", "input", "M|L=3|tk=test|kq=test|rn=none", "M|L=3|tk=test|kq=test|rn=none", "ok");
         var originalEventL4 = new BenchmarkTraceEvent("L4_therapist", "input", "output", null, "ok");
@@ -127,7 +127,7 @@ public sealed class HandSemanticBenchmarkTests
         var mutatedRun = new BenchmarkRun(
             Content: "Kiedy lęk przejmuje kontrolę, jak się czujesz?",
             Metadata: new BenchmarkMetadata("sess-1", false, false, "INIT", "grounding", TopicsAnxietyWorry),
-            Events: new[] { originalEventL2, mutatedEventL3, originalEventL4 }
+            Events: new[] { OriginalEventL2, mutatedEventL3, originalEventL4 }
         );
 
         var expectations = new BenchmarkExpectations(

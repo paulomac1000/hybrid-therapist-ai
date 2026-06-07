@@ -22,6 +22,8 @@ public static class QualityValidator
         @"\b(it|that)\s+sounds\b", RegexOptions.IgnoreCase | RegexOptions.Compiled,
         TimeSpan.FromMilliseconds(100));
 
+    private static readonly char[] WordSeparators = [' ', '\n', '\t'];
+
     public sealed record Verdict(bool Ok, string Reason);
 
     /// <summary>
@@ -84,7 +86,7 @@ public static class QualityValidator
         if (trimmed.Length < 20)
             return new Verdict(false, "too_short");
 
-        int wordCount = trimmed.Split(new[] { ' ', '\n', '\t' }, StringSplitOptions.RemoveEmptyEntries).Length;
+        int wordCount = trimmed.Split(WordSeparators, StringSplitOptions.RemoveEmptyEntries).Length;
         if (wordCount < 5)
             return new Verdict(false, "too_few_words");
 

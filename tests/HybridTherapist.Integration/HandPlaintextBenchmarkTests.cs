@@ -17,6 +17,9 @@ public sealed class HandPlaintextBenchmarkTests
     private static readonly string[] AnxietyTopic = ["anxiety"];
     private static readonly string[] LekPhrase = ["lęk"];
 
+    private static readonly BenchmarkTraceEvent OriginalEventL3 = new("L3_supervisor", "input", "Approach: grounding. Technique: test.", "Approach: grounding. Technique: test.", "ok");
+    private static readonly BenchmarkTraceEvent OriginalEventL4 = new("L4_therapist", "input", "output", null, "ok");
+
     private static string CassettePath(string filename) =>
         Path.Combine(AppContext.BaseDirectory, "Cassettes", filename);
 
@@ -92,13 +95,11 @@ public sealed class HandPlaintextBenchmarkTests
     {
         // Setup a mutated run with M| leakage
         var mutatedEventL2 = new BenchmarkTraceEvent("L2_analyst", "input", "M|L=2|e7=anxiety|s9=moderate", "M|L=2|e7=anxiety|s9=moderate", "ok");
-        var originalEventL3 = new BenchmarkTraceEvent("L3_supervisor", "input", "Approach: grounding. Technique: test.", "Approach: grounding. Technique: test.", "ok");
-        var originalEventL4 = new BenchmarkTraceEvent("L4_therapist", "input", "output", null, "ok");
 
         var mutatedRun = new BenchmarkRun(
             Content: "Kiedy lęk przejmuje kontrolę, jak się czujesz?",
             Metadata: new BenchmarkMetadata("sess-1", false, false, "INIT", "grounding", AnxietyWorryTopics),
-            Events: new[] { mutatedEventL2, originalEventL3, originalEventL4 }
+            Events: new[] { mutatedEventL2, OriginalEventL3, OriginalEventL4 }
         );
 
         var expectations = new BenchmarkExpectations(
@@ -119,13 +120,11 @@ public sealed class HandPlaintextBenchmarkTests
     {
         // Mutated L2 lacking "Emotional state:" label
         var mutatedEventL2 = new BenchmarkTraceEvent("L2_analyst", "input", "State: anxiety. Severity: moderate.", "State: anxiety. Severity: moderate.", "ok");
-        var originalEventL3 = new BenchmarkTraceEvent("L3_supervisor", "input", "Approach: grounding. Technique: test.", "Approach: grounding. Technique: test.", "ok");
-        var originalEventL4 = new BenchmarkTraceEvent("L4_therapist", "input", "output", null, "ok");
 
         var mutatedRun = new BenchmarkRun(
             Content: "Kiedy lęk przejmuje kontrolę, jak się czujesz?",
             Metadata: new BenchmarkMetadata("sess-1", false, false, "INIT", "grounding", AnxietyWorryTopics),
-            Events: new[] { mutatedEventL2, originalEventL3, originalEventL4 }
+            Events: new[] { mutatedEventL2, OriginalEventL3, OriginalEventL4 }
         );
 
         var expectations = new BenchmarkExpectations(
