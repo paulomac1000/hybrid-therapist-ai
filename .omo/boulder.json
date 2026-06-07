@@ -104,9 +104,41 @@
       "work_id": "dotnet-upgrade-8-to-10-23bf6b39",
       "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/dotnet-upgrade-8-to-10.md",
       "plan_name": "dotnet-upgrade-8-to-10",
-      "status": "active",
+      "status": "completed",
       "started_at": "2026-06-06T17:27:37.212Z",
       "updated_at": "2026-06-06T17:27:37.212Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {}
+    },
+    "handcodec-v0-4-upgrade-5c1e5765": {
+      "work_id": "handcodec-v0-4-upgrade-5c1e5765",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/handcodec-v0.4-upgrade.md",
+      "plan_name": "handcodec-v0.4-upgrade",
+      "status": "completed",
+      "started_at": "2026-06-06T18:30:52.794Z",
+      "updated_at": "2026-06-06T18:30:52.794Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {}
+    },
+    "e2e-checkpoint-comprehensive-9f78b3d4": {
+      "work_id": "e2e-checkpoint-comprehensive-9f78b3d4",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/e2e-checkpoint-comprehensive.md",
+      "plan_name": "e2e-checkpoint-comprehensive",
+      "status": "completed",
+      "started_at": "2026-06-06T22:57:31.154Z",
+      "updated_at": "2026-06-06T22:57:31.154Z",
       "session_ids": [
         "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
       ],
@@ -165,22 +197,6 @@
       },
       "ended_at": "2026-06-06T18:09:45.008Z",
       "elapsed_ms": 316818
-    },
-    "handcodec-v0-4-upgrade-5c1e5765": {
-      "work_id": "handcodec-v0-4-upgrade-5c1e5765",
-      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/handcodec-v0.4-upgrade.md",
-      "plan_name": "handcodec-v0.4-upgrade",
-      "status": "active",
-      "started_at": "2026-06-06T18:30:52.794Z",
-      "updated_at": "2026-06-06T18:30:52.794Z",
-      "session_ids": [
-        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
-      ],
-      "session_origins": {
-        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
-      },
-      "agent": "atlas",
-      "task_sessions": {}
     },
     "handcodec-v0-4-upgrade-5ef22534": {
       "work_id": "handcodec-v0-4-upgrade-5ef22534",
@@ -322,22 +338,6 @@
       "ended_at": "2026-06-06T22:23:14.911Z",
       "elapsed_ms": 692487
     },
-    "e2e-checkpoint-comprehensive-9f78b3d4": {
-      "work_id": "e2e-checkpoint-comprehensive-9f78b3d4",
-      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/e2e-checkpoint-comprehensive.md",
-      "plan_name": "e2e-checkpoint-comprehensive",
-      "status": "active",
-      "started_at": "2026-06-06T22:57:31.154Z",
-      "updated_at": "2026-06-06T22:57:31.154Z",
-      "session_ids": [
-        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
-      ],
-      "session_origins": {
-        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
-      },
-      "agent": "atlas",
-      "task_sessions": {}
-    },
     "e2e-checkpoint-comprehensive-b821ac73": {
       "work_id": "e2e-checkpoint-comprehensive-b821ac73",
       "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/e2e-checkpoint-comprehensive.md",
@@ -380,7 +380,7 @@
       "plan_name": "coderabbit-comment-fixes",
       "status": "completed",
       "started_at": "2026-06-07T13:45:51.591Z",
-      "updated_at": "2026-06-07T14:00:06.210Z",
+      "updated_at": "2026-06-07T16:50:14.777Z",
       "session_ids": [
         "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
       ],
@@ -392,15 +392,15 @@
         "todo:1": {
           "task_key": "todo:1",
           "task_label": "1",
-          "task_title": "`.omo/plans/dockerfile-codec-fix.md`",
-          "session_id": "opencode:ses_15da0c232ffesCx0Ios8FUKNDy",
+          "task_title": "WireMock.Net 2.6.0 → 2.9.0 in `tests/HybridTherapist.Integration/HybridTherapist.Integration.csproj`",
+          "session_id": "opencode:ses_15d045aa6ffe5ySgkjyJyhklVN",
           "agent": "Sisyphus-Junior",
           "category": "quick",
           "started_at": "2026-06-07T13:46:56.669Z",
-          "ended_at": "2026-06-07T13:57:25.037Z",
-          "elapsed_ms": 628368,
+          "ended_at": "2026-06-07T16:50:14.777Z",
+          "elapsed_ms": 10998108,
           "status": "completed",
-          "updated_at": "2026-06-07T13:57:25.037Z"
+          "updated_at": "2026-06-07T16:50:14.777Z"
         },
         "todo:5": {
           "task_key": "todo:5",
@@ -436,7 +436,7 @@
   "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/coderabbit-comment-fixes.md",
   "started_at": "2026-06-07T13:45:51.591Z",
   "status": "completed",
-  "updated_at": "2026-06-07T14:00:06.210Z",
+  "updated_at": "2026-06-07T16:50:14.777Z",
   "session_ids": [
     "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
   ],
@@ -448,15 +448,15 @@
     "todo:1": {
       "task_key": "todo:1",
       "task_label": "1",
-      "task_title": "`.omo/plans/dockerfile-codec-fix.md`",
-      "session_id": "opencode:ses_15da0c232ffesCx0Ios8FUKNDy",
+      "task_title": "WireMock.Net 2.6.0 → 2.9.0 in `tests/HybridTherapist.Integration/HybridTherapist.Integration.csproj`",
+      "session_id": "opencode:ses_15d045aa6ffe5ySgkjyJyhklVN",
       "agent": "Sisyphus-Junior",
       "category": "quick",
       "started_at": "2026-06-07T13:46:56.669Z",
-      "ended_at": "2026-06-07T13:57:25.037Z",
-      "elapsed_ms": 628368,
+      "ended_at": "2026-06-07T16:50:14.777Z",
+      "elapsed_ms": 10998108,
       "status": "completed",
-      "updated_at": "2026-06-07T13:57:25.037Z"
+      "updated_at": "2026-06-07T16:50:14.777Z"
     },
     "todo:5": {
       "task_key": "todo:5",
