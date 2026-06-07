@@ -8,7 +8,7 @@ using HybridTherapist.Application.Options;
 
 namespace HybridTherapist.Integration;
 
-internal static class HandSemanticBenchmarkValidator
+internal class HandSemanticBenchmarkValidator : HandBenchmarkValidatorBase
 {
     private static readonly string[] CompactKeys = { "e7=", "s9=", "x4=", "y1=", "q3=", "p3=", "t5=", "k2=", "r8=", "g6=", "f0=" };
 
@@ -16,30 +16,6 @@ internal static class HandSemanticBenchmarkValidator
     {
         "emotional_state", "severity", "risk_indicators", "cognitive_patterns",
         "approach", "technique", "key_question", "risk_note", "session_goal", "crisis_flag",
-    };
-
-    private static readonly string[] L4ForbiddenInstructionMarkers =
-    {
-        "Use the information below",
-        "Read the M| messages",
-        "structured clinical context",
-        "Analyst memo keys",
-        "Supervisor memo keys",
-        "em=emotional state",
-        "sv=severity",
-        "ap=approach",
-    };
-
-    private static readonly string[] EnglishMarkers =
-    {
-        "what ", "when ", "i hear", "i understand", "anxiety", "panic attack",
-        "depression", "worry", "therapist", "you are", "tell me",
-    };
-
-    private static readonly HashSet<string> PolishStopwords = new(StringComparer.OrdinalIgnoreCase)
-    {
-        "że", "nie", "się", "jest", "to", "jak", "co", "kiedy", "który", "która",
-        "które", "twoje", "twoja", "twojego", "cię", "ciebie", "dla", "bez", "przed",
     };
 
     public static async Task<(BenchmarkRun Run, BenchmarkExpectations Expectations)> RunCassetteAsync(string cassettePath)
@@ -100,7 +76,7 @@ internal static class HandSemanticBenchmarkValidator
 
         ValidateL2Wire(l2Wire);
         ValidateL3Wire(l3Wire);
-        ValidateL4Input(l4.Input);
+        ValidateL4SemanticInput(l4.Input);
         ValidateExpectedQuality(run, expected);
     }
 
@@ -132,66 +108,6 @@ internal static class HandSemanticBenchmarkValidator
         }
     }
 
-    private static async Task<BenchmarkExpectations> ReadExpectationsAsync(string cassettePath)
-    {
-        string cassetteJson = await File.ReadAllTextAsync(cassettePath);
-        using JsonDocument cassetteDoc = JsonDocument.Parse(cassetteJson);
-        JsonElement expected = cassetteDoc.RootElement.GetProperty("expected_quality");
-
-        return new BenchmarkExpectations(
-            UserInputPl: cassetteDoc.RootElement.GetProperty("user_input_pl").GetString()!,
-            ExpectedPass: expected.GetProperty("pass").GetBoolean(),
-            MinQualityScore: expected.GetProperty("min_quality_score").GetInt32(),
-            RequiredTopics: ReadStringArray(expected, "required_topics"),
-            RequiredPhrasesPl: ReadStringArray(expected, "required_phrases_pl"),
-            ForbiddenPhrases: ReadStringArray(expected, "forbidden_phrases"));
-    }
-
-    private static BenchmarkMetadata ReadMetadata(JsonElement meta)
-    {
-        IReadOnlyList<string> topics = meta.TryGetProperty("topics", out JsonElement topicsEl)
-            && topicsEl.ValueKind == JsonValueKind.Array
-                ? topicsEl.EnumerateArray()
-                    .Select(t => t.GetString())
-                    .Where(t => !string.IsNullOrWhiteSpace(t))
-                    .Select(t => t!)
-                    .ToArray()
-                : Array.Empty<string>();
-
-        return new BenchmarkMetadata(
-            SessionId: meta.GetProperty("session_id").GetString()!,
-            Fallback: meta.GetProperty("fallback").GetBoolean(),
-            CrisisDetected: meta.GetProperty("crisis_detected").GetBoolean(),
-            Phase: meta.GetProperty("phase").GetString()!,
-            SupervisorApproach: meta.TryGetProperty("supervisor_approach", out JsonElement sa) ? sa.GetString() : null,
-            Topics: topics);
-    }
-
-    private static BenchmarkTraceEvent ReadTraceEvent(JsonElement evt) => new(
-        Layer: evt.GetProperty("layer").GetString()!,
-        Input: evt.GetProperty("input").GetString() ?? string.Empty,
-        Output: evt.GetProperty("output").GetString() ?? string.Empty,
-        WireFormat: evt.TryGetProperty("wire_format", out JsonElement wf) && wf.ValueKind != JsonValueKind.Null
-            ? wf.GetString()
-            : null,
-        Outcome: evt.GetProperty("outcome").GetString() ?? string.Empty);
-
-    private static string[] ReadStringArray(JsonElement root, string propertyName) =>
-        root.GetProperty(propertyName).EnumerateArray().Select(e => e.GetString()!).ToArray();
-
-    private static BenchmarkTraceEvent SingleLayer(BenchmarkRun run, string layer)
-    {
-        run.Events.Count(e => e.Layer == layer).Should().Be(1, $"trace must contain exactly one {layer} event");
-        return run.Events.Single(e => e.Layer == layer);
-    }
-
-    private static string WireOrOutput(BenchmarkTraceEvent evt, string label)
-    {
-        string wire = string.IsNullOrWhiteSpace(evt.WireFormat) ? evt.Output : evt.WireFormat!;
-        wire.Should().NotBeNullOrWhiteSpace($"{label} event must expose wire_format or output");
-        return wire;
-    }
-
     private static void ValidateL2Wire(string wire)
     {
         wire.Should().StartWith("M|L=2|", "L2 must emit M|L=2| wire format");
@@ -211,7 +127,7 @@ internal static class HandSemanticBenchmarkValidator
         AssertAllowedKeysOnly(wire, new HashSet<string>(StringComparer.Ordinal) { "L", "ap", "tk", "kq", "rn", "sg", "cf" }, "L3");
     }
 
-    private static void ValidateL4Input(string input)
+    private static void ValidateL4SemanticInput(string input)
     {
         input.Should().Contain("M|L=2|", "L4 must receive raw L2 Semantic memo");
         input.Should().Contain("em=", "L4 raw L2 memo must contain em=");
@@ -221,31 +137,7 @@ internal static class HandSemanticBenchmarkValidator
         input.Should().Contain("tk=", "L4 raw L3 memo must contain tk=");
         input.Should().Contain("kq=", "L4 raw L3 memo must contain kq=");
 
-        foreach (string marker in L4ForbiddenInstructionMarkers)
-            input.Should().NotContain(marker, $"L4 prompt must not contain format instruction marker '{marker}'");
-    }
-
-    private static void ValidateExpectedQuality(BenchmarkRun run, BenchmarkExpectations expected)
-    {
-        expected.ExpectedPass.Should().BeTrue("hand benchmark cassettes are strict passing scenarios");
-
-        foreach (string topic in expected.RequiredTopics)
-            run.Metadata.Topics.Should().Contain(topic, $"required topic '{topic}' must be present in metadata.topics");
-
-        foreach (string phrase in expected.RequiredPhrasesPl)
-        {
-            run.Content.Contains(phrase, StringComparison.OrdinalIgnoreCase)
-                .Should().BeTrue($"final Polish response must contain required phrase '{phrase}'");
-        }
-
-        foreach (string phrase in expected.ForbiddenPhrases)
-        {
-            run.Content.Contains(phrase, StringComparison.OrdinalIgnoreCase)
-                .Should().BeFalse($"final Polish response must not contain forbidden phrase '{phrase}'");
-        }
-
-        HandBenchmarkValidator.LooksPolish(run.Content).Should().BeTrue("final response must look Polish, not mostly English");
-        run.Content.Should().Contain("?", "therapist contract requires an open question to continue");
+        ValidateL4ForbiddenMarkers(input);
     }
 
     private static void AssertNoCompactKeys(string wire, string label)
@@ -255,18 +147,4 @@ internal static class HandSemanticBenchmarkValidator
         foreach (string verboseKey in VerboseKeys)
             wire.Should().NotContain(verboseKey, $"{label} must not contain verbose key '{verboseKey}'");
     }
-
-    private static void AssertAllowedKeysOnly(string wire, ISet<string> allowedKeys, string label)
-    {
-        foreach (string part in wire.Split('|').Skip(1))
-        {
-            int eq = part.IndexOf('=');
-            if (eq <= 0) continue;
-            string key = part[..eq];
-            allowedKeys.Should().Contain(key, $"{label} must not contain fallback or out-of-codec key '{key}'");
-        }
-    }
-
-    private static int CountTokenEquivalents(string text) =>
-        (int)Math.Ceiling(text.Length / 3.5);
 }

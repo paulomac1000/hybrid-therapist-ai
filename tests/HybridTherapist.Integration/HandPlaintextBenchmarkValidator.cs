@@ -8,35 +8,11 @@ using HybridTherapist.Application.Options;
 
 namespace HybridTherapist.Integration;
 
-internal static class HandPlaintextBenchmarkValidator
+internal class HandPlaintextBenchmarkValidator : HandBenchmarkValidatorBase
 {
-    private static readonly string[] L4ForbiddenInstructionMarkers =
-    {
-        "Use the information below",
-        "Read the M| messages",
-        "structured clinical context",
-        "Analyst memo keys",
-        "Supervisor memo keys",
-        "em=emotional state",
-        "sv=severity",
-        "ap=approach",
-    };
-
-    private static readonly string[] EnglishMarkers =
-    {
-        "what ", "when ", "i hear", "i understand", "anxiety", "panic attack",
-        "depression", "worry", "therapist", "you are", "tell me",
-    };
-
     // Theoretical Compact wire size baseline (~35 tokens) derived from
     // L2 + L3 Codec G memos observed in benchmark cassettes (see docs/benchmarks/hand-compact.md)
     private const int CompactTokensBaseline = 35;
-
-    private static readonly HashSet<string> PolishStopwords = new(StringComparer.OrdinalIgnoreCase)
-    {
-        "że", "nie", "się", "jest", "to", "jak", "co", "kiedy", "który", "która",
-        "które", "twoje", "twoja", "twojego", "cię", "ciebie", "dla", "bez", "przed",
-    };
 
     public static async Task<(BenchmarkRun Run, BenchmarkExpectations Expectations)> RunCassetteAsync(string cassettePath)
     {
@@ -103,8 +79,7 @@ internal static class HandPlaintextBenchmarkValidator
         l3Wire.Should().Contain("Technique:", "plaintext L3 must label technique");
         l3Wire.Should().Contain("Key question:", "plaintext L3 must label key question");
 
-        foreach (string marker in L4ForbiddenInstructionMarkers)
-            l4.Input.Should().NotContain(marker, $"L4 prompt must not contain format instruction marker '{marker}'");
+        ValidateL4ForbiddenMarkers(l4.Input);
 
         ValidateExpectedQuality(run, expected);
     }
@@ -122,90 +97,4 @@ internal static class HandPlaintextBenchmarkValidator
 
         return new TokenSavingsMetrics(plaintextTokens, compactTokens, compactTokens - plaintextTokens, savingsPercent);
     }
-
-    private static async Task<BenchmarkExpectations> ReadExpectationsAsync(string cassettePath)
-    {
-        string cassetteJson = await File.ReadAllTextAsync(cassettePath);
-        using JsonDocument cassetteDoc = JsonDocument.Parse(cassetteJson);
-        JsonElement expected = cassetteDoc.RootElement.GetProperty("expected_quality");
-
-        return new BenchmarkExpectations(
-            UserInputPl: cassetteDoc.RootElement.GetProperty("user_input_pl").GetString()!,
-            ExpectedPass: expected.GetProperty("pass").GetBoolean(),
-            MinQualityScore: expected.GetProperty("min_quality_score").GetInt32(),
-            RequiredTopics: ReadStringArray(expected, "required_topics"),
-            RequiredPhrasesPl: ReadStringArray(expected, "required_phrases_pl"),
-            ForbiddenPhrases: ReadStringArray(expected, "forbidden_phrases"));
-    }
-
-    private static BenchmarkMetadata ReadMetadata(JsonElement meta)
-    {
-        IReadOnlyList<string> topics = meta.TryGetProperty("topics", out JsonElement topicsEl)
-            && topicsEl.ValueKind == JsonValueKind.Array
-                ? topicsEl.EnumerateArray()
-                    .Select(t => t.GetString())
-                    .Where(t => !string.IsNullOrWhiteSpace(t))
-                    .Select(t => t!)
-                    .ToArray()
-                : Array.Empty<string>();
-
-        return new BenchmarkMetadata(
-            SessionId: meta.GetProperty("session_id").GetString()!,
-            Fallback: meta.GetProperty("fallback").GetBoolean(),
-            CrisisDetected: meta.GetProperty("crisis_detected").GetBoolean(),
-            Phase: meta.GetProperty("phase").GetString()!,
-            SupervisorApproach: meta.TryGetProperty("supervisor_approach", out JsonElement sa) ? sa.GetString() : null,
-            Topics: topics);
-    }
-
-    private static BenchmarkTraceEvent ReadTraceEvent(JsonElement evt) => new(
-        Layer: evt.GetProperty("layer").GetString()!,
-        Input: evt.GetProperty("input").GetString() ?? string.Empty,
-        Output: evt.GetProperty("output").GetString() ?? string.Empty,
-        WireFormat: evt.TryGetProperty("wire_format", out JsonElement wf) && wf.ValueKind != JsonValueKind.Null
-            ? wf.GetString()
-            : null,
-        Outcome: evt.GetProperty("outcome").GetString() ?? string.Empty);
-
-    private static string[] ReadStringArray(JsonElement root, string propertyName) =>
-        root.GetProperty(propertyName).EnumerateArray().Select(e => e.GetString()!).ToArray();
-
-    private static BenchmarkTraceEvent SingleLayer(BenchmarkRun run, string layer)
-    {
-        run.Events.Count(e => e.Layer == layer).Should().Be(1, $"trace must contain exactly one {layer} event");
-        return run.Events.Single(e => e.Layer == layer);
-    }
-
-    private static string WireOrOutput(BenchmarkTraceEvent evt, string label)
-    {
-        string wire = string.IsNullOrWhiteSpace(evt.WireFormat) ? evt.Output : evt.WireFormat!;
-        wire.Should().NotBeNullOrWhiteSpace($"{label} event must expose wire_format or output");
-        return wire;
-    }
-
-    private static void ValidateExpectedQuality(BenchmarkRun run, BenchmarkExpectations expected)
-    {
-        expected.ExpectedPass.Should().BeTrue("hand benchmark cassettes are strict passing scenarios");
-
-        foreach (string topic in expected.RequiredTopics)
-            run.Metadata.Topics.Should().Contain(topic, $"required topic '{topic}' must be present in metadata.topics");
-
-        foreach (string phrase in expected.RequiredPhrasesPl)
-        {
-            run.Content.Contains(phrase, StringComparison.OrdinalIgnoreCase)
-                .Should().BeTrue($"final Polish response must contain required phrase '{phrase}'");
-        }
-
-        foreach (string phrase in expected.ForbiddenPhrases)
-        {
-            run.Content.Contains(phrase, StringComparison.OrdinalIgnoreCase)
-                .Should().BeFalse($"final Polish response must not contain forbidden phrase '{phrase}'");
-        }
-
-        HandBenchmarkValidator.LooksPolish(run.Content).Should().BeTrue("final response must look Polish, not mostly English");
-        run.Content.Should().Contain("?", "therapist contract requires an open question to continue");
-    }
-
-    private static int CountTokenEquivalents(string text) =>
-        (int)Math.Ceiling(text.Length / 3.5);
 }
