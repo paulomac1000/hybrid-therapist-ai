@@ -41,7 +41,7 @@ public static partial class HandResponseDecoder
 
     private static string StripModelArtifacts(string raw)
     {
-        if (raw is null) return raw;
+        if (raw is null) return string.Empty;
         string s = ControlTokenPattern().Replace(raw, "");
         s = ProtocolArtifactPattern().Replace(s, "");
         return s.Trim();
