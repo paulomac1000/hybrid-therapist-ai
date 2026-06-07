@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "active_work_id": "e2e-debug-comprehensive-fix-b4152906",
+  "active_work_id": "coderabbit-comment-fixes-770e6832",
   "works": {
     "docs-audit-fix-57778d7d": {
       "work_id": "docs-audit-fix-57778d7d",
@@ -373,21 +373,119 @@
       "task_sessions": {},
       "ended_at": "2026-06-06T23:37:35.186Z",
       "elapsed_ms": 1062976
+    },
+    "coderabbit-comment-fixes-770e6832": {
+      "work_id": "coderabbit-comment-fixes-770e6832",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/coderabbit-comment-fixes.md",
+      "plan_name": "coderabbit-comment-fixes",
+      "status": "completed",
+      "started_at": "2026-06-07T13:45:51.591Z",
+      "updated_at": "2026-06-07T14:00:06.210Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {
+        "todo:1": {
+          "task_key": "todo:1",
+          "task_label": "1",
+          "task_title": "`.omo/plans/dockerfile-codec-fix.md`",
+          "session_id": "opencode:ses_15da0c232ffesCx0Ios8FUKNDy",
+          "agent": "Sisyphus-Junior",
+          "category": "quick",
+          "started_at": "2026-06-07T13:46:56.669Z",
+          "ended_at": "2026-06-07T13:57:25.037Z",
+          "elapsed_ms": 628368,
+          "status": "completed",
+          "updated_at": "2026-06-07T13:57:25.037Z"
+        },
+        "todo:5": {
+          "task_key": "todo:5",
+          "task_label": "5",
+          "task_title": "Fix HandJsonBenchmarkValidator.cs StrictCodecG restore",
+          "session_id": "opencode:ses_15da6cb53ffeIxe7xFG29PkBAj",
+          "agent": "Sisyphus-Junior",
+          "category": "quick",
+          "updated_at": "2026-06-07T13:51:16.343Z",
+          "started_at": "2026-06-07T13:51:00.387Z",
+          "status": "completed",
+          "ended_at": "2026-06-07T13:51:16.343Z",
+          "elapsed_ms": 15956
+        },
+        "todo:7": {
+          "task_key": "todo:7",
+          "task_label": "7",
+          "task_title": "Fix HandJsonBenchmarkValidator.cs MinQualityScore enforcement",
+          "session_id": "opencode:ses_15da46717ffet1dTl95fg10lBu",
+          "agent": "Sisyphus-Junior",
+          "category": "quick",
+          "updated_at": "2026-06-07T13:55:12.363Z",
+          "started_at": "2026-06-07T13:53:26.536Z",
+          "status": "completed",
+          "ended_at": "2026-06-07T13:55:12.363Z",
+          "elapsed_ms": 105827
+        }
+      },
+      "ended_at": "2026-06-07T14:00:06.210Z",
+      "elapsed_ms": 854619
     }
   },
-  "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/e2e-debug-comprehensive-fix.md",
-  "started_at": "2026-06-06T23:19:52.210Z",
+  "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/coderabbit-comment-fixes.md",
+  "started_at": "2026-06-07T13:45:51.591Z",
   "status": "completed",
-  "updated_at": "2026-06-06T23:37:35.186Z",
+  "updated_at": "2026-06-07T14:00:06.210Z",
   "session_ids": [
     "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
   ],
   "session_origins": {
     "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
   },
-  "plan_name": "e2e-debug-comprehensive-fix",
-  "task_sessions": {},
+  "plan_name": "coderabbit-comment-fixes",
+  "task_sessions": {
+    "todo:1": {
+      "task_key": "todo:1",
+      "task_label": "1",
+      "task_title": "`.omo/plans/dockerfile-codec-fix.md`",
+      "session_id": "opencode:ses_15da0c232ffesCx0Ios8FUKNDy",
+      "agent": "Sisyphus-Junior",
+      "category": "quick",
+      "started_at": "2026-06-07T13:46:56.669Z",
+      "ended_at": "2026-06-07T13:57:25.037Z",
+      "elapsed_ms": 628368,
+      "status": "completed",
+      "updated_at": "2026-06-07T13:57:25.037Z"
+    },
+    "todo:5": {
+      "task_key": "todo:5",
+      "task_label": "5",
+      "task_title": "Fix HandJsonBenchmarkValidator.cs StrictCodecG restore",
+      "session_id": "opencode:ses_15da6cb53ffeIxe7xFG29PkBAj",
+      "agent": "Sisyphus-Junior",
+      "category": "quick",
+      "updated_at": "2026-06-07T13:51:16.343Z",
+      "started_at": "2026-06-07T13:51:00.387Z",
+      "status": "completed",
+      "ended_at": "2026-06-07T13:51:16.343Z",
+      "elapsed_ms": 15956
+    },
+    "todo:7": {
+      "task_key": "todo:7",
+      "task_label": "7",
+      "task_title": "Fix HandJsonBenchmarkValidator.cs MinQualityScore enforcement",
+      "session_id": "opencode:ses_15da46717ffet1dTl95fg10lBu",
+      "agent": "Sisyphus-Junior",
+      "category": "quick",
+      "updated_at": "2026-06-07T13:55:12.363Z",
+      "started_at": "2026-06-07T13:53:26.536Z",
+      "status": "completed",
+      "ended_at": "2026-06-07T13:55:12.363Z",
+      "elapsed_ms": 105827
+    }
+  },
   "agent": "atlas",
-  "ended_at": "2026-06-06T23:37:35.186Z",
-  "elapsed_ms": 1062976
+  "ended_at": "2026-06-07T14:00:06.210Z",
+  "elapsed_ms": 854619
 }

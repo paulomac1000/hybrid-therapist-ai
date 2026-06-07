@@ -154,6 +154,35 @@ public sealed class QualityValidatorTests
         v.Ok.Should().BeTrue();
     }
 
+    [Fact]
+    public void ValidateTherapeuticQuality_EnglishReflectionWithQuestion_Ok()
+    {
+        // Reflection + question without advice keywords should NOT be rejected
+        // (calibrator is instructed to avoid advice language after prompt hardening)
+        var v = QualityValidator.ValidateTherapeuticQuality(
+            "That sounds really heavy. It makes sense you'd feel exhausted carrying this alone. What first comes to mind when you imagine feeling better?",
+            "EXPLORATION", 5);
+        v.Ok.Should().BeTrue("reflection markers ('that sounds', 'it makes sense') indicate therapeutic substance even without advice");
+    }
+
+    [Fact]
+    public void ValidateTherapeuticQuality_ThankYouAcknowledgment_Ok()
+    {
+        var v = QualityValidator.ValidateTherapeuticQuality(
+            "Thank you for sharing that. I can imagine how draining that must feel. What helped you get through the worst moments?",
+            "DIGGING", 5);
+        v.Ok.Should().BeTrue("acknowledgment markers ('thank you for', 'I can imagine') indicate therapeutic substance");
+    }
+
+    [Fact]
+    public void ValidateTherapeuticQuality_ValidationWithQuestion_Ok()
+    {
+        var v = QualityValidator.ValidateTherapeuticQuality(
+            "That must be incredibly difficult. I can see why you'd feel overwhelmed. What does support look like for you right now?",
+            "WORKING", 6);
+        v.Ok.Should().BeTrue("validation markers ('that must be', 'I can see why') pass the check");
+    }
+
     // ── English detectors ─────────────────────────────────────────────────────
 
     [Fact]
@@ -200,11 +229,21 @@ public sealed class QualityValidatorTests
     [Theory]
     [InlineData("I hear you. The situation in your country must be difficult. What helps you cope?")]
     [InlineData("Can you tell me more? Your entry in the journal was meaningful.")]
-    [InlineData("That sounds like poetry. How does it make you feel?")]
     public void ValidateTherapeuticQuality_TrySubstringNotAdvice_FailsAfterMessages(string text)
     {
         var v = QualityValidator.ValidateTherapeuticQuality(text, "EXPLORATION", 5);
-        v.Ok.Should().BeFalse("'try' substring in 'country'/'entry'/'poetry' must not count as advice");
+        v.Ok.Should().BeFalse("'try' substring in 'country'/'entry' must not count as advice");
         v.Reason.Should().Be("only_questions_after_4_messages");
+    }
+
+    [Fact]
+    public void ValidateTherapeuticQuality_ReflectionWithPoetry_Ok()
+    {
+        // "That sounds like poetry" contains reflection marker but "try" in "poetry"
+        // is NOT advice — the response should pass because reflection IS therapeutic substance
+        var v = QualityValidator.ValidateTherapeuticQuality(
+            "That sounds like poetry. How does it make you feel?",
+            "EXPLORATION", 5);
+        v.Ok.Should().BeTrue("reflection marker 'that sounds' overrides 'try' substring in 'poetry' — reflection is therapeutic");
     }
 }
