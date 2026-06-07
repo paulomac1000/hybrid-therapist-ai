@@ -113,6 +113,7 @@ internal static class HandSemanticBenchmarkValidator
         string l2Compact = l2Wire.Replace("em=", "e7=").Replace("sv=", "s9=").Replace("ri=", "x4=").Replace("cp=", "y1=").Replace("ev=", "q3=");
         string l3Compact = l3Wire.Replace("ap=", "p3=").Replace("tk=", "t5=").Replace("kq=", "k2=").Replace("rn=", "r8=").Replace("sg=", "g6=").Replace("cf=", "f0=");
 
+        bool originalStrictMode = TokenSavingsTracker.StrictCodecG;
         TokenSavingsTracker.StrictCodecG = true;
         try
         {
@@ -127,7 +128,7 @@ internal static class HandSemanticBenchmarkValidator
         }
         finally
         {
-            TokenSavingsTracker.StrictCodecG = false;
+            TokenSavingsTracker.StrictCodecG = originalStrictMode;
         }
     }
 

@@ -129,6 +129,7 @@ internal static class HandJsonBenchmarkValidator
         string l2Compact = ConvertJsonToCompactL2(l2Wire);
         string l3Compact = ConvertJsonToCompactL3(l3Wire);
 
+        bool originalStrictMode = TokenSavingsTracker.StrictCodecG;
         TokenSavingsTracker.StrictCodecG = true;
         try
         {
@@ -143,7 +144,7 @@ internal static class HandJsonBenchmarkValidator
         }
         finally
         {
-            TokenSavingsTracker.StrictCodecG = false;
+            TokenSavingsTracker.StrictCodecG = originalStrictMode;
         }
     }
 
