@@ -323,7 +323,8 @@ public sealed class LiveOllamaE2ETests
             string reply = lastDoc.RootElement.GetProperty("choices")[0]
                 .GetProperty("message").GetProperty("content").GetString()!;
 
-            _output.WriteLine($"msg{i+1}: {userMessages[i][..Math.Min(40, userMessages[i].Length)]}... → len={reply.Length}");
+            string truncated = userMessages[i][..Math.Min(40, userMessages[i].Length)];
+            _output.WriteLine($"msg{i + 1}: {truncated}... → len={reply.Length}");
 
             history.Add(new { role = "user", content = userMessages[i] });
             history.Add(new { role = "assistant", content = reply });

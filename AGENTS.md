@@ -17,6 +17,9 @@ last_verified: 2026-06-06
 # Build (check after every .cs change)
 dotnet build HybridTherapist.sln -c Release --nologo -v q
 
+# Format check (MUST pass on CI — run before push)
+dotnet format HybridTherapist.sln --verify-no-changes --no-restore
+
 # Unit tests (fast, no Docker/Ollama)
 dotnet test tests/HybridTherapist.Tests -c Release --no-build --nologo
 
@@ -111,11 +114,12 @@ This repository uses a native git hook at `.githooks/pre-commit` that enforces c
 ```bash
 # The hook runs automatically on every commit (configured via core.hooksPath).
 # It performs these steps in order:
-#   1. dotnet restore        (L1 — blocking)
-#   2. dotnet build Release  (L1 — blocking)
-#   3. dotnet test unit      (L1 — blocking)
-#   4. semgrep               (L2 — non-blocking, tool may be missing)
-#   5. AFDS docs validation  (L3 — non-blocking)
+#   1. dotnet restore                                    (L1 — blocking)
+#   2. dotnet format HybridTherapist.sln --verify-no-changes --no-restore  (L2 — blocking on CI)
+#   3. dotnet build Release                              (L1 — blocking)
+#   4. dotnet test unit                                  (L1 — blocking)
+#   5. semgrep                                           (L2 — non-blocking, tool may be missing)
+#   6. AFDS docs validation                              (L3 — non-blocking)
 #
 # To bypass (only for urgent hotfixes):
 git commit --no-verify

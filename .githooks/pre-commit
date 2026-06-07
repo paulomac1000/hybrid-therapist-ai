@@ -27,12 +27,14 @@ else
     fail "restore failed"
 fi
 
-# ── 2. dotnet format (check-only — non-blocking for tool issues) ────────────
+# ── 2. dotnet format (check-only — L2, blocking on CI) ─────────────────────
 step "dotnet format --verify-no-changes"
-if $DOTNET format --verify-no-changes 2>/dev/null; then
+if $DOTNET format HybridTherapist.sln --verify-no-changes --no-restore 2>/dev/null; then
     pass "format clean"
+elif [ -n "${CI:-}" ]; then
+    fail "WHITESPACE formatting errors — run 'dotnet format' locally"
 else
-    echo "  ⚠ format check failed (may be infra — run 'dotnet format' manually)"
+    echo "  ⚠ format check failed (may be build-host infra — run 'dotnet format' manually if CI fails)"
 fi
 
 # ── 3. dotnet build ────────────────────────────────────────────────────────
