@@ -28,6 +28,10 @@ internal static class HandPlaintextBenchmarkValidator
         "depression", "worry", "therapist", "you are", "tell me",
     };
 
+    // Theoretical Compact wire size baseline (~35 tokens) derived from
+    // L2 + L3 Codec G memos observed in benchmark cassettes (see docs/benchmarks/hand-compact.md)
+    private const int CompactTokensBaseline = 35;
+
     private static readonly HashSet<string> PolishStopwords = new(StringComparer.OrdinalIgnoreCase)
     {
         "że", "nie", "się", "jest", "to", "jak", "co", "kiedy", "który", "która",
@@ -111,8 +115,7 @@ internal static class HandPlaintextBenchmarkValidator
         string l3Wire = WireOrOutput(SingleLayer(run, "L3_supervisor"), "L3");
         int plaintextTokens = CountTokenEquivalents(l2Wire + "\n" + l3Wire);
 
-        // Theoretical Compact wire size baseline is ~35 tokens
-        int compactTokens = 35;
+        int compactTokens = CompactTokensBaseline;
         double savingsPercent = compactTokens > 0
             ? Math.Round((1.0 - (double)plaintextTokens / compactTokens) * 100, 1)
             : 0;

@@ -272,6 +272,7 @@ internal static class HandJsonBenchmarkValidator
 
         HandBenchmarkValidator.LooksPolish(run.Content).Should().BeTrue("final response must look Polish, not mostly English");
         run.Content.Should().Contain("?", "therapist contract requires an open question to continue");
+
     }
 
     private static int CountTokenEquivalents(string text) =>
