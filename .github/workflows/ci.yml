@@ -126,7 +126,11 @@ jobs:
           path: ./TestResults/CoverageReport/SummaryGithub.md
 
       - name: SonarQube End
-        run: dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+        if: vars.SONAR_HOST_URL != '' && secrets.SONAR_TOKEN != ''
+        continue-on-error: true
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: dotnet sonarscanner end /d:sonar.token="$SONAR_TOKEN"
 
       - name: Upload test results
         if: always()
