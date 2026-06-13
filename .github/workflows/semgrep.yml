@@ -42,4 +42,34 @@ jobs:
         uses: github/codeql-action/upload-sarif@8aad20d150bbac5944a9f9d289da16a4b0d87c1e  # v4
         with:
           sarif_file: semgrep.sarif
-          category: semgrep-full
+          category: semgrep
+
+      - name: Post Semgrep results as PR comment
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@373c709c69115d41ff229c7e5df9f8788daa9553  # v9
+        with:
+          script: |
+            const marker = '<!-- semgrep-bot -->';
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find(c => c.body.includes(marker));
+            const findings = '${{ steps.semgrep.outputs.findings }}';
+            const body = `${marker}\n## Semgrep Results\n\n\`\`\`\n${findings || 'No findings reported.'}\n\`\`\`\n`;
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }

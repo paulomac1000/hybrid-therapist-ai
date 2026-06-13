@@ -58,3 +58,4 @@ local-packages/*.snupkg
 
 # SonarQube scanner working directory (generated at scan time)
 .sonarqube/
+.omo

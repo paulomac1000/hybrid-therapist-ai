@@ -17,6 +17,10 @@ last_verified: 2026-06-06
 # Build (check after every .cs change)
 dotnet build HybridTherapist.sln -c Release --nologo -v q
 
+# Local builds require .NET SDK 10.0+ (installed at ~/.dotnet/sdk/10.0.300)
+export DOTNET_ROOT=$HOME/.dotnet
+export PATH=$DOTNET_ROOT:$PATH
+
 # Format check (MUST pass on CI — run before push)
 dotnet format HybridTherapist.sln --verify-no-changes --no-restore
 
