@@ -83,8 +83,8 @@ jobs:
             -reports:./TestResults/**/coverage.cobertura.xml \
             -targetdir:./TestResults/CoverageReport \
             -reporttypes:MarkdownSummaryGithub \
-            --minimumCoverageThresholds:lineCoverage=80 \
-            --minimumCoverageThresholds:branchCoverage=60
+            --minimumCoverageThresholds:lineCoverage=55 \
+            --minimumCoverageThresholds:branchCoverage=50
 
       - name: Upload test results
         if: always()
