@@ -67,30 +67,24 @@ jobs:
             --logger "trx;LogFileName=test-results.trx" \
             --results-directory ./TestResults
 
-      - name: Generate coverage report
+      - name: Verify coverage data exists
+        run: |
+          COVFILE=$(find ./TestResults -name 'coverage.cobertura.xml' 2>/dev/null | head -1)
+          if [ -z "$COVFILE" ]; then
+            echo "❌ No coverage.cobertura.xml found — coverage collection failed"
+            exit 1
+          fi
+          echo "Found: $COVFILE"
+
+      - name: Generate coverage report and check thresholds
         run: |
           dotnet tool install -g dotnet-reportgenerator-globaltool
           reportgenerator \
             -reports:./TestResults/**/coverage.cobertura.xml \
             -targetdir:./TestResults/CoverageReport \
-            -reporttypes:MarkdownSummaryGithub
-
-      - name: Check coverage thresholds
-        if: hashFiles('./TestResults/**/coverage.cobertura.xml') != ''
-        run: |
-          LINE_COV=$(grep -oP 'Line coverage: \K[0-9.]+(?=%)' ./TestResults/CoverageReport/SummaryGithub.md 2>/dev/null || echo "0")
-          BRANCH_COV=$(grep -oP 'Branch coverage: \K[0-9.]+(?=%)' ./TestResults/CoverageReport/SummaryGithub.md 2>/dev/null || echo "0")
-          echo "Line coverage: ${LINE_COV}% (threshold: 75%)"
-          echo "Branch coverage: ${BRANCH_COV}% (threshold: 60%)"
-          if (( $(echo "$LINE_COV < 75" | bc -l) )); then
-            echo "❌ Line coverage ${LINE_COV}% is below 75% threshold"
-            exit 1
-          fi
-          if (( $(echo "$BRANCH_COV < 60" | bc -l) )); then
-            echo "❌ Branch coverage ${BRANCH_COV}% is below 60% threshold"
-            exit 1
-          fi
-          echo "✅ Coverage thresholds met"
+            -reporttypes:MarkdownSummaryGithub \
+            --minimumCoverageThresholds:lineCoverage=80 \
+            --minimumCoverageThresholds:branchCoverage=60
 
       - name: Upload test results
         if: always()
