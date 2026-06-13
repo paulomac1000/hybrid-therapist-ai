@@ -61,12 +61,33 @@ jobs:
         run: dotnet tool install --global dotnet-sonarscanner
 
       - name: SonarQube Begin (PR)
-        if: github.event_name == 'pull_request'
-        run: dotnet sonarscanner begin /k:"hybrid-therapist" /d:sonar.host.url="${{ vars.SONAR_HOST_URL }}" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.pullrequest.key="${{ github.event.pull_request.number }}" /d:sonar.pullrequest.branch="${{ github.head_ref }}" /d:sonar.pullrequest.base="${{ github.base_ref }}" /d:sonar.scm.revision="${{ github.event.pull_request.head.sha }}"
+        if: github.event_name == 'pull_request' && vars.SONAR_HOST_URL != '' && secrets.SONAR_TOKEN != ''
+        continue-on-error: true
+        env:
+          SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          dotnet sonarscanner begin \
+            /k:"hybrid-therapist" \
+            /d:sonar.host.url="$SONAR_HOST_URL" \
+            /d:sonar.token="$SONAR_TOKEN" \
+            /d:sonar.pullrequest.key="${{ github.event.pull_request.number }}" \
+            /d:sonar.pullrequest.branch="${{ github.head_ref }}" \
+            /d:sonar.pullrequest.base="${{ github.base_ref }}" \
+            /d:sonar.scm.revision="${{ github.event.pull_request.head.sha }}"
 
       - name: SonarQube Begin (main)
-        if: github.event_name != 'pull_request'
-        run: dotnet sonarscanner begin /k:"hybrid-therapist" /d:sonar.host.url="${{ vars.SONAR_HOST_URL }}" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.branch.name="${{ github.ref_name }}"
+        if: github.event_name != 'pull_request' && vars.SONAR_HOST_URL != '' && secrets.SONAR_TOKEN != ''
+        continue-on-error: true
+        env:
+          SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          dotnet sonarscanner begin \
+            /k:"hybrid-therapist" \
+            /d:sonar.host.url="$SONAR_HOST_URL" \
+            /d:sonar.token="$SONAR_TOKEN" \
+            /d:sonar.branch.name="${{ github.ref_name }}"
 
       - name: Restore
         run: dotnet restore HybridTherapist.sln
