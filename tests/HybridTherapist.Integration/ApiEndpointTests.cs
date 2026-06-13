@@ -57,7 +57,7 @@ public sealed class ChatEndpointsTests : IClassFixture<WebApplicationFactory<Pro
     }
 
     [Fact]
-    public async Task PostChatCompletions_ValidRequest_Returns200()
+    public async Task PostChatCompletions_ValidRequest_IsRouted()
     {
         var body = new
         {
@@ -67,7 +67,8 @@ public sealed class ChatEndpointsTests : IClassFixture<WebApplicationFactory<Pro
 
         HttpResponseMessage response = await _client.PostAsJsonAsync("/v1/chat/completions", body);
 
-        // Should route to handler (pipeline falls back gracefully, returns 200, not 404)
+        // Smoke test: pipeline may gracefully degrade (503, 504, or 200),
+        // but confirmed the route exists and request reached the handler
         response.StatusCode.Should().NotBe(HttpStatusCode.NotFound);
     }
 
