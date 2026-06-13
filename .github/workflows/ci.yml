@@ -66,15 +66,19 @@ jobs:
         env:
           SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_BRANCH: ${{ github.head_ref }}
+          PR_BASE: ${{ github.base_ref }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           dotnet sonarscanner begin \
             /k:"hybrid-therapist" \
             /d:sonar.host.url="$SONAR_HOST_URL" \
             /d:sonar.token="$SONAR_TOKEN" \
-            /d:sonar.pullrequest.key="${{ github.event.pull_request.number }}" \
-            /d:sonar.pullrequest.branch="${{ github.head_ref }}" \
-            /d:sonar.pullrequest.base="${{ github.base_ref }}" \
-            /d:sonar.scm.revision="${{ github.event.pull_request.head.sha }}"
+            /d:sonar.pullrequest.key="$PR_NUMBER" \
+            /d:sonar.pullrequest.branch="$PR_BRANCH" \
+            /d:sonar.pullrequest.base="$PR_BASE" \
+            /d:sonar.scm.revision="$PR_HEAD_SHA"
 
       - name: SonarQube Begin (main)
         if: github.event_name != 'pull_request' && vars.SONAR_HOST_URL != '' && secrets.SONAR_TOKEN != ''
