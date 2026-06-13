@@ -126,6 +126,7 @@ jobs:
 
       - name: Post coverage summary to PR
         if: github.event_name == 'pull_request' && always() && hashFiles('./TestResults/CoverageReport/SummaryGithub.md') != ''
+        continue-on-error: true
         uses: marocchino/sticky-pull-request-comment@0ea0beb66eb9baf113663a64ec522f60e49231c0  # v3.0.4
         with:
           path: ./TestResults/CoverageReport/SummaryGithub.md
