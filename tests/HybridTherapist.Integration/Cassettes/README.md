@@ -72,7 +72,7 @@ WireMock.Net's auto-record produces verbose, model-specific JSON that's hard to 
 - **Match by substring** — fields like timestamps and per-request UUIDs don't matter, so we don't capture them.
 - **Hand-editable** — adjust the L4 output to test echo detection without re-recording.
 
-The trade-off: cassettes don't capture full HTTP fidelity (headers, exact streaming chunks). That's fine for our pipeline — the only thing we test is whether each layer's content survives the `TherapistHandDecoder` and shapes the next layer's input correctly.
+The trade-off: cassettes don't capture full HTTP fidelity (headers, exact streaming chunks). That's fine for our pipeline — the only thing we test is whether each layer's content survives the `HandResponseDecoder` and shapes the next layer's input correctly.
 
 ## Currently recorded
 

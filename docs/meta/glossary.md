@@ -18,7 +18,7 @@ owners: ["hybrid-therapist"]
 
 ## DEFINITIONS
 
-- **Socrates Pipeline** — The 17-layer multi-agent therapy pipeline orchestrating 6 local LLMs via Ollama.
+- **Socrates Pipeline** — The 19-layer multi-agent therapy pipeline orchestrating 6 local LLMs via Ollama.
 - **M| Memo** — Wire-format performative (`MemoBuilder` output) for inter-layer clinical communication between L2 Analyst and L3 Supervisor. Format: `M|L=N|key=value|...`.
 - **R| Result** — Wire-format performative for LLM output carrying confidence and answer text. Format: `R|C=0.95|V=answer`.
 - **Implicit Priming** — Teaching a model the wire format through conversation-history examples (checkpoints) rather than explicit system-prompt instructions.

@@ -21,7 +21,7 @@ owners: ["hybrid-therapist"]
 
 | doc_id | Path | Type | Status | Description |
 |--------|------|------|--------|-------------|
-| `sys.socrates-pipeline` | `docs/architecture.md` | system | active | Architecture of the 17-layer Socrates pipeline with HandCodec wire format |
+| `sys.socrates-pipeline` | `docs/architecture.md` | system | active | Architecture of the 19-layer Socrates pipeline with HandCodec wire format |
 | `guide.socrates-pipeline` | `docs/socrates-pipeline.md` | guide | active | Walkthrough: wire format, Implicit Priming, resilience ladder |
 | `ref.api-reference` | `docs/api.md` | ref | active | OpenAI-compatible HTTP API reference |
 | `ref.layer-necessity` | `docs/layer-necessity.md` | ref | active | Necessity-proving test contracts per pipeline layer |

@@ -1,5 +1,5 @@
 ---
-description: Architecture of the 17-layer Socrates multi-agent therapy pipeline with HandCodec wire format integration
+description: Architecture of the 19-layer Socrates multi-agent therapy pipeline with HandCodec wire format integration
 doc_id: sys.socrates-pipeline
 type: system
 status: active
@@ -28,7 +28,7 @@ owners: ["hybrid-therapist"]
                        └──────┬───────┘
                               ▼
                        ┌──────────────┐
-                       │ TherapistFlow│  orchestrates 17 layers
+                       │ TherapistFlow│  orchestrates 19 layers
                        └──────┬───────┘
         ┌─────────────────────┼─────────────────────┐
         ▼                     ▼                     ▼
@@ -59,7 +59,7 @@ Five .NET projects:
 | `HybridTherapist.Domain` | Interfaces, models, `SessionPhase`, `TopicRegistry`, `RuptureDetector`, `ThematicAlignment`, `ResponseStrategySelector`, `QualityValidator` |
 | `HybridTherapist.Security` | `CrisisGate`, `PrivacySanitizer` — must run before any LLM call |
 | `HybridTherapist.Infrastructure` | `OllamaAdapter`, `InMemoryTherapyStateRepository`, `InMemoryTraceSink` |
-| `HybridTherapist.Application` | `TherapistFlow`, `TherapistLayerService`, `AnalystLayer`, `SupervisorLayer`, `TherapyMemoryService`, `TherapistHandEncoder/Decoder` |
+| `HybridTherapist.Application` | `TherapistFlow`, `TherapistLayerService`, `AnalystLayer`, `SupervisorLayer`, `TherapyMemoryService`, `HandResponseDecoder`, `HandCheckpointLibrary`, `HandConversationBuilder` |
 | `HybridTherapist.Api` | ASP.NET Core host, `/v1/chat/completions` (JSON + SSE), `/v1/models`, `/v1/trace/{sessionId}`, DI wiring |
 
 External dependencies:
@@ -70,7 +70,7 @@ External dependencies:
 
 The Socrates pipeline runs **entirely on local Ollama**. No OpenRouter. No external APIs. All LLM calls go to `http://ollama:11434/api/chat`. Translator quality is safeguarded by a quality gate: Bielik 7B, single pass → static Polish fallback if output still looks like English.
 
-## 17-layer Socrates pipeline
+## 19-layer Socrates pipeline
 
 ```
 Layer  Name                  Implementation                                       Feeds downstream
@@ -104,15 +104,15 @@ Layer  Name                  Implementation                                     
 
 **Necessity invariant**: every layer has a corresponding test in `LayerNecessityTests` that fails if the layer's contribution is bypassed. No layer is "dead weight" — each one demonstrably shapes the output, blocks unsafe data, or enables a downstream consumer.
 
-### Layer taxonomy — why 17 is not "too many"
+### Layer taxonomy — why 19 is not "too many"
 
-The 17-layer count is misleading if read as "17 sequential LLM calls". In reality, only **6 layers** invoke an LLM (each costing 5-15s). The remaining 11 are sub-millisecond in-process operations:
+The 19-layer count is misleading if read as "19 sequential LLM calls". In reality, only **7 layers** invoke an LLM (each costing 5-15s). The remaining 12 are sub-millisecond in-process operations:
 
 | Category | Layers | Runtime cost | Purpose |
 |----------|--------|--------------|---------|
 | **Safety Guards** | L-1 CrisisGate, L0 PrivacySanitizer | < 1ms each, **mandatory** | Crisis hard-stop + PII redaction — these are never optional |
 | **State & Strategy** | 1-5 (StateLoader, TopicExtraction, PhaseMachine, RuptureDetector, ResponseStrategy) | < 1ms each | In-memory lookups, regex, enum selection |
-| **LLM Pipeline** | L1 PL→EN, L2 Analyst, L3 Supervisor, L4 Therapist, L6 Calibrator, L7 EN→PL | 5-15s each | The actual multi-agent orchestration core |
+| **LLM Pipeline** | L1 PL→EN, L2 Analyst, L3 Supervisor, L4 Therapist, L5 MemoryService, L6 Calibrator, L7 EN→PL | 5-15s each | The actual multi-agent orchestration core |
 | **QA Gates** | QA1, QA2, ThematicAlignment | < 1ms each | Output validation — echo, leakage, language checks |
 | **Post-processing** | Disclaimer, Audit | < 1ms each | Conditional append + structured logging |
 
@@ -153,9 +153,9 @@ The `HybridTherapist.Application/Hand/` directory contains thin **facade classes
 
 | Facade file | Delegates to (HandRuntime) |
 |---|---|
-| `HandConversationBuilder.cs` | `HandRuntime.ConversationBuilder` |
-| `HandResponseDecoder.cs` | `HandRuntime.ResponseDecoder` |
-| `HandCheckpointLibrary.cs` | `HandRuntime.CheckpointLibrary` |
+| `HandConversationBuilder.cs` | `HandRuntime.HandConversationBuilder` |
+| `HandResponseDecoder.cs` | `HandRuntime.HandResponseDecoder` |
+| `HandCheckpointLibrary.cs` | `HandRuntime.HandCheckpointLibrary` |
 
 This pattern allows the application to inject domain-specific configuration (e.g., the Polish CrisisKeywordDetector via `HandResilientOptions.CrisisDetector`) while delegating all protocol-level logic to the domain-agnostic runtime.
 
@@ -210,7 +210,7 @@ layers never see a broken input.
 
 Two QA stages run after the language-generating layers:
 
-1. **English-side QA** (after L6 Calibrator) — catches echo of user input, too-short responses, and prompt template leakage (`confidence_decimal`, `[ANALYST CONTEXT]` (this is an intentional QA leakage pattern — `QualityValidator.cs:138` explicitly checks for it), and other template artifacts).
+1. **English-side QA** (after L6 Calibrator) — catches echo of user input, too-short responses, and prompt template leakage (`confidence_decimal`, `[ANALYST CONTEXT]` (this is an intentional QA leakage pattern — `QualityValidator.cs:153` explicitly checks for it), and other template artifacts).
 2. **Polish-side QA** (after L7 Translator) — verifies the output is actually Polish (diacritic ratio), wasn't an echo, doesn't contain wire-format remnants.
 
 Failure of either gate triggers a fallback: EN-side falls back to L4 draft, PL-side falls back to a static apology message.

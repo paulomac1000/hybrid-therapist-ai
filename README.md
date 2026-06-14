@@ -7,7 +7,7 @@ Runs entirely locally — no cloud, no per-token billing, on a single ~$200 GPU.
 
 ## What is this?
 
-Hybrid Therapist uses a **17-layer Socrates pipeline** — a team of six specialized,
+Hybrid Therapist uses a **19-layer Socrates pipeline** — a team of six specialized,
 local LLMs (via Ollama), each performing a single task: translation, emotional analysis,
 therapeutic planning, response generation, and quality control.
 
@@ -56,8 +56,10 @@ User (PL) → CrisisGate → PrivacySanitizer
                        ↓
                  L7 Translator EN→PL (Bielik 7B)
                        ↓
-                 User (Polish response)
+                  User (Polish response)
 ```
+
+> **Note:** The diagram above shows only the major LLM layers. The full pipeline has 19 layers including safety guards, state management, strategy selection, memory, quality gates, and audit — see [docs/architecture.md](docs/architecture.md) for the complete layer table.
 
 Each layer has a single responsibility:
 
@@ -169,7 +171,7 @@ Models run sequentially — only one loaded at a time. Peak usage: ~4.9 GB (Supe
 
 ## Documentation
 
-- [docs/architecture.md](docs/architecture.md) — architecture, 17 layers, data flow
+- [docs/architecture.md](docs/architecture.md) — architecture, 19 layers, data flow
 - [docs/socrates-pipeline.md](docs/socrates-pipeline.md) — H.A.N.D. protocol, Implicit Priming, resilience ladder
 - [docs/api.md](docs/api.md) — API reference (OpenAI-compatible, SSE, trace)
 - [docs/security.md](docs/security.md) — CrisisGate, PrivacySanitizer, security invariants
@@ -183,7 +185,7 @@ clinically validated. Do not use in situations requiring professional psychologi
 ## External Dependencies
 
 - [HandCodec](https://github.com/paulomac1000/hand-codec) — compact wire format for inter-model communication
-- [HandRuntime](https://github.com/paulomac1000/hand-codec) — layer orchestration, Implicit Priming, resilience ladder (same package as HandCodec)
+- [HandRuntime](https://github.com/paulomac1000/hand-codec) — layer orchestration, Implicit Priming, resilience ladder (separate package from HandCodec)
 - [Ollama](https://ollama.com) — local LLM runtime
 
 ## License
