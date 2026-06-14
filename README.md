@@ -1,23 +1,19 @@
 # Hybrid Therapist
 
 An experimental, multi-agent AI therapist operating in Polish.
-Runs entirely locally — no cloud, no per-token billing, on a single ~$200 GPU.
+Runs entirely on your hardware — no cloud, no API costs, on a single ~$200 GPU.
+
+> **Not medical software.** The therapy domain is used exclusively as a stress-test
+> for multi-agent coordination, safety gates, privacy redaction, and compact inter-agent
+> communication. This is a research experiment, not a substitute for professional help.
 
 ---
 
 ## What is this?
 
-Hybrid Therapist uses a **19-layer Socrates pipeline** — a team of six specialized,
-local LLMs (via Ollama), each performing a single task: translation, emotional analysis,
+Hybrid Therapist uses a **19-layer Socrates pipeline** — seven specialized local LLMs
+(via Ollama), each performing a single task: translation, emotional analysis,
 therapeutic planning, response generation, and quality control.
-
-Instead of asking one large model to "be a psychologist", the pipeline distributes
-responsibility: each model does what it does best, and their outputs are combined into
-a coherent therapeutic response.
-
-**This is not a substitute for professional therapy.** It is a research experiment
-investigating whether a team of small, local models can perform better in therapeutic
-conversation than a single general-purpose model.
 
 ## Why multiple models instead of one?
 
@@ -127,6 +123,37 @@ curl -X POST http://localhost:8080/v1/chat/completions \
   -d '{"model":"hybrid-therapist","messages":[{"role":"user","content":"chcę skończyć z sobą"}]}'
 #: → response will contain "116 123" (Polish helpline)
 ```
+
+## Pipeline Trace
+
+Every response includes a `/v1/trace/{sessionId}` endpoint showing exactly what each
+layer did — which model, how long it took, what the inter-agent wire format looked like,
+and the final output:
+
+```json
+{
+  "session_id": "sess_141a42ca06a8db06",
+  "event_count": 6,
+  "events": [
+    {"layer":"L1_pl_en",     "model":"Bielik 7B",             "duration_ms":6273,
+     "outcome":"ok", "output":"I can't sleep, I wake up at 3 AM..."},
+    {"layer":"L2_analyst",   "model":"MentaLLaMA 7B",         "duration_ms":7321,
+     "outcome":"ok", "wire_format":"M|L=2|e7=depression|s9=high|x4=overwhelmed|..."},
+    {"layer":"L3_supervisor","model":"PsyLLM 8B",              "duration_ms":9210,
+     "outcome":"ok", "wire_format":"M|L=3|p3=cognitive_behavioral|t5=sleep_schedule|..."},
+    {"layer":"L4_therapist", "model":"PsychoCounsel 8B",       "duration_ms":10298,
+     "outcome":"ok", "output":"I sense that you're feeling really stuck right now..."},
+    {"layer":"L6_calibrator","model":"Llama4-Dolphin 8B",      "duration_ms":9638,
+     "outcome":"ok", "output":"Rozumiem, że masz trudności z ponownym zaśnięciem..."},
+    {"layer":"L7_en_pl",     "model":"Bielik 7B",             "duration_ms":4281,
+     "outcome":"ok", "output":"...polska odpowiedź terapeutyczna..."}
+  ]
+}
+```
+
+This is the killer feature: you don't guess what the pipeline did — you see every layer's
+input, output, wire format, timing, and error state. Perfect for debugging multi-agent
+orchestration.
 
 ## Configuration
 

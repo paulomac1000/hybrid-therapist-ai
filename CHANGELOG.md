@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.4.0 (2026-06-04)
+## v0.4.0 (2026-06-14)
 
 ### SonarQube quality cleanup
 - Fixed `app.Run()` → `await app.RunAsync()` in Program.cs (S6966)
@@ -12,7 +12,7 @@
 - Suppressed 3× S3358 nested ternary in `ResponseStrategySelector` — intentional phase×severity map
 - Refactored `TokenSavingsTracker.ExpandMemoToPlaintext` — 9 repetitive if-blocks replaced with table-driven `_fieldDefs` array. Cognitive complexity: 33 → estimated ~5
 - Extracted `ParseSupervisorResponse()` from `SupervisorLayer.RunAsync` — cognitive complexity: 18 → <15
-- Suppressed S3776 with rationale comments for: `TherapistFlow.ExecuteAsync` (17-layer orchestration), `ChatEndpoints.HandleCompletions` (HTTP request/streaming handler), `MemorySummaryParser.ParseTopicLine` (string parser)
+- Suppressed S3776 with rationale comments for: `TherapistFlow.ExecuteAsync` (19-layer orchestration), `ChatEndpoints.HandleCompletions` (HTTP request/streaming handler), `MemorySummaryParser.ParseTopicLine` (string parser)
 - Suppressed S107 with rationale comments for: `TherapistFlow` constructor (DI), `RunL4TherapistAsync` (pipeline context)
 
 ### HandCodec upgrade: 0.2.1 → 0.4.0
@@ -82,6 +82,50 @@
 - Refactored 4 HandBenchmarkValidators into `HandBenchmarkValidatorBase` — eliminated ~264 lines of duplicated code
 - Resolved 25× CA1861 array allocation code smells across QualityValidator and benchmark test files
 - Added API endpoint integration tests (`ChatEndpoints` + `TraceEndpoints`) with `WebApplicationFactory`
+
+### CI/CD overhaul
+- **Coverage gate** — reportgenerator native thresholds replacing fragile grep+bc, coverage summary posted as sticky PR comment
+- **NuGet pack+publish** — auto-publishes HandCodec/HandRuntime to GitHub Packages on tag push
+- **SonarQube scan** — conditional on SONAR_HOST_URL, continue-on-error for forks, community-branch-plugin
+- **Cassette benchmarks** — CI job running all 4 hand-benchmark variants
+- **persist-credentials: false** on all 8 checkout steps across 6 workflow files
+- **Semgrep** — SARIF category, PR comment bot, shell-injection hardening
+- **Docs Validation** — incremental changed-files, PR comment bot
+- **Dependabot** — dotnet-sdk ecosystem
+- CI: 3/3 green (CI, Semgrep, Documentation Validation)
+
+### Precommit hooks
+- **10-step pre-commit hook**: merge conflicts → large files → secrets → trailing whitespace → restore → format → build → test → semgrep → AFDS
+- **commit-msg**: conventional commits validation
+- **pre-push**: branch naming validation
+- Config contract: `.github/precommit-config.yaml`
+
+### .NET 10 upgrade
+- Target framework: `net8.0` → `net10.0` across all 7 projects
+- `global.json`: SDK 10.0.300, `rollForward latestFeature`
+- `Directory.Build.props`: shared Nullable, ImplicitUsings, LangVersion
+- `tests/coverlet.runsettings`: ExcludeByFile for generated regex
+- DOTNET_ROOT documented in AGENTS.md
+
+### Documentation audit (14 fixes)
+- Layer count: 17→19 across 7 docs (README, AGENTS.md, architecture.md, glossary, doc-registry)
+- Wrong class names: TherapistHandEncoder/Decoder → HandResponseDecoder/HandCheckpointLibrary/HandConversationBuilder
+- Wrong checkpoint names: MemoPing → TherapyAnalystPing/TherapySupervisorPing in AGENTS.md + source comments
+- Phantom method: ValidateL4Input → ValidateL4ForbiddenMarkers/ValidateL4CompactInput/ValidateL4SemanticInput
+- Dead interface: ICrisisGate deleted, CrisisGateResult extracted to Domain/Models/
+- Misleading filename: ClinicalReport.cs → ResponseStrategy.cs
+- Wrong line reference: QualityValidator.cs:138 → :153
+- Pre-commit hook docs: 6→10 steps documented
+- L5 MemoryService added to architecture taxonomy (7 LLM layers)
+- HandRuntime documented as separate NuGet package
+- README disclaimer + pipeline trace example added
+- `.omo/` added to .gitignore, untracked from repo
+
+### Testing expansion
+- **OllamaAdapter**: +7 tests (success, failure, null/empty responses) — 290/290 pass
+- **LiveOllama E2E**: 9 scenarios (phase transitions, rupture detection, memory context, multi-turn, crisis)
+- **API endpoint tests**: 7 tests via WebApplicationFactory
+- **Benchmark**: 4 variants + checkpoint count + long-session drift
 
 ---
 
