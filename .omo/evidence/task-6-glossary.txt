@@ -1,2 +1,0 @@
-=== Task 6: glossary.md ===
-- **Resilience Ladder** — 6-level degradation pipeline (strict → lenient → markdown_strip → semantic → json_extraction → unstructured) for parsing model outputs.
