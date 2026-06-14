@@ -16,7 +16,7 @@ namespace HybridTherapist.Application.Layers;
 /// <summary>
 /// L3 Supervisor — reads the analyst's M| Memo, picks an approach/technique,
 /// and generates its own native M|L=3|p3=...|t5=...|k2=... Codec G memo line.
-/// Uses Implicit Priming (MemoPing checkpoint). No longer parses plaintext
+/// Uses Implicit Priming (TherapySupervisorPing checkpoint). No longer parses plaintext
 /// via C# regex — the model emits M| directly.
 ///
 public partial class SupervisorLayer

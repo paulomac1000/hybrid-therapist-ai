@@ -15,7 +15,7 @@ namespace HybridTherapist.Application.Layers;
 
 /// <summary>
 /// L2 Analyst — emotional analysis. Generates a native M| Memo wire line via
-/// Implicit Priming (MemoPing checkpoint). No longer uses structured plaintext
+/// Implicit Priming (TherapyAnalystPing checkpoint). No longer uses structured plaintext
 /// prompts parsed by C# regex — the model emits M| directly, saving output tokens.
 ///
 /// On total decode failure (resilience level 6/passthrough), returns a safe fallback memo

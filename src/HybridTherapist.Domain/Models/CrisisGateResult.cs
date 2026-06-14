@@ -1,9 +1,4 @@
-namespace HybridTherapist.Domain.Interfaces;
-
-public interface ICrisisGate
-{
-    CrisisGateResult Check(string input);
-}
+namespace HybridTherapist.Domain.Models;
 
 public sealed class CrisisGateResult
 {

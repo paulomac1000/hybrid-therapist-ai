@@ -1,5 +1,5 @@
 using System.Text.RegularExpressions;
-using HybridTherapist.Domain.Interfaces;
+using HybridTherapist.Domain.Models;
 
 namespace HybridTherapist.Security.Gates;
 
@@ -7,7 +7,7 @@ namespace HybridTherapist.Security.Gates;
 /// Regex-based crisis detection gate. Must execute BEFORE any LLM call (safety layer -1).
 /// Patterns are sourced from crisis_flow.yaml (Polish therapy user base).
 /// </summary>
-public sealed partial class CrisisGate : ICrisisGate
+public sealed partial class CrisisGate
 {
     private const string HardStopMessage =
         "Jest mi przykro, że przechodzisz przez trudne chwile. Jako asystent AI nie mogę udzielić " +
