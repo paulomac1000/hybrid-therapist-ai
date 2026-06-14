@@ -43,8 +43,8 @@ jobs:
       - name: Create and push tag
         if: env.SKIP_TAG != 'true'
         run: |
-          git config user.name "hybrid-therapist-ai-bot"
-          git config user.email "bot@hybrid-therapist-ai.local"
+          git config user.name "hybrid-therapist-bot"
+          git config user.email "bot@hybrid-therapist.local"
           git tag "v${{ steps.version.outputs.version }}"
           git push origin "v${{ steps.version.outputs.version }}"
 

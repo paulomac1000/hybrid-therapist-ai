@@ -1,0 +1,37 @@
+task-F2 — Docs-audit-fix verification
+========================================
+Date: 2026-06-06
+Executor: Sisyphus-Junior
+
+1. dotnet build (Release, 0 warnings, 0 errors)
+   RESULT: PASS
+   Output: Build succeeded. 0 Warning(s) 0 Error(s)
+
+2. Grep for "5.level.*resilience|5-level.*degradation" in docs/
+   RESULT: PASS (no matches found)
+
+3. Grep for 6-level references in key docs
+   - docs/socrates-pipeline.md: 2 matches (lines 22 "6-level resilience ladder", 70 "6-level degradation ladder") → PASS
+   - docs/architecture.md: 3 matches (lines 201, 202, 239 — "Level 6") → PASS
+   - docs/meta/glossary.md: 1 match (line 25 "6-level degradation pipeline") → PASS
+
+4. Grep for "last_verified: 2026-06-06" on specified files
+   - docs/architecture.md: 1 → PASS
+   - docs/socrates-pipeline.md: 1 → PASS
+   - docs/api.md: 1 → PASS
+   - docs/security.md: 1 → PASS
+   - docs/layer-necessity.md: 1 → PASS
+   - docs/benchmarks.md: not a file (directory) — sub-files hand-semantic.md, json.md, plaintext.md have the date → N/A
+   - CHANGELOG.md: 0 (no last_verified field) → FAIL
+   - AGENTS.md: 0 (has last_verified: 2026-06-05, not 2026-06-06) → FAIL
+
+5. Polish diacritics in cassettes README
+   RESULT: PASS (no docs/benchmarks/cassettes/ directory exists; no Polish diacritics found in docs/benchmarks/)
+
+6. Evidence files
+   - .omo/evidence/task-F1-docs-fixes.txt: MISSING
+   - .omo/evidence/task-F2-verification.txt: EXISTS (this file)
+
+VERDICT
+-------
+Build PASS | grep-purity PASS | grep-6level PASS | grep-dates PARTIAL (5/8 pass, 2 fail, 1 N/A) | grep-diacritics PASS

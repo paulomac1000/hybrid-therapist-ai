@@ -14,7 +14,7 @@ namespace HybridTherapist.Tests;
 
 /// <summary>
 /// Tests that AnalystLayer and SupervisorLayer gracefully degrade to safe fallback memos
-/// when the LLM returns garbage (Level 5) or fails entirely (error path).
+/// when the LLM returns garbage (Level 6 passthrough) or fails entirely (error path).
 /// </summary>
 public sealed class LayerFallbackTests
 {
@@ -37,7 +37,7 @@ public sealed class LayerFallbackTests
     // ── AnalystLayer ───────────────────────────────────────────────────────
 
     [Fact]
-    public async Task Analyst_LlmReturnsGarbage_EmitsLevel5FallbackMemo()
+    public async Task Analyst_LlmReturnsGarbage_EmitsLevel6Passthrough()
     {
         var fake = new FakeOllamaAdapter("asdfghjkl totalny belkot bez formatu");
         var analyst = MakeAnalyst(fake);
@@ -48,7 +48,7 @@ public sealed class LayerFallbackTests
         result.Ok.Should().BeTrue();
         result.Memo.Should().Contain("e7=unknown");
         result.Memo.Should().Contain("s9=low");
-        result.Memo.Should().Contain("decoder_level5_fallback");
+        result.Memo.Should().Contain("decoder_level6_passthrough");
         result.Memo.Should().StartWith("M|L=2|");
 
         ParsedHandMessage? parsed = HandParser.Parse(result.Memo);
@@ -85,13 +85,13 @@ public sealed class LayerFallbackTests
         result.Ok.Should().BeTrue();
         result.Memo.Should().Contain("e7=anxiety");
         result.Memo.Should().Contain("s9=moderate");
-        result.Memo.Should().NotContain("decoder_level5");
+        result.Memo.Should().NotContain("decoder_level6_passthrough");
     }
 
     // ── SupervisorLayer ────────────────────────────────────────────────────
 
     [Fact]
-    public async Task Supervisor_LlmReturnsGarbage_EmitsLevel5FallbackMemo()
+    public async Task Supervisor_LlmReturnsGarbage_EmitsLevel6Passthrough()
     {
         var fake = new FakeOllamaAdapter("totalny belkot bez zadnego formatu");
         var supervisor = MakeSupervisor(fake);
@@ -102,7 +102,7 @@ public sealed class LayerFallbackTests
         result.Ok.Should().BeTrue();
         result.Memo.Should().Contain("p3=behavioral_activation");
         result.Memo.Should().Contain("t5=schedule_one_small_activity");
-        result.Memo.Should().Contain("decoder_level5_fallback");
+        result.Memo.Should().Contain("decoder_level6_passthrough");
         result.Memo.Should().StartWith("M|L=3|");
         result.Approach.Should().Be("behavioral_activation");
 
@@ -141,7 +141,7 @@ public sealed class LayerFallbackTests
         result.Memo.Should().Contain("p3=CBT");
         result.Memo.Should().Contain("t5=cognitive_restructuring");
         result.Approach.Should().Be("CBT");
-        result.Memo.Should().NotContain("decoder_level5");
+        result.Memo.Should().NotContain("decoder_level6_passthrough");
     }
 
     [Fact]
@@ -149,6 +149,18 @@ public sealed class LayerFallbackTests
     {
         string approach = SupervisorLayer.ExtractApproach("M|L=3|p3=CBT|t5=reframing|k2=test|r8=none");
         approach.Should().Be("CBT");
+    }
+
+    [Theory]
+    [InlineData("Approach: cognitive_restructuring. Technique: thought_record.", "cognitive_restructuring")]
+    [InlineData("approach: CBT, technique: reframing", "CBT")]
+    [InlineData("APPROACH:  mindfulness; technique: breathing", "mindfulness")]
+    [InlineData("Approach: behavior-activation\nTechnique: schedule", "behavior-activation")]
+    [InlineData("Approach: cognitive restructuring. Technique: thought record.", "cognitive restructuring")]
+    [InlineData("Approach: cognitive restructuring Technique: thought record.", "cognitive restructuring")]
+    public void Supervisor_ExtractApproach_FromPlaintext(string plaintext, string expectedApproach)
+    {
+        SupervisorLayer.ExtractApproach(plaintext).Should().Be(expectedApproach);
     }
 
     [Fact]

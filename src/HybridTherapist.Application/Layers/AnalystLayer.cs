@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 using HandCodec.Models;
 using HandCodec.Parser;
 using HybridTherapist.Application.Hand;
@@ -14,10 +15,10 @@ namespace HybridTherapist.Application.Layers;
 
 /// <summary>
 /// L2 Analyst — emotional analysis. Generates a native M| Memo wire line via
-/// Implicit Priming (MemoPing checkpoint). No longer uses structured plaintext
+/// Implicit Priming (TherapyAnalystPing checkpoint). No longer uses structured plaintext
 /// prompts parsed by C# regex — the model emits M| directly, saving output tokens.
 ///
-/// On total decode failure (resilience level 5), returns a safe fallback memo
+/// On total decode failure (resilience level 6/passthrough), returns a safe fallback memo
 /// so downstream L3 and L4 never see a broken input.
 /// </summary>
 public sealed class AnalystLayer
@@ -63,9 +64,22 @@ public sealed class AnalystLayer
             "Only analyze themes the user EXPLICITLY mentioned or that appear in session topics. " +
             "Do NOT infer or fabricate new themes.";
 
+        HandCheckpoint baseCheckpoint = _opts.HandWireVariant switch
+        {
+            HandWireVariant.Semantic => HandCheckpointLibrary.TherapyAnalystSemanticPing,
+            HandWireVariant.Plaintext => HandCheckpointLibrary.TherapyAnalystPlaintextPing,
+            HandWireVariant.Json => HandCheckpointLibrary.TherapyAnalystJsonPing,
+            _ => HandCheckpointLibrary.TherapyAnalystPing,
+        };
+
+        HandCheckpoint limitedCheckpoint = new HandCheckpoint(
+            baseCheckpoint.Exchanges
+                .Take(_opts.ImplicitPrimingCheckpointCount)
+                .ToArray());
+
         IReadOnlyList<HandTurn> messages = HandConversationBuilder.Build(
             systemPrompt,
-            HandCheckpointLibrary.TherapyAnalystPing,
+            limitedCheckpoint,
             englishUserMessage,
             Performative.Memo,
             _opts.AgentClass);
@@ -79,38 +93,63 @@ public sealed class AnalystLayer
             await _trace.RecordAsync(new TraceEvent(
                 DateTimeOffset.UtcNow, sessionId, "L2_analyst", _opts.Analyst,
                 englishUserMessage, string.Empty, sw.ElapsedMilliseconds, "error", resp.Error), ct);
-            return new AnalystResult(false, null,
+            return new AnalystResult(false,
                 BuildFallbackMemo("llm_error"), resp.Error);
         }
 
         string sanitized = SanitizeMemoOutput(resp.Text, 2);
-        ResilienceResult parsed = HandResiliencePipeline.Parse(sanitized, HandResilientOptions.AllEnabled);
-        _logger.LogInformation("[Drabina] L2 resilience level {Level}, confidence {Conf}",
-            parsed.Level, parsed.Message.GetDoubleOr("C", 0.5));
-
         string memo;
-        if (parsed.Level >= 5)
+
+        if (_opts.HandWireVariant == HandWireVariant.Plaintext)
         {
-            memo = BuildFallbackMemo("decoder_level5_fallback");
+            memo = sanitized;
         }
-        else if (parsed.Message.Performative == Performative.Memo)
+        else if (_opts.HandWireVariant == HandWireVariant.Json)
         {
-            memo = parsed.Message.RawMessage;
+            var (jsonMemo, parseOk) = ParseJsonMemo(sanitized);
+            if (!parseOk)
+            {
+                await _trace.RecordAsync(new TraceEvent(
+                    DateTimeOffset.UtcNow, sessionId, "L2_analyst", resp.ModelId ?? _opts.Analyst,
+                    englishUserMessage, resp.Text, sw.ElapsedMilliseconds, "json_parse_error", null, jsonMemo), ct);
+                return new AnalystResult(false, jsonMemo, "JSON parse error");
+            }
+            memo = jsonMemo;
         }
         else
         {
-            string body = parsed.Message.Body;
-            memo = string.IsNullOrWhiteSpace(body)
-                ? BuildFallbackMemo("parse_no_body")
-                : BuildFallbackMemo($"parsed_from_body_{TruncateForMemo(body, 80)}");
+            ResilienceResult parsed = HandResiliencePipeline.Parse(sanitized, HandResilientOptions.AllEnabled);
+            _logger.LogInformation("[Drabina] L2 resilience level {Level}, confidence {Conf}",
+                parsed.Level, parsed.Message.GetDoubleOr("C", 0.5));
+
+            if (parsed.Level >= 6)
+            {
+                memo = BuildFallbackMemo("decoder_level6_passthrough");
+            }
+            else if (parsed.Message.Performative == Performative.Memo)
+            {
+                memo = parsed.Message.RawMessage;
+            }
+            else
+            {
+                string body = parsed.Message.Body;
+                memo = string.IsNullOrWhiteSpace(body)
+                    ? BuildFallbackMemo("parse_no_body")
+                    : BuildFallbackMemo("parsed_from_body");
+            }
         }
 
         await _trace.RecordAsync(new TraceEvent(
             DateTimeOffset.UtcNow, sessionId, "L2_analyst", resp.ModelId ?? _opts.Analyst,
             englishUserMessage, resp.Text, sw.ElapsedMilliseconds, "ok", null, memo), ct);
 
-        return new AnalystResult(true, null, memo, null);
+        return new AnalystResult(true, memo, null);
     }
+
+    private static readonly Regex ControlTokenRegex = new(
+        @"<\|control_\d+\|>.*?<\|control_\d+\|>\s*",
+        RegexOptions.Compiled | RegexOptions.Singleline,
+        TimeSpan.FromMilliseconds(200));
 
     private static string SanitizeMemoOutput(string raw, int expectedLayer)
     {
@@ -123,8 +162,14 @@ public sealed class AnalystLayer
             .Replace("</think>", "", StringComparison.Ordinal)
             .Replace("<content>", "", StringComparison.OrdinalIgnoreCase)
             .Replace("</content>", "", StringComparison.OrdinalIgnoreCase)
-            .Replace("<｜end▁of▁thinking｜>", "", StringComparison.Ordinal)
+            .Replace(" response", "", StringComparison.Ordinal)
             .Trim();
+
+        if (text.StartsWith("M|", StringComparison.Ordinal))
+            return text;
+
+        // Strip Llama-style thinking/control blocks (PsychoCounsel, MentaLLaMA emit <|control_8|>...<|control_9|>)
+        text = ControlTokenRegex.Replace(text, "");
 
         if (text.StartsWith($"{expectedLayer}|", StringComparison.Ordinal))
             text = $"M|L={text}";
@@ -132,8 +177,34 @@ public sealed class AnalystLayer
         return text;
     }
 
+    private (string memo, bool ok) ParseJsonMemo(string text)
+    {
+        try
+        {
+            using System.Text.Json.JsonDocument doc = System.Text.Json.JsonDocument.Parse(text.Trim());
+            return (text.Trim(), true);
+        }
+        catch (System.Text.Json.JsonException)
+        {
+            return (BuildFallbackMemo("json_parse_error"), false);
+        }
+    }
+
     private string BuildFallbackMemo(string note)
     {
+        if (_opts.HandWireVariant == HandWireVariant.Plaintext)
+        {
+            return $"Emotional state: unknown. Severity: low. Risk: none. Patterns: none. Evidence: none. Fallback note: {note}.";
+        }
+        if (_opts.HandWireVariant == HandWireVariant.Json)
+        {
+            return $"{{\"layer\":2,\"emotional_state\":\"unknown\",\"severity\":\"low\",\"risk\":\"none\",\"patterns\":\"none\",\"evidence\":\"none\",\"note\":\"{note}\"}}";
+        }
+        if (_opts.HandWireVariant == HandWireVariant.Semantic)
+        {
+            return $"M|L=2|em=unknown|sv=low|ri=none|cp=none|ev=none|note={note}";
+        }
+
         return new MemoBuilder(_opts.HandCompressionTier)
             .Layer(2)
             .EmotionalState("unknown")
@@ -146,4 +217,4 @@ public sealed class AnalystLayer
         value.Length <= maxLen ? value : value[..maxLen];
 }
 
-public sealed record AnalystResult(bool Ok, ClinicalReport? Report, string Memo, string? Error);
+public sealed record AnalystResult(bool Ok, string Memo, string? Error);

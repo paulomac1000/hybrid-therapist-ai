@@ -1,0 +1,10 @@
+=== Task 4: socrates-pipeline.md ===
+Matches: 0
+
+=== 6-level table rows ===
+74:| 1 | Strict | Perfect format — passes unchanged |
+75:| 2 | Lenient | Minor format deviations — repaired |
+76:| 3 | Markdown Strip | Wire wrapped in ``` fences — stripped |
+77:| 4 | Semantic Extraction | Model ignored format and wrote prose — regex extracts fields |
+78:| 5 | JSON Extraction | Attempts JSON parse (opt-in, new in v0.3.0) |
+79:| 6 | Passthrough/Fallback | Everything failed — safe replacement memo |

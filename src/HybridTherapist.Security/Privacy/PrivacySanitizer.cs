@@ -20,7 +20,7 @@ public sealed partial class PrivacySanitizer
     [GeneratedRegex(@"\b\d{11}\b", RegexOptions.None, matchTimeoutMilliseconds: 200)]
     private static partial Regex PeselPattern();
 
-    public string Sanitize(string input, string level = "basic")
+    public static string Sanitize(string input, string level = "basic")
     {
         if (string.IsNullOrWhiteSpace(input))
             return input;

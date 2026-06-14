@@ -1,0 +1,110 @@
+{
+  "name": "hand-semantic-insomnia",
+  "description": "User reports 6-week insomnia. H.A.N.D. Semantic variant.",
+  "variant": "hand-semantic",
+  "expected_quality": {
+    "pass": true,
+    "min_quality_score": 4,
+    "required_topics": [
+      "sleep",
+      "insomnia"
+    ],
+    "required_phrases_pl": [
+      "sześć tygodni",
+      "sen"
+    ],
+    "forbidden_phrases": [
+      "po prostu idź spać",
+      "policz owce"
+    ]
+  },
+  "interactions": [
+    {
+      "layer": "L1_translator_pl_en",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "You are a translator"
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.94|V=I have not slept properly in six weeks, I lie awake for hours every night"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L2_analyst",
+      "request_match": {
+        "model_contains": "MentaLLaMA"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "M|L=2|em=exhaustion_with_anxiety|sv=moderate|ri=none|cp=anticipatory_anxiety,rumination|ev=\"not slept properly in six weeks\""
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L3_supervisor",
+      "request_match": {
+        "model_contains": "PsyLLM"
+      },
+      "response": {
+        "model": "hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "M|L=3|ap=sleep_hygiene|tk=no_screen_30min_before|kq=What_is_the_last_thing_you_do_before_getting_into_bed?|rn=monitor_deepening_insomnia"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L4_therapist",
+      "request_match": {
+        "model_contains": "PsychoCounsel"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/PsychoCounsel-Llama3-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.88\nSix weeks without proper rest changes everything — your mood, your patience, how you see the world. When sleep abandons you, even small things feel monumental.\n\nWhat is the last thing you do before getting into bed?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L6_calibrator",
+      "request_match": {
+        "model_contains": "dolphin"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "Six weeks without proper rest changes everything — your mood, your patience, how you see the world. When sleep abandons you, even small things feel monumental.\n\nWhat is the last thing you do before getting into bed?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L7_translator_en_pl",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "You are a Polish translator"
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.93\nSześć tygodni bez porządnego odpoczynku zmienia wszystko — nastrój, cierpliwość, sposób patrzenia na świat. Kiedy sen Cię opuszcza, nawet małe rzeczy stają się ogromne.\n\nCo jest ostatnią rzeczą, którą robisz przed położeniem się do łóżka?"
+        },
+        "done": true
+      }
+    }
+  ],
+  "user_input_pl": "Od sześciu tygodni nie przespałam porządnie ani jednej nocy."
+}

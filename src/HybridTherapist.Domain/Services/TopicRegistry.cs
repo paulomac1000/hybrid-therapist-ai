@@ -46,31 +46,13 @@ public static class TopicRegistry
         if (string.IsNullOrWhiteSpace(text)) return Array.Empty<string>();
 
         string lower = text.ToLowerInvariant();
-        var found = new List<string>();
-        foreach ((string topic, string[] keywords) in TopicMap)
-        {
-            foreach (string kw in keywords)
-            {
-                if (lower.Contains(kw, StringComparison.Ordinal))
-                {
-                    if (!found.Contains(topic, StringComparer.Ordinal))
-                        found.Add(topic);
-                    break;
-                }
-            }
-        }
-        return found;
+        return TopicMap
+            .Where(t => t.Keywords.Any(kw => lower.Contains(kw, StringComparison.Ordinal)))
+            .Select(t => t.Topic)
+            .Distinct(StringComparer.Ordinal)
+            .ToList();
     }
 
-    /// <summary>
-    /// Returns active topics for a session — union of the existing topic list
-    /// and topics newly detected in the latest user message.
-    /// </summary>
     public static IReadOnlyList<string> Merge(IEnumerable<string> existing, IEnumerable<string> fresh)
-    {
-        var result = new List<string>();
-        foreach (string t in existing) if (!result.Contains(t, StringComparer.Ordinal)) result.Add(t);
-        foreach (string t in fresh) if (!result.Contains(t, StringComparer.Ordinal)) result.Add(t);
-        return result;
-    }
+        => existing.Concat(fresh).Distinct(StringComparer.Ordinal).ToList();
 }

@@ -14,7 +14,9 @@ var builder = WebApplication.CreateBuilder(args);
 // ── HTTP client — local Ollama only (zero cloud for Socrates pipeline) ──────
 builder.Services.AddHttpClient("ollama", c =>
 {
+#pragma warning disable S1075 // Config fallback — default Ollama URL
     c.BaseAddress = new Uri(builder.Configuration["Ollama:BaseUrl"] ?? "http://localhost:11434");
+#pragma warning restore S1075
     c.Timeout = TimeSpan.FromMinutes(5);
 });
 
@@ -68,7 +70,8 @@ app.Use(async (ctx, next) =>
 app.MapChatEndpoints();
 app.MapTraceEndpoints();
 
-app.Run();
+await app.RunAsync();
 
-// Exposed for WebApplicationFactory in integration tests
+// Exposed for WebApplicationFactory<T> in integration tests — cannot be static
+#pragma warning disable S1118
 public partial class Program { }

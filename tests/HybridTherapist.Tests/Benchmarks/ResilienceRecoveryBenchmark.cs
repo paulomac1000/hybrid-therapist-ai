@@ -40,15 +40,15 @@ public sealed class ResilienceRecoveryBenchmark
             ("Confidence: 0.95. The patient is definitely catastrophizing.", 4, true),
             ("Answer: To wszystko nie ma sensu, beznadziejne. Nie chcę już żyć. S=crisis.", 4, true), // Crisis keywords sum to >= 7
             
-            // Level 5: Unstructured fallback (Complete garbage or unrecognized prose)
-            ("Just some random text that does not match any semantic patterns.", 5, false),
-            ("xyz 123", 5, false),
+            // Level 6: Unstructured fallback (Complete garbage or unrecognized prose)
+            ("Just some random text that does not match any semantic patterns.", 6, false),
+            ("xyz 123", 6, false),
         };
 
         int total = samples.Length;
         int recovered = 0;
         int fullyCompliant = 0;
-        var levelCounts = new Dictionary<int, int> { { 1, 0 }, { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 } };
+        var levelCounts = new Dictionary<int, int> { { 1, 0 }, { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 } };
 
         var opts = HandResilientOptions.AllEnabled with
         {
@@ -63,14 +63,14 @@ public sealed class ResilienceRecoveryBenchmark
 
             if (result.Level == 1) fullyCompliant++;
 
-            // A message is considered "recovered" if it was successfully parsed (Level < 5)
-            // or if it was expected to fall through to Level 5.
-            if (result.Level < 5) recovered++;
+            // A message is considered "recovered" if it was successfully parsed (Level < 6)
+            // or if it was expected to fall through to Level 6.
+            if (result.Level < 6) recovered++;
 
             result.Level.Should().BeLessThanOrEqualTo(expectedLevel, $"Input '{input}' should resolve at or below level {expectedLevel}");
         }
 
-        double recoveryRate = (double)recovered / (total - levelCounts[5]); // Excluding intentional garbage
+        double recoveryRate = (double)recovered / (total - levelCounts[6]); // Excluding intentional garbage
 
         _output.WriteLine("=== Resilience Recovery Benchmark ===");
         _output.WriteLine($"Total Samples:     {total}");
@@ -83,7 +83,8 @@ public sealed class ResilienceRecoveryBenchmark
         _output.WriteLine($"  Level 2 (Lenient):   {levelCounts[2]}");
         _output.WriteLine($"  Level 3 (Markdown):  {levelCounts[3]}");
         _output.WriteLine($"  Level 4 (Semantic):  {levelCounts[4]}");
-        _output.WriteLine($"  Level 5 (Fallback):  {levelCounts[5]}");
+        _output.WriteLine($"  Level 5 (JSON):      {levelCounts[5]}");
+        _output.WriteLine($"  Level 6 (Fallback):  {levelCounts[6]}");
 
         recovered.Should().BeGreaterThan(0, "Pipeline should recover at least some defective messages");
     }

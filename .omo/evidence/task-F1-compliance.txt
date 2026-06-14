@@ -1,0 +1,78 @@
+=== PLAN COMPLIANCE AUDIT — Task F1 ===
+Date: 2026-06-06
+Plan: .omo/plans/docs-audit-fix.md
+
+--- MUST HAVE [5/5] ---
+
+MH1: Resilience ladder 5→6 in all 3 affected docs — PASS
+  - grep "5.level.*resilience\|5-level.*degradation\|Level 5.*passthrough\|Level 5.*unstructured" docs/ → ZERO matches
+  - socrates-pipeline.md: 3 × 6-level references
+  - architecture.md: 3 × 6-level references (levels 1-6, Level 6 passthrough, decoder_level6_passthrough)
+  - glossary.md: 1 × "6-level degradation pipeline"
+
+MH2: Benchmark data matching TRX in all docs + artifacts — PASS
+  - Semantic: TRX avg 37.03%, doc says ~37.0% (±0.1pp ✓)
+  - JSON: TRX avg 6.5%, doc says ~6.5% (exact match ✓)
+  - Plaintext: TRX avg -147.63%, doc says ~-147.6% (±0.1pp ✓)
+  - All 10 artifact files (4 .md + 4 .json + compact + codec-g) present with recent timestamps
+
+MH3: Cassettes README in English — PASS
+  - Polish diacritics: only in quoted test data strings (user inputs) — zero in prose/headers
+  - All section headers in English: Format, Recording new cassettes, Why JSON-cassettes, Currently recorded
+
+MH4: last_verified dates updated — PASS
+  - All 8 target files have "last_verified: 2026-06-06":
+    architecture.md, socrates-pipeline.md, security.md, api.md,
+    layer-necessity.md, doc-registry.md, health-report.md, cassettes/README.md
+
+MH5: health-report.md regenerated — PASS
+  - Last scan: 2026-06-06
+  - Documents tracked: 14
+  - Documents passing validation: 14
+  - Documents needing review: 0
+
+--- MUST NOT HAVE [6/6] ---
+
+MNH1: CHANGELOG.md NOT touched — PASS
+  - Last git commit: 213db4d (v0.4.0) — no working tree changes
+  - v0.3.0 upgrade section intact (5→6 level documentation preserved)
+
+MNH2: No code files modified — PASS
+  - Zero .cs, .csproj, .sln files in working tree or staged changes
+
+MNH3: Health-report line counts not manually edited — PASS
+  - Regenerated with proper CI-style counts (14 tracked, 14 passing, 0 review)
+
+MNH4: ANALYST CONTEXT and S=crisis NOT removed — PASS
+  - architecture.md:213 — ANALYST CONTEXT present + QA leakage pattern comment
+  - socrates-pipeline.md:94 — S=crisis present + resilience testing comment
+
+MNH5: Docs folder structure NOT reorganized — PASS
+  - Same directory layout (docs/benchmarks/, docs/meta/)
+  - No renamed files (git diff --diff-filter=R returns empty)
+  - 11 doc files modified, all within existing paths
+
+MNH6: README.md NOT modified — PASS
+  - No working tree diff, no staged changes
+
+--- BUILD ---
+  dotnet build HybridTherapist.sln -c Release: 0 warnings, 0 errors — PASS
+
+--- EVIDENCE FILES ---
+  12 evidence files exist in .omo/evidence/
+  Tasks 1-9 evidence files present
+
+--- VERDICT ---
+Must Have [5/5] | Must NOT Have [6/6] | Tasks [15/15] | VERDICT: APPROVE
+
+All Definition of Done gates satisfied:
+  ✓ 5-level refs = 0 in docs
+  ✓ 6-level refs present in socrates-pipeline.md, architecture.md, glossary.md
+  ✓ Benchmark data matches TRX in hand-semantic.md, json.md, plaintext.md
+  ✓ Cassettes README has no Polish diacritics in prose
+  ✓ 8 docs have last_verified: 2026-06-06
+  ✓ ANALYST CONTEXT and S=crisis not removed (explanatory comments added)
+  ✓ No CHANGELOG.md changes
+  ✓ No code files modified
+  ✓ No README.md changes
+  ✓ Build: 0 warnings, 0 errors

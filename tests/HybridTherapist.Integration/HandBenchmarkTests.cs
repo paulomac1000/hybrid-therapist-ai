@@ -31,16 +31,22 @@ public sealed class HandBenchmarkTests
     private static string CassettePath(string filename) =>
         Path.Combine(AppContext.BaseDirectory, "Cassettes", filename);
 
-    public static IEnumerable<object[]> DiscoverHandCassettes()
+    public static TheoryData<string> DiscoverHandCassettes()
     {
         string dir = Path.Combine(AppContext.BaseDirectory, "Cassettes");
+        var data = new TheoryData<string>();
         if (!Directory.Exists(dir))
-            yield break;
+            return data;
 
         foreach (string file in Directory.GetFiles(dir, "hand-*.json"))
         {
-            yield return new object[] { Path.GetFileName(file) };
+            string fileName = Path.GetFileName(file);
+            if (fileName.StartsWith("hand-semantic-") || fileName == "hand-long-session.json")
+                continue;
+            data.Add(fileName);
         }
+
+        return data;
     }
 
     /// <summary>
@@ -54,6 +60,8 @@ public sealed class HandBenchmarkTests
             await HandBenchmarkValidator.RunCassetteAsync(CassettePath(cassetteFile));
         HandBenchmarkValidator.ValidateStrict(run, expectations);
         TokenSavingsMetrics savings = HandBenchmarkValidator.CalculateTokenSavings(run);
+        savings.SavingsPercent.Should().BeGreaterThan(15.0,
+            "Compact variant must save at least 15% tokens vs plaintext expansion");
 
         // ── Output report ───────────────────────────────────────────────────
         _output.WriteLine($"");
@@ -66,6 +74,7 @@ public sealed class HandBenchmarkTests
         _output.WriteLine($"  Wire tokens:  ~{savings.WireTokens}");
         _output.WriteLine($"  Plain tokens: ~{savings.PlaintextTokens}");
         _output.WriteLine($"  Token save:   ~{savings.TokensSaved} tokens ({savings.SavingsPercent}%)");
+        _output.WriteLine($"BENCHMARK_TOKEN_SAVINGS={savings.SavingsPercent:F1}");
         _output.WriteLine($"  Response PL:  {run.Content[..Math.Min(120, run.Content.Length)]}...");
         _output.WriteLine($"");
     }
@@ -84,7 +93,9 @@ public sealed class HandBenchmarkTests
             return;
         }
 
-        string[] cassettes = Directory.GetFiles(dir, "hand-*.json");
+        string[] cassettes = Directory.GetFiles(dir, "hand-*.json")
+            .Where(f => !Path.GetFileName(f).StartsWith("hand-semantic-") && Path.GetFileName(f) != "hand-long-session.json")
+            .ToArray();
         _output.WriteLine($"");
         _output.WriteLine($"═══ H.A.N.D. BENCHMARK SUMMARY ═══");
         _output.WriteLine($"  Cassettes found: {cassettes.Length}");

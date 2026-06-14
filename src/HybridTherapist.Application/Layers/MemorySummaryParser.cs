@@ -8,8 +8,11 @@ public static partial class MemorySummaryParser
     [GeneratedRegex(@"^\[([A-Z ]+)\]$", RegexOptions.Multiline)]
     private static partial Regex SectionHeaderRegex();
 
+    [GeneratedRegex(@"\s+", RegexOptions.None, 200)]
+    private static partial Regex WhitespaceNormalizeRegex();
+
     private static string NormalizeHeader(string raw) =>
-        Regex.Replace(raw.Trim(), @"\s+", " ");
+        WhitespaceNormalizeRegex().Replace(raw.Trim(), " ");
 
     public static MemorySummary? Parse(string raw)
     {
@@ -101,6 +104,7 @@ public static partial class MemorySummaryParser
         }
     }
 
+#pragma warning disable S3776 // String parser — inherent conditional complexity
     private static TopicEntry? ParseTopicLine(string line)
     {
         if (string.IsNullOrWhiteSpace(line)) return null;
@@ -125,16 +129,12 @@ public static partial class MemorySummaryParser
             int colonPos = trimmed.IndexOf(": ", StringComparison.Ordinal);
             int eqPos = trimmed.IndexOf('=');
 
-            if (colonPos >= 0)
+            if (colonPos >= 0 && (eqPos < 0 || colonPos <= eqPos))
             {
-                // Prefer ": " separator when both exist and ":" comes at or before "="
-                if (eqPos < 0 || colonPos <= eqPos)
-                {
-                    string key = trimmed[..colonPos].Trim().ToLowerInvariant();
-                    string value = trimmed[(colonPos + 2)..].Trim();
-                    AssignTopicField(key, value, ref messageRange, ref evolution, ref status);
-                    continue;
-                }
+                string key = trimmed[..colonPos].Trim().ToLowerInvariant();
+                string value = trimmed[(colonPos + 2)..].Trim();
+                AssignTopicField(key, value, ref messageRange, ref evolution, ref status);
+                continue;
             }
 
             if (eqPos >= 0)
@@ -152,6 +152,7 @@ public static partial class MemorySummaryParser
 
         return new TopicEntry(theme, messageRange, evolution, status);
     }
+#pragma warning restore S3776
 
     private static void AssignTopicField(
         string key, string value,

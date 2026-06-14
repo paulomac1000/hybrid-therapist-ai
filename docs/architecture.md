@@ -1,5 +1,5 @@
 ---
-description: Architecture of the 17-layer Socrates multi-agent therapy pipeline with HandCodec wire format integration
+description: Architecture of the 19-layer Socrates multi-agent therapy pipeline with HandCodec wire format integration
 doc_id: sys.socrates-pipeline
 type: system
 status: active
@@ -11,7 +11,7 @@ source_of_truth: true
 upstream:
   - ref.glossary
 tags: ["architecture", "socrates", "handcodec", "pipeline"]
-last_verified: 2026-05-23
+last_verified: 2026-06-06
 owners: ["hybrid-therapist"]
 ---
 
@@ -28,7 +28,7 @@ owners: ["hybrid-therapist"]
                        └──────┬───────┘
                               ▼
                        ┌──────────────┐
-                       │ TherapistFlow│  orchestrates 17 layers
+                       │ TherapistFlow│  orchestrates 19 layers
                        └──────┬───────┘
         ┌─────────────────────┼─────────────────────┐
         ▼                     ▼                     ▼
@@ -59,7 +59,7 @@ Five .NET projects:
 | `HybridTherapist.Domain` | Interfaces, models, `SessionPhase`, `TopicRegistry`, `RuptureDetector`, `ThematicAlignment`, `ResponseStrategySelector`, `QualityValidator` |
 | `HybridTherapist.Security` | `CrisisGate`, `PrivacySanitizer` — must run before any LLM call |
 | `HybridTherapist.Infrastructure` | `OllamaAdapter`, `InMemoryTherapyStateRepository`, `InMemoryTraceSink` |
-| `HybridTherapist.Application` | `TherapistFlow`, `TherapistLayerService`, `AnalystLayer`, `SupervisorLayer`, `TherapyMemoryService`, `TherapistHandEncoder/Decoder` |
+| `HybridTherapist.Application` | `TherapistFlow`, `TherapistLayerService`, `AnalystLayer`, `SupervisorLayer`, `TherapyMemoryService`, `HandResponseDecoder`, `HandCheckpointLibrary`, `HandConversationBuilder` |
 | `HybridTherapist.Api` | ASP.NET Core host, `/v1/chat/completions` (JSON + SSE), `/v1/models`, `/v1/trace/{sessionId}`, DI wiring |
 
 External dependencies:
@@ -70,7 +70,7 @@ External dependencies:
 
 The Socrates pipeline runs **entirely on local Ollama**. No OpenRouter. No external APIs. All LLM calls go to `http://ollama:11434/api/chat`. Translator quality is safeguarded by a quality gate: Bielik 7B, single pass → static Polish fallback if output still looks like English.
 
-## 17-warstwowy pipeline Socrates
+## 19-layer Socrates pipeline
 
 ```
 Layer  Name                  Implementation                                       Feeds downstream
@@ -104,15 +104,15 @@ Layer  Name                  Implementation                                     
 
 **Necessity invariant**: every layer has a corresponding test in `LayerNecessityTests` that fails if the layer's contribution is bypassed. No layer is "dead weight" — each one demonstrably shapes the output, blocks unsafe data, or enables a downstream consumer.
 
-### Layer taxonomy — why 17 is not "too many"
+### Layer taxonomy — why 19 is not "too many"
 
-The 17-layer count is misleading if read as "17 sequential LLM calls". In reality, only **6 layers** invoke an LLM (each costing 5-15s). The remaining 11 are sub-millisecond in-process operations:
+The 19-layer count is misleading if read as "19 sequential LLM calls". In reality, only **7 layers** invoke an LLM (each costing 5-15s). The remaining 12 are sub-millisecond in-process operations:
 
 | Category | Layers | Runtime cost | Purpose |
 |----------|--------|--------------|---------|
 | **Safety Guards** | L-1 CrisisGate, L0 PrivacySanitizer | < 1ms each, **mandatory** | Crisis hard-stop + PII redaction — these are never optional |
 | **State & Strategy** | 1-5 (StateLoader, TopicExtraction, PhaseMachine, RuptureDetector, ResponseStrategy) | < 1ms each | In-memory lookups, regex, enum selection |
-| **LLM Pipeline** | L1 PL→EN, L2 Analyst, L3 Supervisor, L4 Therapist, L6 Calibrator, L7 EN→PL | 5-15s each | The actual multi-agent orchestration core |
+| **LLM Pipeline** | L1 PL→EN, L2 Analyst, L3 Supervisor, L4 Therapist, L5 MemoryService, L6 Calibrator, L7 EN→PL | 5-15s each | The actual multi-agent orchestration core |
 | **QA Gates** | QA1, QA2, ThematicAlignment | < 1ms each | Output validation — echo, leakage, language checks |
 | **Post-processing** | Disclaimer, Audit | < 1ms each | Conditional append + structured logging |
 
@@ -153,10 +153,9 @@ The `HybridTherapist.Application/Hand/` directory contains thin **facade classes
 
 | Facade file | Delegates to (HandRuntime) |
 |---|---|
-| `HandConversationBuilder.cs` | `HandRuntime.ConversationBuilder` |
-| `HandWireConvention.cs` | `HandRuntime.WireConvention` |
-| `HandResponseDecoder.cs` | `HandRuntime.ResponseDecoder` |
-| `HandCheckpointLibrary.cs` | `HandRuntime.CheckpointLibrary` |
+| `HandConversationBuilder.cs` | `HandRuntime.HandConversationBuilder` |
+| `HandResponseDecoder.cs` | `HandRuntime.HandResponseDecoder` |
+| `HandCheckpointLibrary.cs` | `HandRuntime.HandCheckpointLibrary` |
 
 This pattern allows the application to inject domain-specific configuration (e.g., the Polish CrisisKeywordDetector via `HandResilientOptions.CrisisDetector`) while delegating all protocol-level logic to the domain-agnostic runtime.
 
@@ -193,14 +192,14 @@ L4 emits:  R|C=0.90
 
 Short values (translations, single words) use `V=` in the header line.
 Long prose (therapeutic responses, multi-sentence translations) goes to **Body**
-(the line after the wire header). The wire convention (`HandWireConvention.PrefillFor`)
+(the line after the wire header). The wire convention (via `HandRuntime.HandWireConvention.PrefillFor`)
 appends `R|C=` as an assistant-turn prefill for `AgentClass.Assisted` models.
 
 ### Resilience Ladder
 
-Every LLM layer decodes model output via `HandResiliencePipeline.Parse()` (levels 1-5).
+Every LLM layer decodes model output via `HandResiliencePipeline.Parse()` (levels 1-6).
 The resilience level is logged as `[Drabina] L{N} resilience level {Level}` for monitoring.
-Level 5 (unstructured passthrough) triggers a safe fallback memo for L2/L3 so downstream
+Level 6 (passthrough) triggers a safe fallback memo for L2/L3 so downstream
 layers never see a broken input.
 
 ## Anti-hallucination guard
@@ -211,7 +210,7 @@ layers never see a broken input.
 
 Two QA stages run after the language-generating layers:
 
-1. **English-side QA** (after L6 Calibrator) — catches echo of user input, too-short responses, and prompt template leakage (`confidence_decimal`, `[ANALYST CONTEXT]`, and other template artifacts).
+1. **English-side QA** (after L6 Calibrator) — catches echo of user input, too-short responses, and prompt template leakage (`confidence_decimal`, `[ANALYST CONTEXT]` (this is an intentional QA leakage pattern — `QualityValidator.cs:153` explicitly checks for it), and other template artifacts).
 2. **Polish-side QA** (after L7 Translator) — verifies the output is actually Polish (diacritic ratio), wasn't an echo, doesn't contain wire-format remnants.
 
 Failure of either gate triggers a fallback: EN-side falls back to L4 draft, PL-side falls back to a static apology message.
@@ -233,12 +232,12 @@ The session_id is returned in `metadata.session_id` of every chat-completion res
 ### L2 Analyst — observation only
 
 Generates a native `M|` Memo wire via Implicit Priming (MemoPing checkpoint).
-The system prompt teaches the field dictionary; the model emits a single line:
+The checkpoint examples teach the wire format pattern; the model emits a single line:
 ```text
 M|L=2|e7=exhaustion_with_anxiety|s9=moderate|x4=chronic_insomnia|y1=catastrophizing
 ```
-Output decoded by `HandResiliencePipeline` (levels 1-5). Level 5 triggers a safe
-fallback memo (`M|L=2|e7=unknown|s9=low|note=decoder_level5_fallback`).
+Output decoded by `HandResiliencePipeline` (levels 1-6). Level 6 triggers a safe
+fallback memo (`M|L=2|e7=unknown|s9=low|note=decoder_level6_passthrough`).
 
 ### L3 Supervisor — strategy only
 
@@ -259,6 +258,8 @@ in the prompt: no echo, ask one open question, under 200 words.
 ### L6 Calibrator — editorial polish
 
 Same content, better prose. Removes formulaic openings ("I understand that...", "It seems that..."). Cannot introduce new topics or change facts. On failure, the flow falls back to the L4 draft.
+
+**L6 Calibrator prompt hardening**: The calibrator is instructed to avoid advice language. The downstream `QualityValidator` uses `containsTherapeuticSubstance` markers (reflections, validations, acknowledgments) rather than only advice words to avoid false-positive quality blocks on valid therapeutic responses.
 
 ## Session phase machine
 

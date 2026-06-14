@@ -14,6 +14,8 @@ namespace HybridTherapist.Application.Options;
 /// </summary>
 public static class StackYamlOptionsBinder
 {
+    private const string OllamaProvider = "ollama";
+
     // Ollama-side roles. Aliases tried in order, first provider=ollama match wins.
     // All Socrates layers are LOCAL — no cloud anywhere in the chain.
     private static readonly Dictionary<string, string[]> OllamaRoleAliases = new(StringComparer.OrdinalIgnoreCase)
@@ -30,11 +32,11 @@ public static class StackYamlOptionsBinder
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(stack);
 
-        options.Translator = Resolve(stack, "Translator", "ollama", options.Translator);
-        options.Analyst = Resolve(stack, "Analyst", "ollama", options.Analyst);
-        options.Supervisor = Resolve(stack, "Supervisor", "ollama", options.Supervisor);
-        options.Therapist = Resolve(stack, "Therapist", "ollama", options.Therapist);
-        options.Calibrator = Resolve(stack, "Calibrator", "ollama", options.Calibrator);
+        options.Translator = Resolve(stack, "Translator", OllamaProvider, options.Translator);
+        options.Analyst = Resolve(stack, "Analyst", OllamaProvider, options.Analyst);
+        options.Supervisor = Resolve(stack, "Supervisor", OllamaProvider, options.Supervisor);
+        options.Therapist = Resolve(stack, "Therapist", OllamaProvider, options.Therapist);
+        options.Calibrator = Resolve(stack, "Calibrator", OllamaProvider, options.Calibrator);
     }
 
     private static string Resolve(StackConfig stack, string logicalRole, string requiredProvider, string fallback)

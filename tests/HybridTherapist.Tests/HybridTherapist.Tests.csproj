@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="8.10.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.5.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.6.0" />
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -26,6 +26,6 @@
     <ProjectReference Include="../../src/HybridTherapist.Domain/HybridTherapist.Domain.csproj" />
     <ProjectReference Include="../../src/HybridTherapist.Infrastructure/HybridTherapist.Infrastructure.csproj" />
     <ProjectReference Include="../../src/HybridTherapist.Security/HybridTherapist.Security.csproj" />
-    <PackageReference Include="HandRuntime" Version="0.2.0" />
+    <PackageReference Include="HandRuntime" Version="0.4.0" />
   </ItemGroup>
 </Project>

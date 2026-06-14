@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Commit-msg hook — conventional commits validation (L3)
+set -euo pipefail
+
+MSG=$(cat "$1")
+PATTERN='^(feat|fix|docs|chore|refactor|test|build|deps)(\([a-z0-9-]+\))?: .{5,}'
+
+if [[ "$MSG" =~ $PATTERN ]] || echo "$MSG" | grep -q "^Merge "; then
+    exit 0
+else
+    echo "⚠ Commit message doesn't follow conventional commits format"
+    echo "  Expected: feat|fix|docs|chore|refactor|test|build|deps(<scope>): <description>"
+    echo "  Example: feat(therapy): add QualityValidator reflection markers"
+    echo "  To bypass: git commit --no-verify"
+    exit 1
+fi

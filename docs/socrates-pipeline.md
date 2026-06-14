@@ -11,7 +11,7 @@ upstream:
   - sys.socrates-pipeline
   - ref.glossary
 tags: ["socrates", "handcodec", "wire-format", "implicit-priming", "resilience"]
-last_verified: 2026-05-23
+last_verified: 2026-06-06
 owners: ["hybrid-therapist"]
 ---
 
@@ -19,7 +19,7 @@ owners: ["hybrid-therapist"]
 
 ## PURPOSE
 
-Walkthrough of the Socrates pipeline: wire-format protocol, Implicit Priming negotiation, and the 5-level resilience ladder for parsing LLM outputs with HandCodec.
+Walkthrough of the Socrates pipeline: wire-format protocol, Implicit Priming negotiation, and the 6-level resilience ladder for parsing LLM outputs with HandCodec.
 
 ## AUDIENCE
 
@@ -67,7 +67,7 @@ The model sees the pattern and subconsciously continues it. It learns the format
 
 ### Resilience Ladder — when small models stumble
 
-Every layer runs the model's output through `HandResiliencePipeline` — a 5-level degradation ladder:
+Every layer runs the model's output through `HandResiliencePipeline` — a 6-level degradation ladder:
 
 | Level | Strategy | What it does |
 |-------|----------|--------------|
@@ -75,9 +75,10 @@ Every layer runs the model's output through `HandResiliencePipeline` — a 5-lev
 | 2 | Lenient | Minor format deviations — repaired |
 | 3 | Markdown Strip | Wire wrapped in ``` fences — stripped |
 | 4 | Semantic Extraction | Model ignored format and wrote prose — regex extracts fields |
-| 5 | Fallback | Everything failed — safe replacement memo |
+| 5 | JSON Extraction | Attempts JSON parse (opt-in, new in v0.3.0) |
+| 6 | Passthrough/Fallback | Everything failed — safe replacement memo |
 
-This means the pipeline never throws HTTP 500 when a small model makes a mistake. Level 5 (unstructured passthrough) triggers a safe fallback memo for L2/L3, so downstream layers never see a broken input.
+This means the pipeline never throws HTTP 500 when a small model makes a mistake. Level 6 (passthrough/fallback) triggers a safe fallback memo for L2/L3, so downstream layers never see a broken input.
 
 ### Why this works — H.A.N.D. in practice
 
@@ -90,7 +91,7 @@ Empirically observed:
 - **Fewer wooden openings.** L6 catches them.
 - **Less echoing.** L4 explicit "never repeat" + L6 editorial pass beats single-pass.
 - **Better phase coherence.** Phase prompt at L4 + phase awareness in L3 strategy.
-- **Crisis sensitivity.** Three model layers see the message; any can flag `S=crisis`.
+- **Crisis sensitivity.** Three model layers see the message; any can flag `S=crisis` (a wire-format crisis signal used in resilience testing — see `HandResponseDecoderTests.cs`).
 - **No hallucinated themes.** Thematic alignment catches fabrications from L2.
 - **No wrong-language outputs.** L7 quality gate (still-English detection) + Polish QA gate.
 

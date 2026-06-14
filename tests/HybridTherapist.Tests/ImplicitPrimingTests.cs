@@ -115,6 +115,23 @@ public sealed class ImplicitPrimingTests
     }
 
     [Fact]
+    public void NewBenchmarkPings_HaveAtLeastTwoExamples()
+    {
+        var lib = typeof(HybridTherapist.Application.Hand.HandCheckpointLibrary);
+        var props = lib.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
+            .Where(p => p.PropertyType == typeof(HandRuntime.HandCheckpoint));
+
+        foreach (var prop in props)
+        {
+            if (prop.Name == "SystemPing" || prop.Name == "MemoPing")
+                continue;
+
+            var ping = (HandRuntime.HandCheckpoint)prop.GetValue(null)!;
+            ping.Exchanges.Should().HaveCountGreaterThan(1, $"Checkpoint {prop.Name} must have at least two priming examples");
+        }
+    }
+
+    [Fact]
     public void TherapySupervisorPing_AlignedWithFallbackApproach()
     {
         var ping = HybridTherapist.Application.Hand.HandCheckpointLibrary.TherapySupervisorPing;
@@ -124,13 +141,17 @@ public sealed class ImplicitPrimingTests
     [Fact]
     public void AllCheckpointExchanges_AreNonDomain()
     {
-        var analystPing = HybridTherapist.Application.Hand.HandCheckpointLibrary.TherapyAnalystPing;
-        var supervisorPing = HybridTherapist.Application.Hand.HandCheckpointLibrary.TherapySupervisorPing;
+        var lib = typeof(HybridTherapist.Application.Hand.HandCheckpointLibrary);
+        var props = lib.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
+            .Where(p => p.PropertyType == typeof(HandRuntime.HandCheckpoint));
 
-        foreach (var ex in analystPing.Exchanges)
-            ex.UserText.Should().Be("[SYSTEM_PROTOCOL_PING]");
-
-        foreach (var ex in supervisorPing.Exchanges)
-            ex.UserText.Should().Be("[SYSTEM_PROTOCOL_PING]");
+        foreach (var prop in props)
+        {
+            var ping = (HandRuntime.HandCheckpoint)prop.GetValue(null)!;
+            foreach (var ex in ping.Exchanges)
+            {
+                ex.UserText.Should().Be("[SYSTEM_PROTOCOL_PING]", $"Checkpoint {prop.Name} exchanges must use non-domain system protocol ping");
+            }
+        }
     }
 }

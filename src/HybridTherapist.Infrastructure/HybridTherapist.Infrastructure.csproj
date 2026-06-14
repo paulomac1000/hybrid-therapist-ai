@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
@@ -12,6 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="../HybridTherapist.Domain/HybridTherapist.Domain.csproj" />
-    <PackageReference Include="HandRuntime" Version="0.2.0" />
+    <PackageReference Include="HandRuntime" Version="0.4.0" />
   </ItemGroup>
 </Project>

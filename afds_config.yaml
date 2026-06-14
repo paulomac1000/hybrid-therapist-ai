@@ -4,6 +4,7 @@ default_paths:
 excluded_dirs:
   - archived
   - artifacts
+  - .omo
 exempt_files:
   - README.md
   - CHANGELOG.md

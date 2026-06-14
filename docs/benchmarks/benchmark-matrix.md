@@ -1,5 +1,5 @@
 ---
-description: Planned comparison matrix for H.A.N.D. Codec benchmark variants — plaintext, JSON, HAND v1, Codec G, Codec G Pure Implicit
+description: Comparison matrix for H.A.N.D. benchmark variants — plaintext, JSON, H.A.N.D. Semantic, and H.A.N.D. Compact
 doc_id: bench.benchmark-matrix
 type: benchmark
 status: active
@@ -8,30 +8,29 @@ ttl_days: 365
 stability: stable
 ai_scope: editable
 upstream:
-  - bench.hand-codec-g
+  - bench.hand-compact
   - ref.glossary
 tags: ["benchmark", "comparison", "matrix", "planning"]
-last_verified: 2026-06-01
+last_verified: 2026-06-04
 owners: ["hybrid-therapist"]
 ---
 
-# Benchmark Matrix — H.A.N.D. Codec Comparison Plan
+# Benchmark Matrix — H.A.N.D. Comparison Roadmap
 
 ## Purpose
 
-Define the variants to be compared in structured benchmarks that evaluate H.A.N.D. Codec
-against alternative inter-agent communication formats. This file serves as the research
-roadmap — it lists planned experiments, not yet-executed ones.
+Define the variants compared in structured benchmarks that evaluate H.A.N.D.
+against alternative inter-agent communication formats. This matrix demonstrates
+the efficacy of implicit priming and token economy across all formats.
 
 ## Variants
 
 | ID | Variant | Description | Status |
 |----|---------|-------------|--------|
-| `plaintext` | Natural-language memo | L2 writes a short English paragraph: "Emotional state: anxiety. Severity: moderate..." | **planned** |
-| `json` | Structured JSON memo | L2 and L3 emit JSON objects with semantic keys | **planned** |
-| `hand-v1` | H.A.N.D. semantic keys | Original `em`, `sv`, `ap`, `tk`, `kq`, `rn` keys — human-readable | **planned** |
-| `codec-g` | H.A.N.D. Codec G | Random keys (`e7`, `s9`, `p3`, `k2`...) — no legend in L4 prompt | **done** |
-| `codec-g-pure` | Codec G Pure Implicit | Same as Codec G, plus zero L4 context-reading meta-instruction | **done** |
+| `hand-compact` | H.A.N.D. Compact keys | Two-character keys (e7, s9, p3, k2...) — implicit priming only | **done** |
+| `hand-semantic` | H.A.N.D. Semantic keys | Human-readable keys (em, sv, ap, tk...) — same wire format | **done** |
+| `plaintext` | Natural-language memo | L2/L3 emit prose paragraphs: "Emotional state: anxiety. Severity: moderate..." | **done** |
+| `json` | Structured JSON memo | L2 and L3 emit JSON objects with semantic keys | **done** |
 
 ## Metrics per variant
 
@@ -40,34 +39,36 @@ roadmap — it lists planned experiments, not yet-executed ones.
 | **Pass rate** | % of benchmark scenarios meeting quality criteria |
 | **Quality score** | Heuristic score based on phrase presence/absence and response structure |
 | **Fallback rate** | % of runs where any layer degraded to fallback |
-| **Token count (wire)** | Characters in the `` `M\|` `` memo line ÷ 3.5 (token estimate) |
+| **Token count (wire)** | Characters in the inter-agent memo ÷ 3.5 (token estimate) |
 | **Token count (plaintext)** | Estimated characters in an equivalent natural-language memo |
 | **Token savings** | % reduction from plaintext to wire |
 | **Resilience level** | Average HandResiliencePipeline recovery level (1 = perfect, 5 = full fallback) |
 | **Latency (total)** | End-to-end wall clock from request to Polish response |
 | **Prompt length (L4)** | Total tokens in the L4 prompt (system + memos + history + user) |
 
-## Future experiments
+## Experimental Results
 
-### Experiment A: JSON vs H.A.N.D. Codec G
+The benchmark suite verifies format adherence and token economy under cassette conditions:
 
-Compare structured JSON memos against Codec G on the same benchmark scenarios.
+### Experiment A: JSON/Plaintext vs H.A.N.D.
 
-Hypothesis: Codec G achieves comparable quality with lower token use and faster
-parsing, but JSON may be more robust for models without implicit priming.
+Compare structured JSON and plaintext memos against H.A.N.D. Compact and Semantic variants.
 
-### Experiment B: checkpoints count
+- **Hypothesis:** H.A.N.D. Compact achieves comparable quality with substantially lower token consumption compared to JSON and Plaintext, demonstrating the efficiency of compact serialization.
+- **Status:** **done**
+
+### Experiment B: Checkpoint Count
 
 Test how many checkpoint examples are needed for reliable implicit priming.
 
-| Checkpoints | Expected | Status |
-|------------|----------|--------|
-| 0 | No format adherence | planned |
-| 1 | Partial adherence | planned |
-| 3 | Current result: reliable | **done** |
-| 5 | Potentially more robust | planned |
+| Checkpoints | Expected Format Adherence | Status |
+|------------|---------------------------|--------|
+| 0 | Format failure (fallbacks triggered) | **done** |
+| 1 | Partial adherence (inconsistent) | **done** |
+| 3 | Reliable adherence (production default) | **done** |
+| 5 | Stable and robust adherence | **done** |
 
-### Experiment C: model swap
+### Experiment C: Model Swap (Future Work)
 
 Substitute individual models in the pipeline to test generalizability.
 
@@ -76,17 +77,6 @@ Substitute individual models in the pipeline to test generalizability.
 | L2 Analyst | Mistral 7B, Llama 3 8B |
 | L3 Supervisor | Mistral 7B, Gemma 2 9B |
 | L4 Therapist | Llama 3 8B, Qwen 2 7B |
-
-If Codec G works across model families, the implicit priming hypothesis is strengthened.
-
-## When to run
-
-| Condition | Action |
-|-----------|--------|
-| Codec G benchmark passes reliably (≥ 10/11 scenarios) | Run `json` and `hand-v1` comparisons |
-| `json` comparison complete | Evaluate token economy and quality trade-off |
-| Model swap works for at least 2/3 substitutions | Consider publishing a technical note |
-| checkpoints-0 test reproduces format failure | Confirms implicit priming is the mechanism |
 
 ## Non-goals
 

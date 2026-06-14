@@ -32,8 +32,13 @@ public sealed class TokenSavingsTracker
     /// Verbose fallbacks and old keys are treated as failures. Used for research benchmarks.
     /// Default false — allows verbose backwards compatibility in production.
     /// </summary>
-    [ThreadStatic]
-    public static bool StrictCodecG;
+    private static readonly AsyncLocal<bool> _strictCodecG = new();
+
+    public static bool StrictCodecG
+    {
+        get => _strictCodecG.Value;
+        set => _strictCodecG.Value = value;
+    }
 
     /// <summary>
     /// Expands an M| memo wire line into a plaintext English paragraph,
@@ -44,6 +49,35 @@ public sealed class TokenSavingsTracker
         if (string.IsNullOrWhiteSpace(memoWire) || !memoWire.StartsWith("M|", StringComparison.Ordinal))
             return memoWire;
 
+        var fields = ParseMFields(memoWire);
+
+        string layer = fields.TryGetValue("l", out var l) ? l : "?";
+        var lines = new List<string> { $"Layer {layer} Analysis:" };
+
+        foreach (var (codecKey, fallbackKey, label) in _fieldDefs)
+        {
+            if (fields.TryGetValue(codecKey, out var val) || (!StrictCodecG && fields.TryGetValue(fallbackKey, out val)))
+                lines.Add($"- {label}: {val}");
+        }
+
+        return string.Join("\n", lines);
+    }
+
+    private static readonly (string CodecKey, string FallbackKey, string Label)[] _fieldDefs =
+    [
+        ("e7", "emotional_state", "Emotional state"),
+        ("s9", "severity", "Severity"),
+        ("x4", "risk_indicators", "Risk indicators"),
+        ("y1", "cognitive_patterns", "Cognitive patterns"),
+        ("q3", "evidence_quotes", "Evidence"),
+        ("p3", "approach", "Approach"),
+        ("t5", "technique", "Technique"),
+        ("k2", "key_question", "Key question"),
+        ("r8", "risk_note", "Risk note"),
+    ];
+
+    private static Dictionary<string, string> ParseMFields(string memoWire)
+    {
         string[] parts = memoWire.Split('|');
         var fields = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         foreach (string part in parts.Skip(1))
@@ -52,30 +86,7 @@ public sealed class TokenSavingsTracker
             if (eq > 0)
                 fields[part[..eq].Trim().ToLowerInvariant()] = part[(eq + 1)..].Trim();
         }
-
-        string layer = fields.TryGetValue("l", out var l) ? l : "?";
-        var lines = new List<string> { $"Layer {layer} Analysis:" };
-
-        if (fields.TryGetValue("e7", out var em) || (!StrictCodecG && fields.TryGetValue("emotional_state", out em)))
-            lines.Add($"- Emotional state: {em}");
-        if (fields.TryGetValue("s9", out var sv) || (!StrictCodecG && fields.TryGetValue("severity", out sv)))
-            lines.Add($"- Severity: {sv}");
-        if (fields.TryGetValue("x4", out var ri) || (!StrictCodecG && fields.TryGetValue("risk_indicators", out ri)))
-            lines.Add($"- Risk indicators: {ri}");
-        if (fields.TryGetValue("y1", out var cp) || (!StrictCodecG && fields.TryGetValue("cognitive_patterns", out cp)))
-            lines.Add($"- Cognitive patterns: {cp}");
-        if (fields.TryGetValue("q3", out var ev) || (!StrictCodecG && fields.TryGetValue("evidence_quotes", out ev)))
-            lines.Add($"- Evidence: \"{ev}\"");
-        if (fields.TryGetValue("p3", out var ap) || (!StrictCodecG && fields.TryGetValue("approach", out ap)))
-            lines.Add($"- Approach: {ap}");
-        if (fields.TryGetValue("t5", out var tk) || (!StrictCodecG && fields.TryGetValue("technique", out tk)))
-            lines.Add($"- Technique: {tk}");
-        if (fields.TryGetValue("k2", out var kq) || (!StrictCodecG && fields.TryGetValue("key_question", out kq)))
-            lines.Add($"- Key question: {kq}");
-        if (fields.TryGetValue("r8", out var rn) || (!StrictCodecG && fields.TryGetValue("risk_note", out rn)))
-            lines.Add($"- Risk note: {rn}");
-
-        return string.Join("\n", lines);
+        return fields;
     }
 
     private static int EstimateTokens(string text) => Math.Max(1, text.Length / 4);

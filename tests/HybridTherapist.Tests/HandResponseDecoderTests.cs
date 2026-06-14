@@ -52,7 +52,7 @@ public sealed class HandResponseDecoderTests
 
         r.Text.Should().Be("I hear you and I want to help you through this.");
         r.Confidence.Should().Be(0.5);
-        r.ResilienceLevel.Should().Be(5);
+        r.ResilienceLevel.Should().Be(6);
     }
 
     [Fact]

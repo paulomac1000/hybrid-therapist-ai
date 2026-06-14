@@ -1,0 +1,456 @@
+{
+  "name": "hand-long-session",
+  "description": "Multi-turn 5-step conversation to test format compliance and protocol drift over long sessions.",
+  "interactions": [
+    {
+      "layer": "L1_translator_pl_en",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "Dzień dobry, czuję ostatnio ogromny niepokój."
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.91|V=Good morning, I have been feeling a lot of anxiety lately."
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L2_analyst",
+      "request_match": {
+        "model_contains": "MentaLLaMA",
+        "user_content_contains": "feeling a lot of anxiety lately"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "M|L=2|e7=anxiety|s9=moderate|x4=racing_thoughts|y1=worry_loop|q3=I_feel_very_anxious_today"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L3_supervisor",
+      "request_match": {
+        "model_contains": "PsyLLM",
+        "user_content_contains": "feeling a lot of anxiety lately"
+      },
+      "response": {
+        "model": "hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "M|L=3|p3=cognitive_restructuring|t5=thought_record|k2=What_evidence_supports_this_worry?|r8=none"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L4_therapist",
+      "request_match": {
+        "model_contains": "PsychoCounsel",
+        "user_content_contains": "feeling a lot of anxiety lately"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/PsychoCounsel-Llama3-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.90\nI'm sorry you are feeling anxious. What thoughts make you feel this way?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L6_calibrator",
+      "request_match": {
+        "model_contains": "dolphin",
+        "user_content_contains": "I'm sorry you are feeling anxious."
+      },
+      "response": {
+        "model": "hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "I'm sorry you are feeling anxious. What thoughts make you feel this way?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L7_translator_en_pl",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "I'm sorry you are feeling anxious."
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.92\nPrzykro mi, że czujesz niepokój. Jakie myśli sprawiają, że tak się czujesz?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L1_translator_pl_en",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "Ciągle myślę o pracy i nie potrafię się zrelaksować."
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.91|V=I keep thinking about work and I cannot relax."
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L2_analyst",
+      "request_match": {
+        "model_contains": "MentaLLaMA",
+        "user_content_contains": "thinking about work and I cannot relax"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "M|L=2|e7=anxiety|s9=moderate|x4=work_stress|y1=worry_loop|q3=I_keep_thinking_about_work"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L3_supervisor",
+      "request_match": {
+        "model_contains": "PsyLLM",
+        "user_content_contains": "thinking about work and I cannot relax"
+      },
+      "response": {
+        "model": "hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "M|L=3|p3=cognitive_restructuring|t5=thought_record|k2=Can_we_look_at_what_specifically_causes_this_work_stress?|r8=none"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L4_therapist",
+      "request_match": {
+        "model_contains": "PsychoCounsel",
+        "user_content_contains": "thinking about work and I cannot relax"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/PsychoCounsel-Llama3-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.90\nWork can indeed be stress-inducing. What specific work thoughts are on your mind?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L6_calibrator",
+      "request_match": {
+        "model_contains": "dolphin",
+        "user_content_contains": "Work can indeed be stress-inducing."
+      },
+      "response": {
+        "model": "hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "Work can indeed be stress-inducing. What specific work thoughts are on your mind?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L7_translator_en_pl",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "Work can indeed be stress-inducing."
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.92\nPraca rzeczywiście może wywoływać stres. O jakich konkretnie sprawach zawodowych myślisz?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L1_translator_pl_en",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "Boję się, że zostanę zwolniony, jeśli popełnię błąd."
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.91|V=I am afraid that I will be fired if I make a mistake."
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L2_analyst",
+      "request_match": {
+        "model_contains": "MentaLLaMA",
+        "user_content_contains": "afraid that I will be fired"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "M|L=2|e7=anxiety|s9=moderate|x4=catastrophizing|y1=fear_of_failure|q3=I_am_afraid_of_being_fired"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L3_supervisor",
+      "request_match": {
+        "model_contains": "PsyLLM",
+        "user_content_contains": "afraid that I will be fired"
+      },
+      "response": {
+        "model": "hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "M|L=3|p3=cognitive_restructuring|t5=thought_record|k2=What_is_the_probability_of_being_fired_for_one_mistake?|r8=none"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L4_therapist",
+      "request_match": {
+        "model_contains": "PsychoCounsel",
+        "user_content_contains": "afraid that I will be fired"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/PsychoCounsel-Llama3-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.90\nThat sounds like a frightening thought. What makes you think you will be fired?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L6_calibrator",
+      "request_match": {
+        "model_contains": "dolphin",
+        "user_content_contains": "That sounds like a frightening thought."
+      },
+      "response": {
+        "model": "hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "That sounds like a frightening thought. What makes you think you will be fired for a mistake?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L7_translator_en_pl",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "That sounds like a frightening thought."
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.92\nTo brzmi jak przerażająca myśl. Co sprawia, że uważasz, że zostaniesz zwolniony z powodu błędu?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L1_translator_pl_en",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "Codziennie rano budzę się ze ściskiem w żołądku."
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.91|V=Every morning I wake up with a tight stomach."
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L2_analyst",
+      "request_match": {
+        "model_contains": "MentaLLaMA",
+        "user_content_contains": "wake up with a tight stomach"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "M|L=2|e7=anxiety|s9=moderate|x4=somatic_symptoms|y1=physical_anxiety|q3=Every_morning_tight_stomach"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L3_supervisor",
+      "request_match": {
+        "model_contains": "PsyLLM",
+        "user_content_contains": "wake up with a tight stomach"
+      },
+      "response": {
+        "model": "hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "M|L=3|p3=cognitive_restructuring|t5=thought_record|k2=What_thoughts_do_you_notice_when_you_wake_up?|r8=none"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L4_therapist",
+      "request_match": {
+        "model_contains": "PsychoCounsel",
+        "user_content_contains": "wake up with a tight stomach"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/PsychoCounsel-Llama3-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.90\nSomatic symptoms like a tight stomach can be very uncomfortable. It may help to track when this happens. What is your first thought in the morning?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L6_calibrator",
+      "request_match": {
+        "model_contains": "dolphin",
+        "user_content_contains": "Somatic symptoms like a tight stomach"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "Somatic symptoms like a tight stomach can be very uncomfortable. It may help to track when this happens. What is your first thought in the morning?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L7_translator_en_pl",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "Somatic symptoms like a tight stomach"
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.92\nObjawy somatyczne, takie jak ścisk w żołądku, mogą być bardzo uciążliwe. Pomocne może być śledzenie, kiedy to się dzieje. Jaka jest Twoja pierwsza myśl po przebudzeniu?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L1_translator_pl_en",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "Chciałbym nauczyć się jak radzić sobie z tym stresem."
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.91|V=I would like to learn how to deal with this stress."
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L2_analyst",
+      "request_match": {
+        "model_contains": "MentaLLaMA",
+        "user_content_contains": "learn how to deal with this stress"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "M|L=2|e7=anxiety|s9=moderate|x4=coping_skills|y1=readiness_to_change|q3=Learn_how_to_deal_with_this_stress"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L3_supervisor",
+      "request_match": {
+        "model_contains": "PsyLLM",
+        "user_content_contains": "learn how to deal with this stress"
+      },
+      "response": {
+        "model": "hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "M|L=3|p3=cognitive_restructuring|t5=thought_record|k2=Shall_we_start_by_challenging_your_most_common_automatic_thought?|r8=none"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L4_therapist",
+      "request_match": {
+        "model_contains": "PsychoCounsel",
+        "user_content_contains": "learn how to deal with this stress"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/PsychoCounsel-Llama3-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.90\nLearning coping techniques is a great step forward. You can try a simple thought record. What is one automatic thought you notice?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L6_calibrator",
+      "request_match": {
+        "model_contains": "dolphin",
+        "user_content_contains": "Learning coping techniques is a great step"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "Learning coping techniques is a great step forward. You can try a simple thought record. What is one automatic thought you notice?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L7_translator_en_pl",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "Learning coping techniques is a great step"
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.92\nNauka technik radzenia sobie ze stresem to świetny krok naprzód. Możesz spróbować prostego zapisu myśli. Jaką automatyczną myśl zauważasz?"
+        },
+        "done": true
+      }
+    }
+  ]
+}

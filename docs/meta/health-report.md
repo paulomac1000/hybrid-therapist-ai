@@ -11,7 +11,7 @@ source_of_truth: false
 upstream:
   - ref.doc-registry
 tags: ["health", "metrics", "meta"]
-last_verified: 2026-05-23
+last_verified: 2026-06-06
 owners: ["hybrid-therapist"]
 ---
 
@@ -34,9 +34,9 @@ N/A
 
 ## STATE
 
-- Last scan: 2026-05-23
-- Documents tracked: 8
-- Documents passing validation: 8
+- Last scan: 2026-06-06
+- Documents tracked: 14
+- Documents passing validation: 14
 - Documents needing review: 0
 
 ## RULES

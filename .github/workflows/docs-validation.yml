@@ -2,11 +2,12 @@ name: Documentation Validation
 
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
     paths:
       - "**/*.md"
       - "docs/**"
   pull_request:
+    types: [opened, synchronize, ready_for_review]
     branches: [main]
     paths:
       - "**/*.md"
@@ -31,6 +32,14 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@24d32ffd492484c1d75e0c0b894501ddb9d30d62  # v47
+        with:
+          files: |
+            **/*.md
+            docs/**
+
       - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6
         with:
           python-version: "3.11"
@@ -42,3 +51,33 @@ jobs:
         run: |
           curl -sS https://raw.githubusercontent.com/paulomac1000/ai-skills/main/skills/afds-doc-writer/docs_validate.py | python3 - \
             --config afds_config.yaml ./
+
+      - name: Post validation results as PR comment
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@373c709c69115d41ff229c7e5df9f8788daa9553  # v9
+        with:
+          script: |
+            const marker = '<!-- docs-validation-bot -->';
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find(c => c.body.includes(marker));
+            const changedFiles = '${{ steps.changed-files.outputs.all_changed_files }}';
+            const body = `${marker}\n## Documentation Validation\n\n**Changed files:** ${changedFiles || 'None'}\n\nValidation completed for this PR.\n`;
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }

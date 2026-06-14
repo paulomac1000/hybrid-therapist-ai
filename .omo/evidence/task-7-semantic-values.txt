@@ -1,0 +1,21 @@
+# Task 7 - Semantic Benchmark Values Update
+
+## Source
+TRX file: artifacts/benchmarks/hand-semantic-benchmark.trx
+Date: 2026-06-06T18:38:24+02:00
+
+## Extracted Values
+
+| Scenario   | Wire Tokens | Plain Tokens | Savings % |
+|------------|-------------|--------------|-----------|
+| insomnia   | ~75         | ~114         | 34.2%     |
+| anxiety    | ~53         | ~92          | 42.4%     |
+| depression | ~72         | ~110         | 34.5%     |
+
+**Average token savings: ~37.0%**
+
+## Changes Made
+- Replaced old hardcoded data (~4.4% average) with real TRX values (~37.0%)
+- Updated last_verified and "Last run" date to 2026-06-06
+- Updated NOTE to reflect comparable savings to Compact variant
+- Order: insomnia, anxiety, depression (sorted by savings descending)

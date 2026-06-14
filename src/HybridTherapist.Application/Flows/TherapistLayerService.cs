@@ -92,6 +92,7 @@ public sealed class TherapistLayerService
 
     // ── L4 — PsychoCounsel Therapist ─────────────────────────────────────────
 
+#pragma warning disable S107 // Layer orchestration — pipeline context requires multiple params
     public async Task<LayerResult> RunL4TherapistAsync(
         string sessionId, string userTextEn, string analystMemoWire, string supervisorMemoWire,
         string currentPhase, IReadOnlyList<ChatMessage> history,
@@ -169,7 +170,9 @@ public sealed class TherapistLayerService
             "You are a final editor. Keep all facts from the THERAPIST DRAFT. " +
             "Use supervisor guidance only for technique. " +
             "NEVER introduce new topics. NEVER open with formulaic phrases like 'I understand that' or 'It seems that'. " +
-            "Vary the opening. End with one open-ended question. Respond in English only.";
+            "NEVER add closing reassurances like 'I'm here to help', 'Let's work together', 'I'm here to support you', or 'We can explore'. " +
+            "End with EXACTLY one open-ended question — no more, no less. The response must end with the question itself, not after it. " +
+            "Keep under 120 words. Vary the opening. Respond in English only.";
 
         string systemPrompt =
             "You are a therapeutic response editor. Maintain the therapist's voice and content. " +
@@ -186,7 +189,7 @@ public sealed class TherapistLayerService
             return new LayerResult { Ok = true, Text = therapistDraft, ModelId = _opts.Calibrator };
         }
 
-        string text = resp.Text.Trim();
+        string text = DecodeHand(resp.Text);
         await TraceAsync(sessionId, "L6_calibrator", resp.ModelId ?? _opts.Calibrator, prompt, text, sw.ElapsedMilliseconds, "ok");
         return new LayerResult { Ok = true, Text = text, ModelId = resp.ModelId };
     }
@@ -222,6 +225,7 @@ public sealed class TherapistLayerService
                     englishText, text, sw.ElapsedMilliseconds, "ok", wireFormat: resp.Text);
                 return new LayerResult { Ok = true, Text = text, ModelId = resp.ModelId };
             }
+#pragma warning restore S107
 
             await TraceAsync(sessionId, "L7_en_pl", resp.ModelId ?? _opts.Translator,
                 englishText, text, sw.ElapsedMilliseconds, "still_english");
@@ -242,73 +246,83 @@ public sealed class TherapistLayerService
         if (ms is null) return string.Empty;
 
         var sb = new StringBuilder();
-
         sb.AppendLine("[SESSION OVERVIEW]");
         sb.AppendLine(ms.Overview);
+        AppendPhaseBody(sb, ms, phase);
+        return sb.ToString();
+    }
 
+    private static void AppendPhaseBody(StringBuilder sb, MemorySummary ms, string phase)
+    {
         switch (phase)
         {
-            case "INIT":
-            case "CLOSING":
-                break;
-
             case "EXPLORATION":
-                if (ms.TopicMap.Count > 0)
-                {
-                    sb.AppendLine();
-                    sb.AppendLine("[DISCUSSED TOPICS]");
-                    foreach (var t in ms.TopicMap)
-                        sb.AppendLine($"- {t.Theme} ({t.Status})");
-                }
-                sb.AppendLine();
-                sb.AppendLine($"[EMOTIONAL ARC] {ms.EmotionalArc}");
+                AppendExplorationBlock(sb, ms);
                 break;
-
             case "DIGGING":
-                if (ms.TopicMap.Count > 0)
-                {
-                    sb.AppendLine();
-                    sb.AppendLine("[TOPIC DETAIL]");
-                    foreach (var t in ms.TopicMap)
-                        sb.AppendLine($"- {t.Theme}: {t.Evolution} (msg {t.MessageRange})");
-                }
-                if (!string.IsNullOrWhiteSpace(ms.ClinicalFlags))
-                {
-                    sb.AppendLine();
-                    sb.AppendLine("[CLINICAL FLAGS — PAY ATTENTION]");
-                    sb.AppendLine(ms.ClinicalFlags);
-                }
-                if (!string.IsNullOrWhiteSpace(ms.FocusNext))
-                {
-                    sb.AppendLine();
-                    sb.AppendLine("[SUGGESTED FOCUS]");
-                    sb.AppendLine(ms.FocusNext);
-                }
+                AppendDiggingBlock(sb, ms);
                 break;
-
             case "WORKING":
-                if (ms.TopicMap.Count > 0)
-                {
-                    sb.AppendLine();
-                    sb.AppendLine("[ACTIVE TOPICS]");
-                    foreach (var t in ms.TopicMap.Where(t => t.Status == "active"))
-                        sb.AppendLine($"- {t.Theme}");
-                }
-                if (!string.IsNullOrWhiteSpace(ms.FocusNext))
-                {
-                    sb.AppendLine();
-                    sb.AppendLine("[SUGGESTED FOCUS]");
-                    sb.AppendLine(ms.FocusNext);
-                }
+                AppendWorkingBlock(sb, ms);
                 break;
-
             default:
                 sb.AppendLine();
                 sb.AppendLine($"[EMOTIONAL ARC] {ms.EmotionalArc}");
                 break;
         }
+    }
 
-        return sb.ToString();
+    private static void AppendExplorationBlock(StringBuilder sb, MemorySummary ms)
+    {
+        if (ms.TopicMap.Count > 0)
+        {
+            sb.AppendLine();
+            sb.AppendLine("[DISCUSSED TOPICS]");
+            foreach (var t in ms.TopicMap)
+                sb.AppendLine($"- {t.Theme} ({t.Status})");
+        }
+        sb.AppendLine();
+        sb.AppendLine($"[EMOTIONAL ARC] {ms.EmotionalArc}");
+    }
+
+    private static void AppendDiggingBlock(StringBuilder sb, MemorySummary ms)
+    {
+        if (ms.TopicMap.Count > 0)
+        {
+            sb.AppendLine();
+            sb.AppendLine("[TOPIC DETAIL]");
+            foreach (var t in ms.TopicMap)
+                sb.AppendLine($"- {t.Theme}: {t.Evolution} (msg {t.MessageRange})");
+        }
+        if (!string.IsNullOrWhiteSpace(ms.ClinicalFlags))
+        {
+            sb.AppendLine();
+            sb.AppendLine("[CLINICAL FLAGS — PAY ATTENTION]");
+            sb.AppendLine(ms.ClinicalFlags);
+        }
+        if (!string.IsNullOrWhiteSpace(ms.FocusNext))
+        {
+            sb.AppendLine();
+            sb.AppendLine("[SUGGESTED FOCUS]");
+            sb.AppendLine(ms.FocusNext);
+        }
+    }
+
+    private static void AppendWorkingBlock(StringBuilder sb, MemorySummary ms)
+    {
+        if (ms.TopicMap.Count > 0)
+        {
+            sb.AppendLine();
+            sb.AppendLine("[ACTIVE TOPICS]");
+            foreach (var t in ms.TopicMap.Where(t => t.Status == "active"))
+                sb.AppendLine($"- {t.Theme}");
+        }
+        if (!string.IsNullOrWhiteSpace(ms.FocusNext))
+        {
+            sb.AppendLine();
+            sb.AppendLine("[SUGGESTED FOCUS]");
+            sb.AppendLine(ms.FocusNext);
+        }
     }
 
     internal static string BuildL4SystemPrompt() =>
@@ -317,6 +331,7 @@ public sealed class TherapistLayerService
 
     // ── Helpers ──────────────────────────────────────────────────────────────
 
+#pragma warning disable S107 // Trace helper — all params are atomic fields
     private async Task TraceAsync(string sessionId, string layer, string? model, string input, string output,
         long durationMs, string outcome, string? error = null, string? wireFormat = null)
     {
@@ -332,6 +347,7 @@ public sealed class TherapistLayerService
             Error: error,
             WireFormat: wireFormat));
     }
+#pragma warning restore S107
 
     private static bool LooksMostlyEnglish(string text)
     {

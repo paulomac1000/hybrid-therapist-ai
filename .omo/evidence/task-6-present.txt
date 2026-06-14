@@ -1,0 +1,5 @@
+4
+200:Every LLM layer decodes model output via `HandResiliencePipeline.Parse()` (levels 1-6).
+202:Level 6 (passthrough) triggers a safe fallback memo for L2/L3 so downstream
+239:Output decoded by `HandResiliencePipeline` (levels 1-6). Level 6 triggers a safe
+240:fallback memo (`M|L=2|e7=unknown|s9=low|note=decoder_level6_passthrough`).

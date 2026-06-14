@@ -49,4 +49,13 @@ docker-compose.override.yml
 *.bak
 
 # NuGet local cache (remote GitHub Packages is the source of truth)
-local-packages/
+# local-packages checked in for CI availability until HandCodec/HandRuntime
+# are properly published to the GitHub Packages NuGet feed
+local-packages/*.snupkg
+
+# Antigravity CLI config
+.antigravitycli/
+
+# SonarQube scanner working directory (generated at scan time)
+.sonarqube/
+.omo

@@ -17,6 +17,13 @@ public static class QualityValidator
     private static readonly Regex TryRegex = new(
         @"\btry\b", RegexOptions.IgnoreCase | RegexOptions.Compiled,
         TimeSpan.FromMilliseconds(100));
+
+    private static readonly Regex ReflectionRegex = new(
+        @"\b(it|that)\s+sounds\b", RegexOptions.IgnoreCase | RegexOptions.Compiled,
+        TimeSpan.FromMilliseconds(100));
+
+    private static readonly char[] WordSeparators = [' ', '\n', '\t'];
+
     public sealed record Verdict(bool Ok, string Reason);
 
     /// <summary>
@@ -30,7 +37,7 @@ public static class QualityValidator
         string trimmed = response.Trim();
 
         bool containsQuestion = trimmed.Contains('?', StringComparison.Ordinal);
-        bool containsAdvice =
+        bool containsTherapeuticSubstance =
             trimmed.Contains("spróbuj", StringComparison.OrdinalIgnoreCase) ||
             AdviceRegex.IsMatch(trimmed) ||
             trimmed.Contains("spróbować", StringComparison.OrdinalIgnoreCase) ||
@@ -42,7 +49,14 @@ public static class QualityValidator
             trimmed.Contains("proponuję", StringComparison.OrdinalIgnoreCase) ||
             trimmed.Contains("proponuje", StringComparison.OrdinalIgnoreCase) ||
             trimmed.Contains("pomocne może być", StringComparison.OrdinalIgnoreCase) ||
-            trimmed.Contains("jednym ze sposobów", StringComparison.OrdinalIgnoreCase);
+            trimmed.Contains("jednym ze sposobów", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.Contains("that must be", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.Contains("it makes sense", StringComparison.OrdinalIgnoreCase) ||
+            ReflectionRegex.IsMatch(trimmed) ||
+            trimmed.Contains("thank you for", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.Contains("I appreciate", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.Contains("I can imagine", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.Contains("I can see why", StringComparison.OrdinalIgnoreCase);
 
         bool containsFormulaicOpening =
             trimmed.StartsWith("Rozumiem", StringComparison.OrdinalIgnoreCase) ||
@@ -53,7 +67,7 @@ public static class QualityValidator
             trimmed.StartsWith("I hear", StringComparison.OrdinalIgnoreCase) ||
             trimmed.StartsWith("It seems", StringComparison.OrdinalIgnoreCase);
 
-        if (messageCount >= 4 && containsQuestion && !containsAdvice)
+        if (messageCount >= 4 && containsQuestion && !containsTherapeuticSubstance)
             return new Verdict(false, "only_questions_after_4_messages");
 
         if (containsFormulaicOpening)
@@ -72,7 +86,7 @@ public static class QualityValidator
         if (trimmed.Length < 20)
             return new Verdict(false, "too_short");
 
-        int wordCount = trimmed.Split(new[] { ' ', '\n', '\t' }, StringSplitOptions.RemoveEmptyEntries).Length;
+        int wordCount = trimmed.Split(WordSeparators, StringSplitOptions.RemoveEmptyEntries).Length;
         if (wordCount < 5)
             return new Verdict(false, "too_few_words");
 
@@ -105,10 +119,7 @@ public static class QualityValidator
             return new Verdict(false, "prompt_leakage");
 
         // Polish output must contain some Polish characters
-        int diacritics = 0;
-        foreach (char c in trimmed)
-            if ("ąćęłńóśźżĄĆĘŁŃÓŚŹŻ".Contains(c, StringComparison.Ordinal))
-                diacritics++;
+        int diacritics = trimmed.Count(c => "ąćęłńóśźżĄĆĘŁŃÓŚŹŻ".Contains(c, StringComparison.Ordinal));
         if (trimmed.Length > 40 && diacritics == 0)
             return new Verdict(false, "not_polish");
 

@@ -52,12 +52,12 @@ public sealed class StackConfig
         if (Models.TryGetValue(roleOrKey, out ModelConfig? cfg) && !string.IsNullOrEmpty(cfg.Name))
             return cfg.Name;
 
-        foreach (KeyValuePair<string, ModelConfig> entry in Models)
-        {
-            if (string.Equals(entry.Value.Role, roleOrKey, StringComparison.OrdinalIgnoreCase)
-                && !string.IsNullOrEmpty(entry.Value.Name))
-                return entry.Value.Name;
-        }
+        string? match = Models.Select(kvp => kvp)
+            .Where(kvp => string.Equals(kvp.Value.Role, roleOrKey, StringComparison.OrdinalIgnoreCase)
+                && !string.IsNullOrEmpty(kvp.Value.Name))
+            .Select(kvp => kvp.Value.Name)
+            .FirstOrDefault();
+        if (match is not null) return match;
 
         throw new KeyNotFoundException(
             $"Model '{roleOrKey}' not found in stack.yaml. Known keys: [{string.Join(", ", Models.Keys)}]");
@@ -79,15 +79,13 @@ public sealed class StackConfig
             return cfg.Name;
         }
 
-        foreach (KeyValuePair<string, ModelConfig> entry in Models)
-        {
-            if (string.Equals(entry.Value.Role, roleOrKey, StringComparison.OrdinalIgnoreCase)
-                && !string.IsNullOrEmpty(entry.Value.Name)
-                && ProviderMatches(entry.Value, requiredProvider))
-            {
-                return entry.Value.Name;
-            }
-        }
+        string? match = Models.Select(kvp => kvp)
+            .Where(kvp => string.Equals(kvp.Value.Role, roleOrKey, StringComparison.OrdinalIgnoreCase)
+                && !string.IsNullOrEmpty(kvp.Value.Name)
+                && ProviderMatches(kvp.Value, requiredProvider))
+            .Select(kvp => kvp.Value.Name)
+            .FirstOrDefault();
+        if (match is not null) return match;
 
         throw new KeyNotFoundException(
             $"Model '{roleOrKey}' (provider={requiredProvider}) not found in stack.yaml.");

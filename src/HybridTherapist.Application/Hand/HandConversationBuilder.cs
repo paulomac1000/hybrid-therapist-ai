@@ -14,6 +14,9 @@ public static class HandConversationBuilder
         string userText,
         AgentClass agentClass)
     {
+        ArgumentNullException.ThrowIfNull(persona);
+        ArgumentNullException.ThrowIfNull(checkpoint);
+        ArgumentNullException.ThrowIfNull(userText);
         return RuntimeBuilder.Build(persona, checkpoint, userText, agentClass);
     }
 
@@ -24,6 +27,9 @@ public static class HandConversationBuilder
         Performative performative,
         AgentClass agentClass)
     {
+        ArgumentNullException.ThrowIfNull(persona);
+        ArgumentNullException.ThrowIfNull(checkpoint);
+        ArgumentNullException.ThrowIfNull(userText);
         return RuntimeBuilder.Build(persona, checkpoint, userText, performative, agentClass);
     }
 }

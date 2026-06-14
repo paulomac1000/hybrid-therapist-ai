@@ -1,0 +1,536 @@
+{
+  "schema_version": 2,
+  "active_work_id": "skill-audit-adapt-284f3f34",
+  "works": {
+    "docs-audit-fix-57778d7d": {
+      "work_id": "docs-audit-fix-57778d7d",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/docs-audit-fix.md",
+      "plan_name": "docs-audit-fix",
+      "status": "completed",
+      "started_at": "2026-06-06T16:35:44.062Z",
+      "updated_at": "2026-06-06T16:51:22.800Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS",
+        "opencode:ses_1622d3fb6ffeO24rrTBEAU0dix",
+        "opencode:ses_1622d2f79ffeHoOAsBw4b1YCCe",
+        "opencode:ses_1622d1a47ffeVrvDQ1VStQ37ZD",
+        "opencode:ses_1622cff81ffeYz5hkWR3dXsI48"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct",
+        "opencode:ses_1622d3fb6ffeO24rrTBEAU0dix": "appended",
+        "opencode:ses_1622d2f79ffeHoOAsBw4b1YCCe": "appended",
+        "opencode:ses_1622d1a47ffeVrvDQ1VStQ37ZD": "appended",
+        "opencode:ses_1622cff81ffeYz5hkWR3dXsI48": "appended"
+      },
+      "agent": "atlas",
+      "task_sessions": {
+        "todo:1": {
+          "task_key": "todo:1",
+          "task_label": "1",
+          "task_title": "Verify HandCodec v0.3.0 resilience ladder API against CHANGELOG description",
+          "session_id": "opencode:ses_16234cfabffeOSc9uHcKgxJydH",
+          "agent": "Sisyphus-Junior",
+          "category": "quick",
+          "updated_at": "2026-06-06T16:40:14.568Z",
+          "started_at": "2026-06-06T16:38:53.607Z",
+          "status": "completed",
+          "ended_at": "2026-06-06T16:40:14.568Z",
+          "elapsed_ms": 80961
+        },
+        "todo:7": {
+          "task_key": "todo:7",
+          "task_label": "7",
+          "task_title": "Regenerate docs/benchmarks/hand-semantic.md with TRX data",
+          "session_id": "opencode:ses_16230a3ceffeBYcxfztfI6Nne0",
+          "agent": "Sisyphus-Junior",
+          "category": "quick",
+          "updated_at": "2026-06-06T16:43:36.880Z",
+          "started_at": "2026-06-06T16:42:29.060Z",
+          "status": "completed",
+          "ended_at": "2026-06-06T16:43:36.880Z",
+          "elapsed_ms": 67820
+        },
+        "final-wave:f1": {
+          "task_key": "final-wave:f1",
+          "task_label": "F1",
+          "task_title": "**Plan Compliance Audit** — `oracle` *(running bg)*",
+          "session_id": "opencode:ses_1622cff81ffeYz5hkWR3dXsI48",
+          "agent": "Sisyphus-Junior",
+          "category": "deep",
+          "started_at": "2026-06-06T16:49:02.079Z",
+          "status": "completed",
+          "updated_at": "2026-06-06T16:49:17.987Z",
+          "ended_at": "2026-06-06T16:49:17.987Z",
+          "elapsed_ms": 15908
+        }
+      },
+      "ended_at": "2026-06-06T16:51:22.800Z",
+      "elapsed_ms": 938738
+    },
+    "dockerfile-codec-fix-309aab75": {
+      "work_id": "dockerfile-codec-fix-309aab75",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/dockerfile-codec-fix.md",
+      "plan_name": "dockerfile-codec-fix",
+      "status": "completed",
+      "started_at": "2026-06-06T17:19:41.697Z",
+      "updated_at": "2026-06-06T17:20:52.311Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {
+        "todo:1": {
+          "task_key": "todo:1",
+          "task_label": "1",
+          "task_title": "Fix Dockerfile wget URLs — v0.2.0 → v0.3.0",
+          "session_id": "opencode:ses_1620d1dd9ffeA70OBs05bSylBx",
+          "agent": "Sisyphus-Junior",
+          "category": "quick",
+          "updated_at": "2026-06-06T17:20:43.340Z",
+          "started_at": "2026-06-06T17:20:29.793Z",
+          "status": "completed",
+          "ended_at": "2026-06-06T17:20:43.340Z",
+          "elapsed_ms": 13547
+        }
+      },
+      "ended_at": "2026-06-06T17:20:52.311Z",
+      "elapsed_ms": 70614
+    },
+    "dotnet-upgrade-8-to-10-23bf6b39": {
+      "work_id": "dotnet-upgrade-8-to-10-23bf6b39",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/dotnet-upgrade-8-to-10.md",
+      "plan_name": "dotnet-upgrade-8-to-10",
+      "status": "completed",
+      "started_at": "2026-06-06T17:27:37.212Z",
+      "updated_at": "2026-06-06T17:27:37.212Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {}
+    },
+    "handcodec-v0-4-upgrade-5c1e5765": {
+      "work_id": "handcodec-v0-4-upgrade-5c1e5765",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/handcodec-v0.4-upgrade.md",
+      "plan_name": "handcodec-v0.4-upgrade",
+      "status": "completed",
+      "started_at": "2026-06-06T18:30:52.794Z",
+      "updated_at": "2026-06-06T18:30:52.794Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {}
+    },
+    "e2e-checkpoint-comprehensive-9f78b3d4": {
+      "work_id": "e2e-checkpoint-comprehensive-9f78b3d4",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/e2e-checkpoint-comprehensive.md",
+      "plan_name": "e2e-checkpoint-comprehensive",
+      "status": "completed",
+      "started_at": "2026-06-06T22:57:31.154Z",
+      "updated_at": "2026-06-06T22:57:31.154Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {}
+    },
+    "dotnet-upgrade-8-to-10-7b659a52": {
+      "work_id": "dotnet-upgrade-8-to-10-7b659a52",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/dotnet-upgrade-8-to-10.md",
+      "plan_name": "dotnet-upgrade-8-to-10",
+      "status": "completed",
+      "started_at": "2026-06-06T17:27:37.241Z",
+      "updated_at": "2026-06-06T17:33:29.725Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {},
+      "ended_at": "2026-06-06T17:33:29.725Z",
+      "elapsed_ms": 352484
+    },
+    "sonarqube-info-cleanup-a6a4e38d": {
+      "work_id": "sonarqube-info-cleanup-a6a4e38d",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/sonarqube-info-cleanup.md",
+      "plan_name": "sonarqube-info-cleanup",
+      "status": "completed",
+      "started_at": "2026-06-06T18:04:28.190Z",
+      "updated_at": "2026-06-06T18:09:45.008Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {
+        "todo:1": {
+          "task_key": "todo:1",
+          "task_label": "1",
+          "task_title": "Fix xUnit1042 in `HandBenchmarkTests.cs` (line 53)",
+          "session_id": "opencode:ses_161e3ddaaffexU7Pj0t33GKbJI",
+          "agent": "Sisyphus-Junior",
+          "category": "quick",
+          "updated_at": "2026-06-06T18:08:41.587Z",
+          "started_at": "2026-06-06T18:06:02.354Z",
+          "status": "completed",
+          "ended_at": "2026-06-06T18:08:41.587Z",
+          "elapsed_ms": 159233
+        }
+      },
+      "ended_at": "2026-06-06T18:09:45.008Z",
+      "elapsed_ms": 316818
+    },
+    "handcodec-v0-4-upgrade-5ef22534": {
+      "work_id": "handcodec-v0-4-upgrade-5ef22534",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/handcodec-v0.4-upgrade.md",
+      "plan_name": "handcodec-v0.4-upgrade",
+      "status": "completed",
+      "started_at": "2026-06-06T18:30:52.813Z",
+      "updated_at": "2026-06-06T18:33:10.411Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {},
+      "ended_at": "2026-06-06T18:33:10.411Z",
+      "elapsed_ms": 137598
+    },
+    "coderabbit-findings-fix-0d7e01fa": {
+      "work_id": "coderabbit-findings-fix-0d7e01fa",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/coderabbit-findings-fix.md",
+      "plan_name": "coderabbit-findings-fix",
+      "status": "completed",
+      "started_at": "2026-06-06T19:41:50.881Z",
+      "updated_at": "2026-06-06T19:44:35.842Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {
+        "todo:1": {
+          "task_key": "todo:1",
+          "task_label": "1",
+          "task_title": "CHANGELOG.md: update HandCodec/HandRuntime 0.3.0 → 0.4.0",
+          "session_id": "opencode:ses_1618ae54dffeUhlTuxEcNhtnnz",
+          "agent": "Sisyphus-Junior",
+          "category": "quick",
+          "updated_at": "2026-06-06T19:44:10.252Z",
+          "started_at": "2026-06-06T19:42:49.900Z",
+          "status": "completed",
+          "ended_at": "2026-06-06T19:44:10.252Z",
+          "elapsed_ms": 80352
+        }
+      },
+      "ended_at": "2026-06-06T19:44:35.842Z",
+      "elapsed_ms": 164961
+    },
+    "docker-build-fix-19aa853a": {
+      "work_id": "docker-build-fix-19aa853a",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/docker-build-fix.md",
+      "plan_name": "docker-build-fix",
+      "status": "completed",
+      "started_at": "2026-06-06T20:30:08.520Z",
+      "updated_at": "2026-06-06T20:30:57.202Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {},
+      "ended_at": "2026-06-06T20:30:57.202Z",
+      "elapsed_ms": 48682
+    },
+    "control-token-fix-0ccca979": {
+      "work_id": "control-token-fix-0ccca979",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/control-token-fix.md",
+      "plan_name": "control-token-fix",
+      "status": "completed",
+      "started_at": "2026-06-06T21:04:43.650Z",
+      "updated_at": "2026-06-06T21:11:35.417Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {},
+      "ended_at": "2026-06-06T21:11:35.417Z",
+      "elapsed_ms": 411767
+    },
+    "final-hardening-7d3ef341": {
+      "work_id": "final-hardening-7d3ef341",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/final-hardening.md",
+      "plan_name": "final-hardening",
+      "status": "completed",
+      "started_at": "2026-06-06T21:22:18.221Z",
+      "updated_at": "2026-06-06T21:26:56.281Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {},
+      "ended_at": "2026-06-06T21:26:56.281Z",
+      "elapsed_ms": 278060
+    },
+    "analyst-calibrator-fix-bd8d2c15": {
+      "work_id": "analyst-calibrator-fix-bd8d2c15",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/analyst-calibrator-fix.md",
+      "plan_name": "analyst-calibrator-fix",
+      "status": "completed",
+      "started_at": "2026-06-06T21:45:27.267Z",
+      "updated_at": "2026-06-06T21:56:24.252Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {},
+      "ended_at": "2026-06-06T21:56:24.252Z",
+      "elapsed_ms": 656985
+    },
+    "therapeutic-qa-softfail-85c07d87": {
+      "work_id": "therapeutic-qa-softfail-85c07d87",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/therapeutic-qa-softfail.md",
+      "plan_name": "therapeutic-qa-softfail",
+      "status": "completed",
+      "started_at": "2026-06-06T22:11:42.424Z",
+      "updated_at": "2026-06-06T22:23:14.911Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {},
+      "ended_at": "2026-06-06T22:23:14.911Z",
+      "elapsed_ms": 692487
+    },
+    "e2e-checkpoint-comprehensive-b821ac73": {
+      "work_id": "e2e-checkpoint-comprehensive-b821ac73",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/e2e-checkpoint-comprehensive.md",
+      "plan_name": "e2e-checkpoint-comprehensive",
+      "status": "completed",
+      "started_at": "2026-06-06T22:57:31.177Z",
+      "updated_at": "2026-06-06T23:06:21.636Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {},
+      "ended_at": "2026-06-06T23:06:21.636Z",
+      "elapsed_ms": 530459
+    },
+    "e2e-debug-comprehensive-fix-b4152906": {
+      "work_id": "e2e-debug-comprehensive-fix-b4152906",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/e2e-debug-comprehensive-fix.md",
+      "plan_name": "e2e-debug-comprehensive-fix",
+      "status": "completed",
+      "started_at": "2026-06-06T23:19:52.210Z",
+      "updated_at": "2026-06-06T23:37:35.186Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {},
+      "ended_at": "2026-06-06T23:37:35.186Z",
+      "elapsed_ms": 1062976
+    },
+    "coderabbit-comment-fixes-770e6832": {
+      "work_id": "coderabbit-comment-fixes-770e6832",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/coderabbit-comment-fixes.md",
+      "plan_name": "coderabbit-comment-fixes",
+      "status": "completed",
+      "started_at": "2026-06-07T13:45:51.591Z",
+      "updated_at": "2026-06-07T16:50:14.777Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {
+        "todo:1": {
+          "task_key": "todo:1",
+          "task_label": "1",
+          "task_title": "WireMock.Net 2.6.0 → 2.9.0 in `tests/HybridTherapist.Integration/HybridTherapist.Integration.csproj`",
+          "session_id": "opencode:ses_15d045aa6ffe5ySgkjyJyhklVN",
+          "agent": "Sisyphus-Junior",
+          "category": "quick",
+          "started_at": "2026-06-07T13:46:56.669Z",
+          "ended_at": "2026-06-07T16:50:14.777Z",
+          "elapsed_ms": 10998108,
+          "status": "completed",
+          "updated_at": "2026-06-07T16:50:14.777Z"
+        },
+        "todo:5": {
+          "task_key": "todo:5",
+          "task_label": "5",
+          "task_title": "Fix HandJsonBenchmarkValidator.cs StrictCodecG restore",
+          "session_id": "opencode:ses_15da6cb53ffeIxe7xFG29PkBAj",
+          "agent": "Sisyphus-Junior",
+          "category": "quick",
+          "updated_at": "2026-06-07T13:51:16.343Z",
+          "started_at": "2026-06-07T13:51:00.387Z",
+          "status": "completed",
+          "ended_at": "2026-06-07T13:51:16.343Z",
+          "elapsed_ms": 15956
+        },
+        "todo:7": {
+          "task_key": "todo:7",
+          "task_label": "7",
+          "task_title": "Fix HandJsonBenchmarkValidator.cs MinQualityScore enforcement",
+          "session_id": "opencode:ses_15da46717ffet1dTl95fg10lBu",
+          "agent": "Sisyphus-Junior",
+          "category": "quick",
+          "updated_at": "2026-06-07T13:55:12.363Z",
+          "started_at": "2026-06-07T13:53:26.536Z",
+          "status": "completed",
+          "ended_at": "2026-06-07T13:55:12.363Z",
+          "elapsed_ms": 105827
+        }
+      },
+      "ended_at": "2026-06-07T14:00:06.210Z",
+      "elapsed_ms": 854619
+    },
+    "precommit-skill-bridge-01a5be21": {
+      "work_id": "precommit-skill-bridge-01a5be21",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/precommit-skill-bridge.md",
+      "plan_name": "precommit-skill-bridge",
+      "status": "completed",
+      "started_at": "2026-06-07T17:39:51.527Z",
+      "updated_at": "2026-06-07T17:43:57.770Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {
+        "todo:1": {
+          "task_key": "todo:1",
+          "task_label": "1",
+          "task_title": "`.githooks/pre-push` — Branch naming validation (L3, non-blocking)",
+          "session_id": "opencode:ses_15cd40238ffeytS2QFbjrC2dYE",
+          "agent": "Sisyphus-Junior",
+          "category": "quick",
+          "updated_at": "2026-06-07T17:41:41.854Z",
+          "started_at": "2026-06-07T17:41:41.854Z",
+          "status": "running"
+        },
+        "final-wave:f1": {
+          "task_key": "final-wave:f1",
+          "task_label": "F1",
+          "task_title": "**Hook syntax** — `bash -n .githooks/pre-commit .githooks/pre-push .githooks/commit-msg scripts/install-hooks.sh` → no errors",
+          "session_id": "opencode:ses_15cd425a0fferLNKg7JTd1ESim",
+          "agent": "Sisyphus-Junior",
+          "category": "deep",
+          "updated_at": "2026-06-07T17:43:49.350Z",
+          "started_at": "2026-06-07T17:42:27.735Z",
+          "status": "completed",
+          "ended_at": "2026-06-07T17:43:49.350Z",
+          "elapsed_ms": 81615
+        }
+      },
+      "ended_at": "2026-06-07T17:43:57.770Z",
+      "elapsed_ms": 246243
+    },
+    "skill-audit-adapt-284f3f34": {
+      "work_id": "skill-audit-adapt-284f3f34",
+      "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/skill-audit-adapt.md",
+      "plan_name": "skill-audit-adapt",
+      "status": "completed",
+      "started_at": "2026-06-07T18:09:44.465Z",
+      "updated_at": "2026-06-07T18:11:38.797Z",
+      "session_ids": [
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+      ],
+      "session_origins": {
+        "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+      },
+      "agent": "atlas",
+      "task_sessions": {
+        "todo:1": {
+          "task_key": "todo:1",
+          "task_label": "1",
+          "task_title": "Secret/private key detection (HOOK-L2-SECRET, L2 non-blocking)",
+          "session_id": "opencode:ses_15cb8d2d7ffePyrRNFLA4zweWP",
+          "agent": "Sisyphus-Junior",
+          "category": "quick",
+          "updated_at": "2026-06-07T18:10:47.861Z",
+          "started_at": "2026-06-07T18:10:47.861Z",
+          "status": "running"
+        }
+      },
+      "ended_at": "2026-06-07T18:11:38.797Z",
+      "elapsed_ms": 114332
+    }
+  },
+  "active_plan": "/home/pablo/Projects/hybrid-therapist/.omo/plans/skill-audit-adapt.md",
+  "started_at": "2026-06-07T18:09:44.465Z",
+  "status": "completed",
+  "updated_at": "2026-06-07T18:11:38.797Z",
+  "session_ids": [
+    "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS"
+  ],
+  "session_origins": {
+    "opencode:ses_1625d2fe3ffeKm9SNOGqqXtKmS": "direct"
+  },
+  "plan_name": "skill-audit-adapt",
+  "task_sessions": {
+    "todo:1": {
+      "task_key": "todo:1",
+      "task_label": "1",
+      "task_title": "Secret/private key detection (HOOK-L2-SECRET, L2 non-blocking)",
+      "session_id": "opencode:ses_15cb8d2d7ffePyrRNFLA4zweWP",
+      "agent": "Sisyphus-Junior",
+      "category": "quick",
+      "updated_at": "2026-06-07T18:10:47.861Z",
+      "started_at": "2026-06-07T18:10:47.861Z",
+      "status": "running"
+    }
+  },
+  "agent": "atlas",
+  "ended_at": "2026-06-07T18:11:38.797Z",
+  "elapsed_ms": 114332
+}

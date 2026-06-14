@@ -1,0 +1,110 @@
+{
+  "name": "json-anxiety",
+  "description": "User reports chronic anxiety and racing thoughts. JSON variant.",
+  "variant": "json",
+  "expected_quality": {
+    "pass": true,
+    "min_quality_score": 3,
+    "required_topics": [
+      "anxiety",
+      "worry"
+    ],
+    "required_phrases_pl": [
+      "lęk",
+      "umysł"
+    ],
+    "forbidden_phrases": [
+      "nie martw się",
+      "uspokój się"
+    ]
+  },
+  "interactions": [
+    {
+      "layer": "L1_translator_pl_en",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "You are a translator"
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.91|V=I constantly worry about everything, my mind races and I cannot stop it"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L2_analyst",
+      "request_match": {
+        "model_contains": "MentaLLaMA"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/MentaLLaMA-chat-7B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "{\"layer\":2,\"emotional_state\":\"anxiety\",\"severity\":\"moderate\",\"risk\":\"none\",\"patterns\":\"racing_thoughts\",\"evidence\":\"cannot stop\"}"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L3_supervisor",
+      "request_match": {
+        "model_contains": "PsyLLM"
+      },
+      "response": {
+        "model": "hf.co/RyanGichuru254/PsyLLM-8B-GGUF:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "{\"layer\":3,\"approach\":\"cognitive_restructuring\",\"technique\":\"thought_record\",\"key_question\":\"When was the last time a worry actually came true?\",\"risk_note\":\"none\"}"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L4_therapist",
+      "request_match": {
+        "model_contains": "PsychoCounsel"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/PsychoCounsel-Llama3-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.87\nWhen anxiety takes over, the mind can feel like a radio that never turns off. I hear how exhausting this must be.\n\nWhen was the last time a worry actually came true?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L6_calibrator",
+      "request_match": {
+        "model_contains": "dolphin"
+      },
+      "response": {
+        "model": "hf.co/mradermacher/llama4-dolphin-8B-GGUF:Q4_K_S",
+        "message": {
+          "role": "assistant",
+          "content": "When anxiety takes over, the mind can feel like a radio that never turns off. I hear how exhausting this must be.\n\nWhen was the last time a worry actually came true?"
+        },
+        "done": true
+      }
+    },
+    {
+      "layer": "L7_translator_en_pl",
+      "request_match": {
+        "model_contains": "bielik-minitron",
+        "user_content_contains": "You are a Polish translator"
+      },
+      "response": {
+        "model": "SpeakLeash/bielik-minitron-7b-v3.0-instruct:Q4_K_M",
+        "message": {
+          "role": "assistant",
+          "content": "R|C=0.92\nKiedy lęk przejmuje kontrolę, umysł przypomina radio, które nigdy się nie wyłącza. Słyszę, jak bardzo to wyczerpujące.\n\nKiedy ostatni raz jakieś zmartwienie faktycznie się spełniło?"
+        },
+        "done": true
+      }
+    }
+  ],
+  "user_input_pl": "Od tygodni mam gonitwę myśli i ciągle martwię się o wszystko."
+}

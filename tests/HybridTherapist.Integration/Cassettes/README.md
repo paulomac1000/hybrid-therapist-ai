@@ -10,13 +10,13 @@ upstream:
   - sys.socrates-pipeline
   - ref.glossary
 tags: ["cassettes", "integration", "testing", "ollama"]
-last_verified: 2026-05-23
+last_verified: 2026-06-06
 owners: ["hybrid-therapist"]
 ---
 
-# Kasety Ollama — nagrane interakcje pipeline'u
+# Ollama Cassettes — Recorded Pipeline Interactions
 
-Każda kaseta to plik JSON opisujący sekwencję par request/response Ollama `/api/chat` dla jednego scenariusza terapeutycznego. Kasety pozwalają uruchomić pełny 6-warstwowy pipeline Socrates **offline** w CI — bez żywej Ollamy, bez GPU, bez pobierania modeli.
+Each cassette is a JSON file describing a sequence of Ollama `/api/chat` request/response pairs for one therapeutic scenario. Cassettes allow running the full 6-layer Socrates pipeline **offline** in CI — without a live Ollama, without a GPU, without downloading models.
 
 ## Format
 
@@ -72,7 +72,7 @@ WireMock.Net's auto-record produces verbose, model-specific JSON that's hard to 
 - **Match by substring** — fields like timestamps and per-request UUIDs don't matter, so we don't capture them.
 - **Hand-editable** — adjust the L4 output to test echo detection without re-recording.
 
-The trade-off: cassettes don't capture full HTTP fidelity (headers, exact streaming chunks). That's fine for our pipeline — the only thing we test is whether each layer's content survives the `TherapistHandDecoder` and shapes the next layer's input correctly.
+The trade-off: cassettes don't capture full HTTP fidelity (headers, exact streaming chunks). That's fine for our pipeline — the only thing we test is whether each layer's content survives the `HandResponseDecoder` and shapes the next layer's input correctly.
 
 ## Currently recorded
 
